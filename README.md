@@ -4,7 +4,7 @@ VATS = Verifiable Asset Tokenization System.
 
 ## High Level (VATS)
 
-There are two dominiant _representation_ systems in defi today:
+There are two dominant _representation_ systems in defi today:
 
 - Fungible tokens: Ideal for trading/investment concerns such as liquidity,
   interoperatiblity, transerring, swapping, both large/small scale operations,
