@@ -1,6 +1,6 @@
 # rain.vats
 
-VATS = Verifiable Asset Token System.
+VATS = Verifiable Asset Tokenization System.
 
 ## High Level (VATS)
 
@@ -52,7 +52,7 @@ this makes them all similar to each other, which justifies their "sameness", an
 important feature of any fungible token. In another sense we have simply shifted
 our liquidity problem offchain. What if there is a bank run on the token and a
 significant percentage of these 100 houses all need to be sold in a short period
-of time in order to maintain the backing. Selling 1 house in a good area is
+of time in order to maintain the backing? Selling 1 house in a good area is
 relatively simple, although still might take months, selling 100 houses in the
 same area could take many years to do in a way that doesn't crash the sale price
 due to sudden oversupply.
@@ -89,8 +89,8 @@ are created and destroyed in lockstep to maintain supply integrity.
 V: Verifiable => "Anyone" can compare the onchain ERC1155 NFT IDs/data/supply
   against the offchain assets to check the integrity of the system.
 A: Asset => The system is designed to work referencing/backed by real assets.
-T: Token => The system is fundamentally a tokenization approach to building
-  liquidity for the referenced assets.
+T: Tokenization => The system is fundamentally a tokenization approach to
+  building liquidity for the referenced assets.
 S: System => This is a system of tokens, both an ERC20 and ERC1155, and cannot
   provide all promised features/guarantees without multiple tokens bound together
   logically somehow (e.g. at mint/burn time)
