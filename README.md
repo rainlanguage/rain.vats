@@ -7,7 +7,7 @@ VATS = Verifiable Asset Tokenization System.
 There are two dominant _representation_ systems in defi today:
 
 - Fungible tokens: Ideal for trading/investment concerns such as liquidity,
-  interoperatiblity, transerring, swapping, both large/small scale operations,
+  interoperability, transferring, swapping, both large/small scale operations,
   generalized/bulk behaviours, etc.
 - Non-fungible tokens: Ideal for auditability/provenance concerns such as mapping
   onchain to external/offchain entities, _specific_ mint/burn histories,
