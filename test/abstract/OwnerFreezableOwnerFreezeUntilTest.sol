@@ -4,7 +4,9 @@ pragma solidity ^0.8.25;
 
 import {IOwnerFreezableV1} from "src/abstract/OwnerFreezable.sol";
 import {Math} from "openzeppelin-contracts/contracts/utils/math/Math.sol";
-import {OwnableUpgradeable as Ownable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import {
+    OwnableUpgradeable as Ownable
+} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import {OffchainAssetReceiptVaultTest} from "./OffchainAssetReceiptVaultTest.sol";
 
 abstract contract OwnerFreezableOwnerFreezeUntilTest is OffchainAssetReceiptVaultTest {

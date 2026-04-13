@@ -12,7 +12,7 @@ contract ERC20PriceOracleReceiptVaultMaxDepositTest is ERC20PriceOracleReceiptVa
         address alice = LibUniqueAddressesGenerator.generateUniqueAddresses(vm, aliceSeed);
         vm.startPrank(alice);
 
-        ERC20PriceOracleReceiptVault vault = createVault(I_VAULT_ORACLE, shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, shareName, shareSymbol);
 
         uint256 maxDeposit = vault.maxDeposit(alice);
 

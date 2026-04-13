@@ -31,7 +31,7 @@ contract ERC20PriceOracleReceiptVaultPreviewWithdrawTest is ERC20PriceOracleRece
 
         // Prank as Alice to grant role
         vm.startPrank(alice);
-        ERC20PriceOracleReceiptVault vault = createVault(I_VAULT_ORACLE, shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, shareName, shareSymbol);
 
         // Call withdraw function
         uint256 expectedShares = assets.fixedPointMul(oraclePrice, Math.Rounding.Ceil);

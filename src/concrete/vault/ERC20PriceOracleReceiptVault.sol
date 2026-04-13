@@ -110,8 +110,7 @@ contract ERC20PriceOracleReceiptVault is ReceiptVault {
         emit ERC20PriceOracleReceiptVaultInitializedV2(
             _msgSender(),
             ERC20PriceOracleReceiptVaultConfigV2({
-                priceOracle: config.priceOracle,
-                receiptVaultConfig: config.receiptVaultConfig
+                priceOracle: config.priceOracle, receiptVaultConfig: config.receiptVaultConfig
             })
         );
 
@@ -135,7 +134,9 @@ contract ERC20PriceOracleReceiptVault is ReceiptVault {
         // slither puts false positives on `try/catch/returns`.
         // https://github.com/crytic/slither/issues/511
         //slither-disable-next-line
-        returns (uint256 price) {
+        returns (
+            uint256 price
+        ) {
             return price;
         } catch {
             // Depositing assets while the price oracle is erroring will give 0

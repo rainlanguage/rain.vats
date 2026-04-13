@@ -13,7 +13,9 @@ import {
 } from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {LibExtrospectERC1167Proxy} from "rain.extrospection/lib/LibExtrospectERC1167Proxy.sol";
 import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
-import {OwnableUpgradeable as Ownable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import {
+    OwnableUpgradeable as Ownable
+} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 
 contract AlwaysAuthorize is IAuthorizeV1, IERC165 {
     /// @inheritdoc IERC165
@@ -41,13 +43,9 @@ contract OffchainAssetReceiptVaultAuthorizeTest is OffchainAssetReceiptVaultTest
         address authorizer = address(vault.authorizer());
         (bool isProxy, address implementation) = LibExtrospectERC1167Proxy.isERC1167Proxy(authorizer.code);
         assertTrue(isProxy);
-        assertEq(implementation, address(I_AUTHORIZER_IMPLEMENTATION));
+        assertEq(implementation, address(iAuthorizerImplementation));
         CertifyStateChange memory certifyStateChange = CertifyStateChange({
-            oldCertifiedUntil: 0,
-            newCertifiedUntil: 1234,
-            userCertifyUntil: 1234,
-            forceUntil: true,
-            data: ""
+            oldCertifiedUntil: 0, newCertifiedUntil: 1234, userCertifyUntil: 1234, forceUntil: true, data: ""
         });
         // Smoke test the authorizer NOT authorizing.
         vm.expectRevert(
@@ -70,7 +68,7 @@ contract OffchainAssetReceiptVaultAuthorizeTest is OffchainAssetReceiptVaultTest
         address authorizer = address(vault.authorizer());
         (bool isProxy, address implementation) = LibExtrospectERC1167Proxy.isERC1167Proxy(authorizer.code);
         assertTrue(isProxy);
-        assertEq(implementation, address(I_AUTHORIZER_IMPLEMENTATION));
+        assertEq(implementation, address(iAuthorizerImplementation));
 
         AlwaysAuthorize alwaysAuthorize = new AlwaysAuthorize();
 

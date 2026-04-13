@@ -66,8 +66,10 @@ contract ERC20PriceOracleReceipt is Receipt {
                 _vaultShareSymbol(),
                 " to redeem ",
                 LibFixedPointDecimalFormat.fixedPointToDecimalString(
-                    LibFixedPointDecimalArithmeticOpenZeppelin.fixedPointDiv(FIXED_POINT_ONE, id, Math.Rounding.Floor)
-                ),
+                        LibFixedPointDecimalArithmeticOpenZeppelin.fixedPointDiv(
+                            FIXED_POINT_ONE, id, Math.Rounding.Floor
+                        )
+                    ),
                 " of ",
                 _vaultAssetSymbol(),
                 ".",

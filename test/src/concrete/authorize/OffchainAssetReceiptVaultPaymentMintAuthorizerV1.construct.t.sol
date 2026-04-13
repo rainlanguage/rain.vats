@@ -127,11 +127,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
 
         bytes memory initData = abi.encode(
             OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config({
-                receiptVault: receiptVault,
-                verify: verify,
-                owner: owner,
-                paymentToken: address(0),
-                maxSharesSupply: 0
+                receiptVault: receiptVault, verify: verify, owner: owner, paymentToken: address(0), maxSharesSupply: 0
             })
         );
         vm.expectRevert(ZeroPaymentToken.selector);
@@ -153,11 +149,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
 
         bytes memory initData = abi.encode(
             OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config({
-                receiptVault: receiptVault,
-                verify: verify,
-                owner: owner,
-                paymentToken: paymentToken,
-                maxSharesSupply: 0
+                receiptVault: receiptVault, verify: verify, owner: owner, paymentToken: paymentToken, maxSharesSupply: 0
             })
         );
         vm.expectRevert(ZeroMaxSharesSupply.selector);
