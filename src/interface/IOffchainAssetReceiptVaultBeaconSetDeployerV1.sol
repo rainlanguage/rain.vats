@@ -1,0 +1,27 @@
+// SPDX-License-Identifier: LicenseRef-DCL-1.0
+// SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
+pragma solidity ^0.8.0;
+
+import {IBeacon} from "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol";
+import {OffchainAssetReceiptVault} from "../concrete/vault/OffchainAssetReceiptVault.sol";
+import {OffchainAssetReceiptVaultConfigV2} from "../concrete/deploy/OffchainAssetReceiptVaultBeaconSetDeployer.sol";
+
+/// @title IOffchainAssetReceiptVaultBeaconSetDeployerV1
+/// @notice V1 interface for the OffchainAssetReceiptVaultBeaconSetDeployer.
+/// Uses the original I_ naming convention for public immutables. Deployed
+/// contracts on-chain have this ABI.
+interface IOffchainAssetReceiptVaultBeaconSetDeployerV1 {
+    /// @return The beacon for the Receipt implementation contracts.
+    // solhint-disable-next-line func-name-mixedcase
+    function I_RECEIPT_BEACON() external view returns (IBeacon);
+
+    /// @return The beacon for the OffchainAssetReceiptVault implementation
+    /// contracts.
+    // solhint-disable-next-line func-name-mixedcase
+    function I_OFFCHAIN_ASSET_RECEIPT_VAULT_BEACON() external view returns (IBeacon);
+
+    /// @notice Deploy a new OffchainAssetReceiptVault with its Receipt.
+    function newOffchainAssetReceiptVault(OffchainAssetReceiptVaultConfigV2 memory config)
+        external
+        returns (OffchainAssetReceiptVault);
+}
