@@ -10,6 +10,8 @@ import {
     InitializeVaultFailed
 } from "../../error/ErrDeployer.sol";
 import {Clones} from "openzeppelin-contracts/contracts/proxy/Clones.sol";
+import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {IERC20PriceOracleReceiptVaultCloneDeployerV2} from "../../interface/IERC20PriceOracleReceiptVaultCloneDeployerV2.sol";
 import {Receipt, ICLONEABLE_V2_SUCCESS} from "../receipt/Receipt.sol";
 import {
     ERC20PriceOracleReceiptVault,
@@ -30,7 +32,12 @@ struct ERC20PriceOracleReceiptVaultCloneDeployerConfig {
 /// @title ERC20PriceOracleReceiptVaultCloneDeployer
 /// Deploys ERC20PriceOracleReceiptVault contracts as minimal proxy contracts
 /// and handles the necessary initialization atomically.
-contract ERC20PriceOracleReceiptVaultCloneDeployer {
+contract ERC20PriceOracleReceiptVaultCloneDeployer is IERC165 {
+    /// @inheritdoc IERC165
+    function supportsInterface(bytes4 interfaceId) public pure override returns (bool) {
+        return interfaceId == type(IERC20PriceOracleReceiptVaultCloneDeployerV2).interfaceId
+            || interfaceId == type(IERC165).interfaceId;
+    }
     /// Emitted when a new deployment is successfully initialized.
     /// @param sender The address that initiated the deployment.
     /// @param erc20PriceOracleReceiptVault The address of the deployed

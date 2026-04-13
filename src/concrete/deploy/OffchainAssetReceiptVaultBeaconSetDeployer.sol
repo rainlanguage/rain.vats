@@ -7,6 +7,8 @@ import {OffchainAssetReceiptVault, OffchainAssetReceiptVaultConfigV2} from "../v
 import {IBeacon} from "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol";
 import {UpgradeableBeacon} from "openzeppelin-contracts/contracts/proxy/beacon/UpgradeableBeacon.sol";
 import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
+import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {IOffchainAssetReceiptVaultBeaconSetDeployerV2} from "../../interface/IOffchainAssetReceiptVaultBeaconSetDeployerV2.sol";
 import {
     ZeroReceiptImplementation,
     ZeroVaultImplementation,
@@ -33,7 +35,12 @@ struct OffchainAssetReceiptVaultBeaconSetDeployerConfig {
 /// @title OffchainAssetReceiptVaultBeaconSetDeployer
 /// Deploys OffchainAssetReceiptVault contracts using beacon proxies and
 /// handles the necessary initialization atomically.
-contract OffchainAssetReceiptVaultBeaconSetDeployer {
+contract OffchainAssetReceiptVaultBeaconSetDeployer is IERC165 {
+    /// @inheritdoc IERC165
+    function supportsInterface(bytes4 interfaceId) public pure override returns (bool) {
+        return interfaceId == type(IOffchainAssetReceiptVaultBeaconSetDeployerV2).interfaceId
+            || interfaceId == type(IERC165).interfaceId;
+    }
     /// Emitted when a new deployment is successfully initialized.
     /// @param sender The address that initiated the deployment.
     /// @param offchainAssetReceiptVault The address of the deployed
