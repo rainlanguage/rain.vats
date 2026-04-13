@@ -61,7 +61,9 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1VerifyTest is OffchainA
 
     function depositData(address owner, uint256 shares) internal pure returns (bytes memory) {
         return abi.encode(
-            DepositStateChange({owner: owner, receiver: owner, id: 1, assetsDeposited: shares, sharesMinted: shares, data: ""})
+            DepositStateChange({
+                owner: owner, receiver: owner, id: 1, assetsDeposited: shares, sharesMinted: shares, data: ""
+            })
         );
     }
 
