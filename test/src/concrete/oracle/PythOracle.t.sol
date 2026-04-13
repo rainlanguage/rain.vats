@@ -82,8 +82,8 @@ contract PythOracleTest is Test {
     /// Construction emits event and sets immutables.
     function testConstruction() external {
         PythOracle oracle = buildOracle();
-        assertEq(oracle.I_PRICE_FEED_ID(), FEED_ID);
-        assertEq(oracle.I_STALE_AFTER(), STALE_AFTER);
-        assertEq(address(oracle.I_PYTH_CONTRACT()), MOCK_PYTH);
+        assertEq(oracle.iPriceFeedId(), FEED_ID);
+        assertEq(oracle.iStaleAfter(), STALE_AFTER);
+        assertEq(address(oracle.iPythContract()), MOCK_PYTH);
     }
 }
