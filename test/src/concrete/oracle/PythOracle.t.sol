@@ -4,6 +4,7 @@ pragma solidity =0.8.25;
 
 import {Test} from "forge-std/Test.sol";
 import {PythOracle, PythOracleConfig, NonPositivePrice} from "src/concrete/oracle/PythOracle.sol";
+import {IPythOracleV2} from "src/interface/IPythOracleV2.sol";
 import {IPyth} from "pyth-sdk/IPyth.sol";
 import {PythStructs} from "pyth-sdk/PythStructs.sol";
 
@@ -84,8 +85,9 @@ contract PythOracleTest is Test {
     /// Construction emits event and sets immutables.
     function testConstruction() external {
         PythOracle oracle = buildOracle();
-        assertEq(oracle.iPriceFeedId(), FEED_ID);
-        assertEq(oracle.iStaleAfter(), STALE_AFTER);
-        assertEq(address(oracle.iPythContract()), MOCK_PYTH);
+        IPythOracleV2 iOracle = IPythOracleV2(address(oracle));
+        assertEq(iOracle.iPriceFeedId(), FEED_ID);
+        assertEq(iOracle.iStaleAfter(), STALE_AFTER);
+        assertEq(address(iOracle.iPythContract()), MOCK_PYTH);
     }
 }
