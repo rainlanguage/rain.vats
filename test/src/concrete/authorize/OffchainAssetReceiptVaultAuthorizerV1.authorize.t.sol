@@ -39,6 +39,9 @@ contract OffchainAssetReceiptVaultAuthorizerV1AuthorizeTest is OffchainAssetRece
         bytes memory data
     ) external {
         vm.assume(initialAdmin != address(0));
+        // The sender must not be the admin, otherwise they may hold roles
+        // that make the authorize call succeed instead of reverting.
+        vm.assume(sender != initialAdmin);
         OffchainAssetReceiptVaultAuthorizerV1 authorizer = newAuthorizer(initialAdmin);
 
         checkDefaultOffchainAssetReceiptVaultAuthorizerV1AuthorizeUnauthorized(
