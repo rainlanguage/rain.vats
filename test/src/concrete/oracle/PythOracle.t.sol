@@ -16,7 +16,9 @@ contract PythOracleTest is Test {
 
     function buildOracle() internal returns (PythOracle) {
         vm.etch(MOCK_PYTH, hex"00");
-        return new PythOracle(PythOracleConfig({priceFeedId: FEED_ID, staleAfter: STALE_AFTER, pythContract: IPyth(MOCK_PYTH)}));
+        return new PythOracle(
+            PythOracleConfig({priceFeedId: FEED_ID, staleAfter: STALE_AFTER, pythContract: IPyth(MOCK_PYTH)})
+        );
     }
 
     function mockPrice(int64 price, uint64 conf, int32 expo) internal {
