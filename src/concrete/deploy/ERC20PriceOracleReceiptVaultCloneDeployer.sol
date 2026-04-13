@@ -11,7 +11,9 @@ import {
 } from "../../error/ErrDeployer.sol";
 import {Clones} from "openzeppelin-contracts/contracts/proxy/Clones.sol";
 import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
-import {IERC20PriceOracleReceiptVaultCloneDeployerV2} from "../../interface/IERC20PriceOracleReceiptVaultCloneDeployerV2.sol";
+import {
+    IERC20PriceOracleReceiptVaultCloneDeployerV2
+} from "../../interface/IERC20PriceOracleReceiptVaultCloneDeployerV2.sol";
 import {Receipt, ICLONEABLE_V2_SUCCESS} from "../receipt/Receipt.sol";
 import {
     ERC20PriceOracleReceiptVault,

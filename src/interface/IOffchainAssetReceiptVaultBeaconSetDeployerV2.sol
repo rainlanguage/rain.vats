@@ -3,7 +3,10 @@
 pragma solidity ^0.8.0;
 
 import {IBeacon} from "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol";
-import {OffchainAssetReceiptVault, OffchainAssetReceiptVaultConfigV2} from "../concrete/vault/OffchainAssetReceiptVault.sol";
+import {
+    OffchainAssetReceiptVault,
+    OffchainAssetReceiptVaultConfigV2
+} from "../concrete/vault/OffchainAssetReceiptVault.sol";
 
 /// @title IOffchainAssetReceiptVaultBeaconSetDeployerV2
 /// @notice V2 interface for the OffchainAssetReceiptVaultBeaconSetDeployer.

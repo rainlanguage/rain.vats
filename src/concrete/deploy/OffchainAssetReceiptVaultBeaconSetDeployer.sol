@@ -8,7 +8,9 @@ import {IBeacon} from "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol
 import {UpgradeableBeacon} from "openzeppelin-contracts/contracts/proxy/beacon/UpgradeableBeacon.sol";
 import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
 import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
-import {IOffchainAssetReceiptVaultBeaconSetDeployerV2} from "../../interface/IOffchainAssetReceiptVaultBeaconSetDeployerV2.sol";
+import {
+    IOffchainAssetReceiptVaultBeaconSetDeployerV2
+} from "../../interface/IOffchainAssetReceiptVaultBeaconSetDeployerV2.sol";
 import {
     ZeroReceiptImplementation,
     ZeroVaultImplementation,
