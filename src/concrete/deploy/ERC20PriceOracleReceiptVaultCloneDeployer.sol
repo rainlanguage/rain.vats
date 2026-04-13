@@ -60,6 +60,8 @@ contract ERC20PriceOracleReceiptVaultCloneDeployer {
     /// @param config The configuration for the ERC20PriceOracleReceiptVault.
     /// @return The address of the newly deployed ERC20PriceOracleReceiptVault
     /// contract.
+    // Deployer is stateless — reentrancy via initialize cannot corrupt state.
+    //slither-disable-next-line reentrancy-events
     function newERC20PriceOracleReceiptVault(ERC20PriceOracleReceiptVaultConfigV2 memory config)
         external
         returns (ERC20PriceOracleReceiptVault)

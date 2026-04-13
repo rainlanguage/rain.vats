@@ -70,6 +70,8 @@ contract OffchainAssetReceiptVaultBeaconSetDeployer {
     /// @param config The configuration for the OffchainAssetReceiptVault.
     /// @return The address of the newly deployed OffchainAssetReceiptVault
     /// contract.
+    // Deployer is stateless — reentrancy via initialize cannot corrupt state.
+    //slither-disable-next-line reentrancy-events
     function newOffchainAssetReceiptVault(OffchainAssetReceiptVaultConfigV2 memory config)
         external
         returns (OffchainAssetReceiptVault)
