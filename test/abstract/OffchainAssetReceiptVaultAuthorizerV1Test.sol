@@ -86,11 +86,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1Test is OffchainAssetReceiptVaultT
             TRANSFER_RECEIPT,
             abi.encode(
                 TransferReceiptStateChange({
-                    from: from,
-                    to: to,
-                    ids: ids,
-                    amounts: amounts,
-                    isCertificationExpired: false
+                    from: from, to: to, ids: ids, amounts: amounts, isCertificationExpired: false
                 })
             )
         );
@@ -131,11 +127,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1Test is OffchainAssetReceiptVaultT
             TRANSFER_RECEIPT,
             abi.encode(
                 TransferReceiptStateChange({
-                    from: from,
-                    to: to,
-                    ids: ids,
-                    amounts: amounts,
-                    isCertificationExpired: true
+                    from: from, to: to, ids: ids, amounts: amounts, isCertificationExpired: true
                 })
             )
         );

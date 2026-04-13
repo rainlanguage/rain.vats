@@ -2,9 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {
-    OffchainAssetReceiptVaultTest, ReceiptVaultConfigV2, Vm
-} from "test/abstract/OffchainAssetReceiptVaultTest.sol";
+import {OffchainAssetReceiptVaultTest, ReceiptVaultConfigV2, Vm} from "test/abstract/OffchainAssetReceiptVaultTest.sol";
 import {
     OffchainAssetReceiptVault,
     OffchainAssetReceiptVaultConfigV2,
@@ -18,9 +16,9 @@ import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenera
 contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTest {
     /// Test that admin is not address zero
     function testZeroInitialAdmin(string memory shareName, string memory shareSymbol) external {
-        ReceiptContract receipt = ReceiptContract(address(new BeaconProxy(address(I_DEPLOYER.I_RECEIPT_BEACON()), "")));
+        ReceiptContract receipt = ReceiptContract(address(new BeaconProxy(address(iDeployer.iReceiptBeacon()), "")));
         OffchainAssetReceiptVault offchainAssetReceiptVault = OffchainAssetReceiptVault(
-            payable(address(new BeaconProxy(address(I_DEPLOYER.I_OFFCHAIN_ASSET_RECEIPT_VAULT_BEACON()), "")))
+            payable(address(new BeaconProxy(address(iDeployer.iOffchainAssetReceiptVaultBeacon()), "")))
         );
         receipt.initialize(abi.encode(offchainAssetReceiptVault));
 
@@ -30,10 +28,7 @@ contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTes
                 OffchainAssetReceiptVaultConfigV2({
                     initialAdmin: address(0),
                     receiptVaultConfig: ReceiptVaultConfigV2({
-                        asset: address(0),
-                        name: shareName,
-                        symbol: shareSymbol,
-                        receipt: address(receipt)
+                        asset: address(0), name: shareName, symbol: shareSymbol, receipt: address(receipt)
                     })
                 })
             )
@@ -49,14 +44,11 @@ contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTes
         vm.assume(asset != address(0));
 
         vm.expectRevert(abi.encodeWithSelector(NonZeroAsset.selector));
-        I_DEPLOYER.newOffchainAssetReceiptVault(
+        iDeployer.newOffchainAssetReceiptVault(
             OffchainAssetReceiptVaultConfigV2({
                 initialAdmin: alice,
                 receiptVaultConfig: ReceiptVaultConfigV2({
-                    asset: asset,
-                    name: shareName,
-                    symbol: shareSymbol,
-                    receipt: address(0)
+                    asset: asset, name: shareName, symbol: shareSymbol, receipt: address(0)
                 })
             })
         );
@@ -112,7 +104,7 @@ contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTes
         // Assert that the event log was found
         assertTrue(eventFound, "OffchainAssetReceiptVaultInitializedV2 event log not found");
 
-        assertEq(msgSender, address(I_DEPLOYER));
+        assertEq(msgSender, address(iDeployer));
         assertEq(config.initialAdmin, alice);
         assert(address(vault) != address(0));
 

@@ -7,7 +7,7 @@ import {ERC20PriceOracleReceiptVault} from "src/concrete/vault/ERC20PriceOracleR
 
 contract ERC20PriceOracleReceiptVaultAssetTest is ERC20PriceOracleReceiptVaultTest {
     function testVaultAsset(string memory shareName, string memory shareSymbol) external {
-        ERC20PriceOracleReceiptVault vault = createVault(I_VAULT_ORACLE, shareName, shareSymbol);
-        assertEq(vault.asset(), address(I_ASSET));
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, shareName, shareSymbol);
+        assertEq(vault.asset(), address(iAsset));
     }
 }

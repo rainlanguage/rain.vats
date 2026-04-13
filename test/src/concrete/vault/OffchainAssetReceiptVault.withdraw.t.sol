@@ -118,12 +118,7 @@ contract WithdrawTest is OffchainAssetReceiptVaultTest {
         {
             encodedWithdraw = abi.encode(
                 WithdrawStateChange({
-                    owner: alice,
-                    receiver: alice,
-                    id: id,
-                    assetsWithdrawn: assets,
-                    sharesBurned: assets,
-                    data: data
+                    owner: alice, receiver: alice, id: id, assetsWithdrawn: assets, sharesBurned: assets, data: data
                 })
             );
         }
