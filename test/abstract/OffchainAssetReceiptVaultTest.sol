@@ -46,10 +46,7 @@ contract OffchainAssetReceiptVaultTest is Test {
             OffchainAssetReceiptVaultConfigV2({
                 initialAdmin: admin,
                 receiptVaultConfig: ReceiptVaultConfigV2({
-                    asset: address(0),
-                    name: shareName,
-                    symbol: shareSymbol,
-                    receipt: address(0)
+                    asset: address(0), name: shareName, symbol: shareSymbol, receipt: address(0)
                 })
             })
         );

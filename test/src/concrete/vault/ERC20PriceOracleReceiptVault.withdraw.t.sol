@@ -266,9 +266,7 @@ contract ERC20PriceOracleReceiptVaultWithdrawTest is ERC20PriceOracleReceiptVaul
             abi.encodeWithSelector(IERC20.transferFrom.selector, alice, vault, aliceDeposit),
             abi.encode(true)
         );
-        vm.expectCall(
-            address(iAsset), abi.encodeWithSelector(IERC20.transferFrom.selector, alice, vault, aliceDeposit)
-        );
+        vm.expectCall(address(iAsset), abi.encodeWithSelector(IERC20.transferFrom.selector, alice, vault, aliceDeposit));
 
         vault.deposit(aliceDeposit, alice, alicePrice, bytes(""));
         vm.stopPrank();
@@ -332,9 +330,7 @@ contract ERC20PriceOracleReceiptVaultWithdrawTest is ERC20PriceOracleReceiptVaul
                 abi.encodeWithSelector(IERC20.transferFrom.selector, bob, vault, bobDeposit),
                 abi.encode(true)
             );
-            vm.expectCall(
-                address(iAsset), abi.encodeWithSelector(IERC20.transferFrom.selector, bob, vault, bobDeposit)
-            );
+            vm.expectCall(address(iAsset), abi.encodeWithSelector(IERC20.transferFrom.selector, bob, vault, bobDeposit));
 
             uint256 bobSharesDeposit1 = vault.deposit(bobDeposit, bob, alicePrice, bytes(""));
             vm.stopPrank();

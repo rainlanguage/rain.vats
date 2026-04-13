@@ -50,9 +50,7 @@ contract OffchainAssetReceiptVaultBeaconSetDeployerNewOffchainAssetReceiptVaultT
         deployer.newOffchainAssetReceiptVault(config);
     }
 
-    function testNewOffchainAssetReceiptVault(address alice, OffchainAssetReceiptVaultConfigV2 memory config)
-        external
-    {
+    function testNewOffchainAssetReceiptVault(address alice, OffchainAssetReceiptVaultConfigV2 memory config) external {
         vm.assume(alice.code.length == 0);
         vm.assume(config.receiptVaultConfig.receipt == address(0));
         vm.assume(config.initialAdmin != address(0));

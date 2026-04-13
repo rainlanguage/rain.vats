@@ -2,9 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {
-    OffchainAssetReceiptVaultTest, ReceiptVaultConfigV2, Vm
-} from "test/abstract/OffchainAssetReceiptVaultTest.sol";
+import {OffchainAssetReceiptVaultTest, ReceiptVaultConfigV2, Vm} from "test/abstract/OffchainAssetReceiptVaultTest.sol";
 import {
     OffchainAssetReceiptVault,
     OffchainAssetReceiptVaultConfigV2,
@@ -30,10 +28,7 @@ contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTes
                 OffchainAssetReceiptVaultConfigV2({
                     initialAdmin: address(0),
                     receiptVaultConfig: ReceiptVaultConfigV2({
-                        asset: address(0),
-                        name: shareName,
-                        symbol: shareSymbol,
-                        receipt: address(receipt)
+                        asset: address(0), name: shareName, symbol: shareSymbol, receipt: address(receipt)
                     })
                 })
             )
@@ -53,10 +48,7 @@ contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTes
             OffchainAssetReceiptVaultConfigV2({
                 initialAdmin: alice,
                 receiptVaultConfig: ReceiptVaultConfigV2({
-                    asset: asset,
-                    name: shareName,
-                    symbol: shareSymbol,
-                    receipt: address(0)
+                    asset: asset, name: shareName, symbol: shareSymbol, receipt: address(0)
                 })
             })
         );

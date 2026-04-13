@@ -83,9 +83,8 @@ contract OffchainAssetReceiptVaultBeaconSetDeployer {
         if (config.initialAdmin == address(0)) revert ZeroInitialAdmin();
 
         Receipt receipt = Receipt(address(new BeaconProxy(address(iReceiptBeacon), "")));
-        OffchainAssetReceiptVault offchainAssetReceiptVault = OffchainAssetReceiptVault(
-            payable(address(new BeaconProxy(address(iOffchainAssetReceiptVaultBeacon), "")))
-        );
+        OffchainAssetReceiptVault offchainAssetReceiptVault =
+            OffchainAssetReceiptVault(payable(address(new BeaconProxy(address(iOffchainAssetReceiptVaultBeacon), ""))));
 
         if (receipt.initialize(abi.encode(offchainAssetReceiptVault)) != ICLONEABLE_V2_SUCCESS) {
             revert InitializeReceiptFailed();

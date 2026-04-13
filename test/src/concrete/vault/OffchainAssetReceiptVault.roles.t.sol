@@ -168,11 +168,7 @@ contract RolesTest is OffchainAssetReceiptVaultTest {
                 CONFISCATE_RECEIPT,
                 abi.encode(
                     ConfiscateReceiptStateChange({
-                        confiscatee: alice,
-                        id: id,
-                        targetAmount: targetAmount,
-                        actualAmount: 0,
-                        data: data
+                        confiscatee: alice, id: id, targetAmount: targetAmount, actualAmount: 0, data: data
                     })
                 )
             )
@@ -208,10 +204,7 @@ contract RolesTest is OffchainAssetReceiptVaultTest {
                 CONFISCATE_SHARES,
                 abi.encode(
                     ConfiscateSharesStateChange({
-                        confiscatee: alice,
-                        targetAmount: targetAmount,
-                        actualAmount: 0,
-                        data: data
+                        confiscatee: alice, targetAmount: targetAmount, actualAmount: 0, data: data
                     })
                 )
             )

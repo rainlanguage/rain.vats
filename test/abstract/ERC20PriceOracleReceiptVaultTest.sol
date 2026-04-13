@@ -49,10 +49,7 @@ contract ERC20PriceOracleReceiptVaultTest is Test {
         return iDeployer.newERC20PriceOracleReceiptVault(
             ERC20PriceOracleReceiptVaultConfigV2({
                 receiptVaultConfig: ReceiptVaultConfigV2({
-                    asset: address(iAsset),
-                    name: name,
-                    symbol: symbol,
-                    receipt: address(0)
+                    asset: address(iAsset), name: name, symbol: symbol, receipt: address(0)
                 }),
                 priceOracle: priceOracle
             })
