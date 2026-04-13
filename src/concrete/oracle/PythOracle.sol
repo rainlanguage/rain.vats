@@ -18,17 +18,14 @@ struct PythOracleConfig {
 contract PythOracle is PriceOracleV2 {
     event Construction(address sender, PythOracleConfig config);
 
-    //slither-disable-next-line naming-convention
-    bytes32 public immutable I_PRICE_FEED_ID;
-    //slither-disable-next-line naming-convention
-    uint256 public immutable I_STALE_AFTER;
-    //slither-disable-next-line naming-convention
-    IPyth public immutable I_PYTH_CONTRACT;
+    bytes32 public immutable iPriceFeedId;
+    uint256 public immutable iStaleAfter;
+    IPyth public immutable iPythContract;
 
     constructor(PythOracleConfig memory config) {
-        I_PRICE_FEED_ID = config.priceFeedId;
-        I_STALE_AFTER = config.staleAfter;
-        I_PYTH_CONTRACT = config.pythContract;
+        iPriceFeedId = config.priceFeedId;
+        iStaleAfter = config.staleAfter;
+        iPythContract = config.pythContract;
 
         emit Construction(msg.sender, config);
     }
@@ -36,7 +33,7 @@ contract PythOracle is PriceOracleV2 {
     function _price() internal virtual override returns (uint256) {
         // Slither false positive, confidence is checked here.
         // slither-disable-next-line pyth-unchecked-confidence
-        PythStructs.Price memory priceData = I_PYTH_CONTRACT.getPriceNoOlderThan(I_PRICE_FEED_ID, I_STALE_AFTER);
+        PythStructs.Price memory priceData = iPythContract.getPriceNoOlderThan(iPriceFeedId, iStaleAfter);
         int256 conservativePrice = int256(priceData.price) - int256(uint256(priceData.conf));
         if (conservativePrice <= 0) {
             revert NonPositivePrice(conservativePrice);

@@ -37,7 +37,7 @@ contract ERC20PriceOracleReceiptVaultMaxRedeemTest is ERC20PriceOracleReceiptVau
         }
         vm.startPrank(alice);
 
-        ERC20PriceOracleReceiptVault vault = createVault(I_VAULT_ORACLE, shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, shareName, shareSymbol);
 
         uint256 maxRedeem = vault.maxRedeem(alice, oraclePrice);
 
@@ -45,7 +45,7 @@ contract ERC20PriceOracleReceiptVaultMaxRedeemTest is ERC20PriceOracleReceiptVau
 
         setVaultOraclePrice(oraclePrice);
         vm.mockCall(
-            address(I_ASSET),
+            address(iAsset),
             abi.encodeWithSelector(IERC20.transferFrom.selector, alice, address(vault), assets),
             abi.encode(true)
         );

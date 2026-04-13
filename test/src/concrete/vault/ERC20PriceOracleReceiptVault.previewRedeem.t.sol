@@ -31,7 +31,7 @@ contract ERC20PriceOracleReceiptVaultPreviewRedeemTest is ERC20PriceOracleReceip
 
         // Prank as Alice to grant role
         vm.startPrank(alice);
-        ERC20PriceOracleReceiptVault vault = createVault(I_VAULT_ORACLE, shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, shareName, shareSymbol);
 
         uint256 assets = shares.fixedPointDiv(oraclePrice, Math.Rounding.Floor);
 

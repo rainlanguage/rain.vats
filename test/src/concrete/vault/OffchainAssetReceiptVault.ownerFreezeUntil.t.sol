@@ -4,7 +4,8 @@ pragma solidity =0.8.25;
 
 import {console2} from "forge-std/Test.sol";
 import {
-    OwnerFreezableOwnerFreezeUntilTest, IOwnerFreezableV1
+    OwnerFreezableOwnerFreezeUntilTest,
+    IOwnerFreezableV1
 } from "test/abstract/OwnerFreezableOwnerFreezeUntilTest.sol";
 import {OffchainAssetReceiptVault} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {IReceiptV3} from "src/concrete/receipt/Receipt.sol";

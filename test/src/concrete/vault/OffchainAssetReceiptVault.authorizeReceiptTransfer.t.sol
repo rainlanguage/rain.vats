@@ -3,9 +3,7 @@
 pragma solidity =0.8.25;
 
 import {OffchainAssetReceiptVaultTest} from "test/abstract/OffchainAssetReceiptVaultTest.sol";
-import {
-    OffchainAssetReceiptVault, CONFISCATE_RECEIPT, CERTIFY
-} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {OffchainAssetReceiptVault, CONFISCATE_RECEIPT, CERTIFY} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
