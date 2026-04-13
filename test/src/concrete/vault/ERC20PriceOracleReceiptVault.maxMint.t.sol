@@ -12,7 +12,7 @@ contract ERC20PriceOracleReceiptVaultMaxMintTest is ERC20PriceOracleReceiptVault
         address alice = LibUniqueAddressesGenerator.generateUniqueAddresses(vm, aliceSeed);
         vm.startPrank(alice);
 
-        ERC20PriceOracleReceiptVault vault = createVault(I_VAULT_ORACLE, shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, shareName, shareSymbol);
 
         uint256 maxMint = vault.maxMint(alice);
 

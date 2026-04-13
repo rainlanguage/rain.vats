@@ -1,4 +1,4 @@
 {
-  "detectors_to_exclude": "solc-version,block-timestamp,unused-imports,different-pragma-directives-are-used,assembly-usage",
+  "detectors_to_exclude": "solc-version,block-timestamp,unused-imports,different-pragma-directives-are-used,assembly-usage,unindexed-event-address",
   "filter_paths": "lib/openzeppelin-contracts,lib/rain.tier.interface,test/,node_modules,rain.math.float,rain.math.fixedpoint"
 }

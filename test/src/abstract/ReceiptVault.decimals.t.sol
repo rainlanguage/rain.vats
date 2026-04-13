@@ -29,10 +29,7 @@ contract ReceiptVaultDecimalsTest is Test {
         receiptVault.initialize(
             abi.encode(
                 ReceiptVaultConfigV2({
-                    asset: address(asset),
-                    name: "Test Vault",
-                    symbol: "TVLT",
-                    receipt: address(receipt)
+                    asset: address(asset), name: "Test Vault", symbol: "TVLT", receipt: address(receipt)
                 })
             )
         );
