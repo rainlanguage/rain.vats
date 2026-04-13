@@ -27,7 +27,9 @@ import {
     WrongManager
 } from "../error/ErrReceiptVault.sol";
 import {UnmanagedReceiptTransfer} from "../interface/IReceiptManagerV2.sol";
-import {ERC165Upgradeable} from "openzeppelin-contracts-upgradeable/contracts/utils/introspection/ERC165Upgradeable.sol";
+import {
+    ERC165Upgradeable
+} from "openzeppelin-contracts-upgradeable/contracts/utils/introspection/ERC165Upgradeable.sol";
 import {IERC20Metadata} from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 /// @dev String ID for the ReceiptVault storage location v1.
@@ -149,6 +151,7 @@ abstract contract ReceiptVault is
             revert WrongManager(address(this), receiptManager);
         }
     }
+
     //slither-disable-end naming-convention
 
     /// @inheritdoc ERC165Upgradeable
@@ -381,7 +384,9 @@ abstract contract ReceiptVault is
         // slither puts false positives on `try/catch/returns`.
         // https://github.com/crytic/slither/issues/511
         //slither-disable-next-line
-        returns (uint256 assetBalance) {
+        returns (
+            uint256 assetBalance
+        ) {
             return assetBalance;
         } catch {
             // It's not clear what the balance should be if querying it is

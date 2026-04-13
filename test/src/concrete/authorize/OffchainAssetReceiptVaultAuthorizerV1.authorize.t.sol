@@ -185,11 +185,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1AuthorizeTest is OffchainAssetRece
 
         bytes memory data = abi.encode(
             TransferReceiptStateChange({
-                from: address(0),
-                to: to,
-                ids: ids,
-                amounts: amounts,
-                isCertificationExpired: true
+                from: address(0), to: to, ids: ids, amounts: amounts, isCertificationExpired: true
             })
         );
 
@@ -262,11 +258,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1AuthorizeTest is OffchainAssetRece
 
         bytes memory data = abi.encode(
             TransferReceiptStateChange({
-                from: from,
-                to: address(0),
-                ids: ids,
-                amounts: amounts,
-                isCertificationExpired: true
+                from: from, to: address(0), ids: ids, amounts: amounts, isCertificationExpired: true
             })
         );
 

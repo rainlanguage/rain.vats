@@ -28,7 +28,7 @@ contract ERC20PriceOracleReceiptVaultConvertToSharesTest is ERC20PriceOracleRece
 
         vm.startPrank(alice);
 
-        ERC20PriceOracleReceiptVault vault = createVault(I_VAULT_ORACLE, shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, shareName, shareSymbol);
 
         uint256 expectedShares = assets.fixedPointMul(id, Math.Rounding.Floor);
         uint256 resultShares = vault.convertToShares(assets, id);
@@ -53,7 +53,7 @@ contract ERC20PriceOracleReceiptVaultConvertToSharesTest is ERC20PriceOracleRece
 
         vm.startPrank(alice);
 
-        ERC20PriceOracleReceiptVault vault = createVault(I_VAULT_ORACLE, shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, shareName, shareSymbol);
 
         uint256 resultSharesAlice = vault.convertToShares(assets, id);
         vm.stopPrank();

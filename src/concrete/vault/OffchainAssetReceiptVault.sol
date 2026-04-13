@@ -319,8 +319,7 @@ contract OffchainAssetReceiptVault is IAuthorizeV1, ReceiptVault, OwnerFreezable
         emit OffchainAssetReceiptVaultInitializedV2(
             _msgSender(),
             OffchainAssetReceiptVaultConfigV2({
-                initialAdmin: config.initialAdmin,
-                receiptVaultConfig: config.receiptVaultConfig
+                initialAdmin: config.initialAdmin, receiptVaultConfig: config.receiptVaultConfig
             })
         );
 
@@ -385,19 +384,16 @@ contract OffchainAssetReceiptVault is IAuthorizeV1, ReceiptVault, OwnerFreezable
         super.authorizeReceiptTransfer3(operator, from, to, ids, amounts);
         ownerFreezeCheckTransaction(from, to);
         OffchainAssetReceiptVault7201Storage storage s = getStorageOffchainAssetReceiptVault();
-        s.authorizer.authorize(
-            operator,
-            TRANSFER_RECEIPT,
-            abi.encode(
-                TransferReceiptStateChange({
-                    from: from,
-                    to: to,
-                    ids: ids,
-                    amounts: amounts,
-                    isCertificationExpired: isCertificationExpired()
-                })
-            )
-        );
+        s.authorizer
+            .authorize(
+                operator,
+                TRANSFER_RECEIPT,
+                abi.encode(
+                    TransferReceiptStateChange({
+                        from: from, to: to, ids: ids, amounts: amounts, isCertificationExpired: isCertificationExpired()
+                    })
+                )
+            );
     }
 
     /// DO NOT call super `_beforeDeposit` as there are no assets to move.
@@ -428,20 +424,21 @@ contract OffchainAssetReceiptVault is IAuthorizeV1, ReceiptVault, OwnerFreezable
         bytes memory receiptInformation
     ) internal virtual override {
         OffchainAssetReceiptVault7201Storage storage s = getStorageOffchainAssetReceiptVault();
-        s.authorizer.authorize(
-            _msgSender(),
-            DEPOSIT,
-            abi.encode(
-                DepositStateChange({
-                    owner: _msgSender(),
-                    receiver: receiver,
-                    id: id,
-                    assetsDeposited: assets,
-                    sharesMinted: shares,
-                    data: receiptInformation
-                })
-            )
-        );
+        s.authorizer
+            .authorize(
+                _msgSender(),
+                DEPOSIT,
+                abi.encode(
+                    DepositStateChange({
+                        owner: _msgSender(),
+                        receiver: receiver,
+                        id: id,
+                        assetsDeposited: assets,
+                        sharesMinted: shares,
+                        data: receiptInformation
+                    })
+                )
+            );
     }
 
     /// DO NOT call super `_afterWithdraw` as there are no assets to move.
@@ -455,20 +452,21 @@ contract OffchainAssetReceiptVault is IAuthorizeV1, ReceiptVault, OwnerFreezable
         bytes memory receiptInformation
     ) internal virtual override {
         OffchainAssetReceiptVault7201Storage storage s = getStorageOffchainAssetReceiptVault();
-        s.authorizer.authorize(
-            _msgSender(),
-            WITHDRAW,
-            abi.encode(
-                WithdrawStateChange({
-                    owner: owner,
-                    receiver: receiver,
-                    id: id,
-                    assetsWithdrawn: assets,
-                    sharesBurned: shares,
-                    data: receiptInformation
-                })
-            )
-        );
+        s.authorizer
+            .authorize(
+                _msgSender(),
+                WITHDRAW,
+                abi.encode(
+                    WithdrawStateChange({
+                        owner: owner,
+                        receiver: receiver,
+                        id: id,
+                        assetsWithdrawn: assets,
+                        sharesBurned: shares,
+                        data: receiptInformation
+                    })
+                )
+            );
     }
 
     /// Shares total supply is 1:1 with offchain assets.
@@ -616,18 +614,16 @@ contract OffchainAssetReceiptVault is IAuthorizeV1, ReceiptVault, OwnerFreezable
         ownerFreezeCheckTransaction(from, to);
 
         OffchainAssetReceiptVault7201Storage storage s = getStorageOffchainAssetReceiptVault();
-        s.authorizer.authorize(
-            _msgSender(),
-            TRANSFER_SHARES,
-            abi.encode(
-                TransferSharesStateChange({
-                    from: from,
-                    to: to,
-                    amount: amount,
-                    isCertificationExpired: isCertificationExpired()
-                })
-            )
-        );
+        s.authorizer
+            .authorize(
+                _msgSender(),
+                TRANSFER_SHARES,
+                abi.encode(
+                    TransferSharesStateChange({
+                        from: from, to: to, amount: amount, isCertificationExpired: isCertificationExpired()
+                    })
+                )
+            );
         super._update(from, to, amount);
     }
 
@@ -679,18 +675,16 @@ contract OffchainAssetReceiptVault is IAuthorizeV1, ReceiptVault, OwnerFreezable
         }
 
         OffchainAssetReceiptVault7201Storage storage s = getStorageOffchainAssetReceiptVault();
-        s.authorizer.authorize(
-            _msgSender(),
-            CONFISCATE_SHARES,
-            abi.encode(
-                ConfiscateSharesStateChange({
-                    confiscatee: confiscatee,
-                    targetAmount: targetAmount,
-                    actualAmount: actualAmount,
-                    data: data
-                })
-            )
-        );
+        s.authorizer
+            .authorize(
+                _msgSender(),
+                CONFISCATE_SHARES,
+                abi.encode(
+                    ConfiscateSharesStateChange({
+                        confiscatee: confiscatee, targetAmount: targetAmount, actualAmount: actualAmount, data: data
+                    })
+                )
+            );
 
         return actualAmount;
     }
@@ -731,19 +725,20 @@ contract OffchainAssetReceiptVault is IAuthorizeV1, ReceiptVault, OwnerFreezable
         }
 
         OffchainAssetReceiptVault7201Storage storage s = getStorageOffchainAssetReceiptVault();
-        s.authorizer.authorize(
-            _msgSender(),
-            CONFISCATE_RECEIPT,
-            abi.encode(
-                ConfiscateReceiptStateChange({
-                    confiscatee: confiscatee,
-                    id: id,
-                    targetAmount: targetAmount,
-                    actualAmount: actualAmount,
-                    data: data
-                })
-            )
-        );
+        s.authorizer
+            .authorize(
+                _msgSender(),
+                CONFISCATE_RECEIPT,
+                abi.encode(
+                    ConfiscateReceiptStateChange({
+                        confiscatee: confiscatee,
+                        id: id,
+                        targetAmount: targetAmount,
+                        actualAmount: actualAmount,
+                        data: data
+                    })
+                )
+            );
 
         return actualAmount;
     }

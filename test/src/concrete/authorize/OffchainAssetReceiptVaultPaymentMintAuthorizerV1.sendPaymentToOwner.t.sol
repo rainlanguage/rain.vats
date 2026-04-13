@@ -7,10 +7,12 @@ import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainA
 import {TestErc20} from "test/concrete/TestErc20.sol";
 import {CloneFactory} from "rain.factory/concrete/CloneFactory.sol";
 import {IERC20Metadata} from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import {OffchainAssetReceiptVaultPaymentMintAuthorizerV1} from
-    "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
-import {OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config} from
-    "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
+import {
+    OffchainAssetReceiptVaultPaymentMintAuthorizerV1
+} from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
+import {
+    OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config
+} from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
 import {VerifyAlwaysApproved} from "rain.verify.interface/concrete/VerifyAlwaysApproved.sol";
 
 contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is OffchainAssetReceiptVaultAuthorizerV1Test {

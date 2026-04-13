@@ -17,28 +17,28 @@ import {
 } from "../../src/concrete/deploy/ERC20PriceOracleReceiptVaultCloneDeployer.sol";
 
 contract ERC20PriceOracleReceiptVaultTest is Test {
-    ERC20PriceOracleReceiptVault internal immutable I_IMPLEMENTATION;
-    ReceiptContract internal immutable I_RECEIPT_IMPLEMENTATION;
-    IERC20 immutable I_ASSET;
-    IPriceOracleV2 immutable I_VAULT_ORACLE;
-    ERC20PriceOracleReceiptVaultCloneDeployer internal immutable I_DEPLOYER;
+    ERC20PriceOracleReceiptVault internal immutable iImplementation;
+    ReceiptContract internal immutable iReceiptImplementation;
+    IERC20 immutable iAsset;
+    IPriceOracleV2 immutable iVaultOracle;
+    ERC20PriceOracleReceiptVaultCloneDeployer internal immutable iDeployer;
 
     constructor() {
-        I_RECEIPT_IMPLEMENTATION = new ReceiptContract();
-        I_IMPLEMENTATION = new ERC20PriceOracleReceiptVault();
-        I_ASSET = IERC20(address(uint160(uint256(keccak256("asset.test")))));
-        I_VAULT_ORACLE = IPriceOracleV2(payable(address(uint160(uint256(keccak256("vault.oracle"))))));
-        I_DEPLOYER = new ERC20PriceOracleReceiptVaultCloneDeployer(
+        iReceiptImplementation = new ReceiptContract();
+        iImplementation = new ERC20PriceOracleReceiptVault();
+        iAsset = IERC20(address(uint160(uint256(keccak256("asset.test")))));
+        iVaultOracle = IPriceOracleV2(payable(address(uint160(uint256(keccak256("vault.oracle"))))));
+        iDeployer = new ERC20PriceOracleReceiptVaultCloneDeployer(
             ERC20PriceOracleReceiptVaultCloneDeployerConfig({
-                receiptImplementation: address(I_RECEIPT_IMPLEMENTATION),
-                erc20PriceOracleReceiptVaultImplementation: address(I_IMPLEMENTATION)
+                receiptImplementation: address(iReceiptImplementation),
+                erc20PriceOracleReceiptVaultImplementation: address(iImplementation)
             })
         );
     }
 
     function setVaultOraclePrice(uint256 oraclePrice) internal {
         vm.mockCall(
-            address(I_VAULT_ORACLE), abi.encodeWithSelector(IPriceOracleV2.price.selector), abi.encode(oraclePrice)
+            address(iVaultOracle), abi.encodeWithSelector(IPriceOracleV2.price.selector), abi.encode(oraclePrice)
         );
     }
 
@@ -46,13 +46,10 @@ contract ERC20PriceOracleReceiptVaultTest is Test {
         internal
         returns (ERC20PriceOracleReceiptVault)
     {
-        return I_DEPLOYER.newERC20PriceOracleReceiptVault(
+        return iDeployer.newERC20PriceOracleReceiptVault(
             ERC20PriceOracleReceiptVaultConfigV2({
                 receiptVaultConfig: ReceiptVaultConfigV2({
-                    asset: address(I_ASSET),
-                    name: name,
-                    symbol: symbol,
-                    receipt: address(0)
+                    asset: address(iAsset), name: name, symbol: symbol, receipt: address(0)
                 }),
                 priceOracle: priceOracle
             })

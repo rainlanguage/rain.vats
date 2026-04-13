@@ -74,9 +74,9 @@ contract OffchainAssetReceiptVaultBeaconSetDeployerConstructTest is Test {
             })
         );
 
-        vm.assertEq(address(deployer.I_RECEIPT_BEACON().implementation()), address(initialReceiptImplementation));
+        vm.assertEq(address(deployer.iReceiptBeacon().implementation()), address(initialReceiptImplementation));
         vm.assertEq(
-            address(deployer.I_OFFCHAIN_ASSET_RECEIPT_VAULT_BEACON().implementation()),
+            address(deployer.iOffchainAssetReceiptVaultBeacon().implementation()),
             address(initialOffchainAssetReceiptVaultImplementation)
         );
     }

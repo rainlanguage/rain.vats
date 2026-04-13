@@ -25,7 +25,7 @@ contract ERC20PriceOracleReceiptVaultPreviewMintTest is ERC20PriceOracleReceiptV
         shares = bound(shares, 1, type(uint64).max);
         vm.assume(shares.fixedPointMul(oraclePrice, Math.Rounding.Floor) > 0);
 
-        ERC20PriceOracleReceiptVault vault = createVault(I_VAULT_ORACLE, shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, shareName, shareSymbol);
 
         uint256 assets = shares.fixedPointDiv(oraclePrice, Math.Rounding.Ceil);
 

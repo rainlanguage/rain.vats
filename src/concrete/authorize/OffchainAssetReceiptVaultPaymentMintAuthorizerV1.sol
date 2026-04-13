@@ -104,10 +104,7 @@ struct OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config {
 ///
 /// At any time anon can call `sendPaymentToOwner` to transfer all the payment
 /// tokens held by this contract to the owner of the authorizer.
-contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1 is
-    OffchainAssetReceiptVaultAuthorizerV1,
-    OwnableUpgradeable
-{
+contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1 is OffchainAssetReceiptVaultAuthorizerV1, OwnableUpgradeable {
     using SafeERC20 for IERC20;
 
     /// @dev Emitted when the authorizer is initialized.
