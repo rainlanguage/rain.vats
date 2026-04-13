@@ -34,8 +34,8 @@ contract OffchainAssetReceiptVaultBeaconSetDeployerNewOffchainAssetReceiptVaultT
     function testNewOffchainAssetReceiptVaultZeroInitialAdmin(OffchainAssetReceiptVaultConfigV2 memory config)
         external
     {
-        vm.assume(config.receiptVaultConfig.receipt == address(0));
-        vm.assume(config.initialAdmin == address(0));
+        config.receiptVaultConfig.receipt = address(0);
+        config.initialAdmin = address(0);
 
         ReceiptContract receiptImplementation = new ReceiptContract();
         OffchainAssetReceiptVault offchainAssetReceiptVaultImplementation = new OffchainAssetReceiptVault();
@@ -50,13 +50,11 @@ contract OffchainAssetReceiptVaultBeaconSetDeployerNewOffchainAssetReceiptVaultT
         deployer.newOffchainAssetReceiptVault(config);
     }
 
-    function testNewOffchainAssetReceiptVault(address alice, OffchainAssetReceiptVaultConfigV2 memory config)
-        external
-    {
+    function testNewOffchainAssetReceiptVault(address alice, OffchainAssetReceiptVaultConfigV2 memory config) external {
         vm.assume(alice.code.length == 0);
-        vm.assume(config.receiptVaultConfig.receipt == address(0));
         vm.assume(config.initialAdmin != address(0));
-        vm.assume(config.receiptVaultConfig.asset == address(0));
+        config.receiptVaultConfig.receipt = address(0);
+        config.receiptVaultConfig.asset = address(0);
 
         ReceiptContract receiptImplementation = new ReceiptContract();
         OffchainAssetReceiptVault offchainAssetReceiptVaultImplementation = new OffchainAssetReceiptVault();
@@ -75,7 +73,7 @@ contract OffchainAssetReceiptVaultBeaconSetDeployerNewOffchainAssetReceiptVaultT
         vm.stopPrank();
 
         bool eventFound = false;
-        bytes32 eventTopic = keccak256("OffchainAssetReceiptVaultBeaconSetDeployerDeployment(address,address,address)");
+        bytes32 eventTopic = keccak256("Deployment(address,address,address)");
         address eventSender;
         address eventVault;
         address eventReceipt;
