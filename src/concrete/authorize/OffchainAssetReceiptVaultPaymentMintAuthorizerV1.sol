@@ -214,7 +214,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1 is OffchainAssetReceip
             config.maxSharesSupply
         );
         // Owner of the authorizer is also the initial admin for role management.
-        super._initialize(abi.encode(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: config.owner})));
+        super._initialize(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: config.owner}));
 
         // By revoking the deposit and withdraw admin roles we ensure that there
         // can never be any addresses with deposit or withdraw roles. This
