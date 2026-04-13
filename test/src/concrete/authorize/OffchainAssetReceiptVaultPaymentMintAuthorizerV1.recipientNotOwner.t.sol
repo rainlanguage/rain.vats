@@ -68,12 +68,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1RecipientNotOwnerTest i
             DEPOSIT,
             abi.encode(
                 DepositStateChange({
-                    owner: owner,
-                    receiver: receiver,
-                    id: 1,
-                    assetsDeposited: shares,
-                    sharesMinted: shares,
-                    data: ""
+                    owner: owner, receiver: receiver, id: 1, assetsDeposited: shares, sharesMinted: shares, data: ""
                 })
             )
         );
