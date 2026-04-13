@@ -8,7 +8,9 @@ import {
     OffchainAssetReceiptVaultBeaconSetDeployer,
     OffchainAssetReceiptVaultBeaconSetDeployerConfig
 } from "src/concrete/deploy/OffchainAssetReceiptVaultBeaconSetDeployer.sol";
-import {IOffchainAssetReceiptVaultBeaconSetDeployerV2} from "src/interface/IOffchainAssetReceiptVaultBeaconSetDeployerV2.sol";
+import {
+    IOffchainAssetReceiptVaultBeaconSetDeployerV2
+} from "src/interface/IOffchainAssetReceiptVaultBeaconSetDeployerV2.sol";
 import {ZeroReceiptImplementation, ZeroVaultImplementation, ZeroBeaconOwner} from "src/error/ErrDeployer.sol";
 import {OffchainAssetReceiptVault} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
@@ -75,7 +77,8 @@ contract OffchainAssetReceiptVaultBeaconSetDeployerConstructTest is Test {
             })
         );
 
-        IOffchainAssetReceiptVaultBeaconSetDeployerV2 iDeployer = IOffchainAssetReceiptVaultBeaconSetDeployerV2(address(deployer));
+        IOffchainAssetReceiptVaultBeaconSetDeployerV2 iDeployer =
+            IOffchainAssetReceiptVaultBeaconSetDeployerV2(address(deployer));
         vm.assertEq(address(iDeployer.iReceiptBeacon().implementation()), address(initialReceiptImplementation));
         vm.assertEq(
             address(iDeployer.iOffchainAssetReceiptVaultBeacon().implementation()),

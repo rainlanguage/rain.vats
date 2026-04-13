@@ -8,7 +8,9 @@ import {
     ERC20PriceOracleReceiptVaultCloneDeployer,
     ERC20PriceOracleReceiptVaultCloneDeployerConfig
 } from "src/concrete/deploy/ERC20PriceOracleReceiptVaultCloneDeployer.sol";
-import {IERC20PriceOracleReceiptVaultCloneDeployerV2} from "src/interface/IERC20PriceOracleReceiptVaultCloneDeployerV2.sol";
+import {
+    IERC20PriceOracleReceiptVaultCloneDeployerV2
+} from "src/interface/IERC20PriceOracleReceiptVaultCloneDeployerV2.sol";
 import {ZeroReceiptImplementation, ZeroVaultImplementation} from "src/error/ErrDeployer.sol";
 
 contract ERC20PriceOracleReceiptVaultCloneDeployerConstructTest is Test {
@@ -45,7 +47,8 @@ contract ERC20PriceOracleReceiptVaultCloneDeployerConstructTest is Test {
 
         ERC20PriceOracleReceiptVaultCloneDeployer deployer = new ERC20PriceOracleReceiptVaultCloneDeployer(config);
 
-        IERC20PriceOracleReceiptVaultCloneDeployerV2 iDeployer = IERC20PriceOracleReceiptVaultCloneDeployerV2(address(deployer));
+        IERC20PriceOracleReceiptVaultCloneDeployerV2 iDeployer =
+            IERC20PriceOracleReceiptVaultCloneDeployerV2(address(deployer));
         vm.assertEq(iDeployer.iReceiptImplementation(), config.receiptImplementation);
         vm.assertEq(
             iDeployer.iErc20PriceOracleReceiptVaultImplementation(), config.erc20PriceOracleReceiptVaultImplementation
