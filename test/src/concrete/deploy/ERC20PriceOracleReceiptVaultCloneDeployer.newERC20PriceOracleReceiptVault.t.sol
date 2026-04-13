@@ -39,7 +39,7 @@ contract ERC20PriceOracleReceiptVaultCloneDeployerNewERC20PriceOracleReceiptVaul
         ERC20PriceOracleReceiptVaultConfigV2 memory config
     ) external {
         vm.assume(alice.code.length == 0);
-        vm.assume(config.receiptVaultConfig.receipt == address(0));
+        config.receiptVaultConfig.receipt = address(0);
         ReceiptContract receiptImplementation = new ReceiptContract();
         ERC20PriceOracleReceiptVault erc20PriceOracleReceiptVaultImplementation = new ERC20PriceOracleReceiptVault();
         ERC20PriceOracleReceiptVaultCloneDeployer deployer = new ERC20PriceOracleReceiptVaultCloneDeployer(
