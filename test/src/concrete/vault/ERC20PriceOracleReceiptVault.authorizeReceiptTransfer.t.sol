@@ -24,7 +24,7 @@ contract ERC20PriceOracleReceiptVaultAuthorizeReceiptTransferTest is ERC20PriceO
         // Bound timestamp from 1 to avoid potential issues with timestamp 0.
         timestamp = bound(timestamp, 1, type(uint32).max);
 
-        ERC20PriceOracleReceiptVault vault = createVault(I_VAULT_ORACLE, shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, shareName, shareSymbol);
 
         vm.warp(timestamp);
 

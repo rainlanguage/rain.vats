@@ -41,18 +41,18 @@ contract ERC20PriceOracleReceiptVaultCloneDeployer {
     );
 
     /// The address of the Receipt implementation contract to clone from.
-    address public immutable I_RECEIPT_IMPLEMENTATION;
+    address public immutable iReceiptImplementation;
 
     /// The address of the ERC20PriceOracleReceiptVault implementation contract
     /// to clone from.
-    address public immutable I_ERC20_PRICE_ORACLE_RECEIPT_VAULT_IMPLEMENTATION;
+    address public immutable iErc20PriceOracleReceiptVaultImplementation;
 
     /// @param config The configuration for the deployer.
     constructor(ERC20PriceOracleReceiptVaultCloneDeployerConfig memory config) {
         if (config.receiptImplementation == address(0)) revert ZeroReceiptImplementation();
         if (config.erc20PriceOracleReceiptVaultImplementation == address(0)) revert ZeroVaultImplementation();
-        I_RECEIPT_IMPLEMENTATION = config.receiptImplementation;
-        I_ERC20_PRICE_ORACLE_RECEIPT_VAULT_IMPLEMENTATION = config.erc20PriceOracleReceiptVaultImplementation;
+        iReceiptImplementation = config.receiptImplementation;
+        iErc20PriceOracleReceiptVaultImplementation = config.erc20PriceOracleReceiptVaultImplementation;
     }
 
     /// Deploys and initializes a new ERC20PriceOracleReceiptVault contract
@@ -68,9 +68,9 @@ contract ERC20PriceOracleReceiptVaultCloneDeployer {
             revert InitializeNonZeroReceipt(config.receiptVaultConfig.receipt);
         }
 
-        Receipt receipt = Receipt(Clones.clone(I_RECEIPT_IMPLEMENTATION));
+        Receipt receipt = Receipt(Clones.clone(iReceiptImplementation));
         ERC20PriceOracleReceiptVault erc20PriceOracleReceiptVault =
-            ERC20PriceOracleReceiptVault(payable(Clones.clone(I_ERC20_PRICE_ORACLE_RECEIPT_VAULT_IMPLEMENTATION)));
+            ERC20PriceOracleReceiptVault(payable(Clones.clone(iErc20PriceOracleReceiptVaultImplementation)));
 
         if (receipt.initialize(abi.encode(erc20PriceOracleReceiptVault)) != ICLONEABLE_V2_SUCCESS) {
             revert InitializeReceiptFailed();

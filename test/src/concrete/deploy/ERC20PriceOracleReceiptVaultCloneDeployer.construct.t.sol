@@ -45,9 +45,9 @@ contract ERC20PriceOracleReceiptVaultCloneDeployerConstructTest is Test {
 
         ERC20PriceOracleReceiptVaultCloneDeployer deployer = new ERC20PriceOracleReceiptVaultCloneDeployer(config);
 
-        vm.assertEq(deployer.I_RECEIPT_IMPLEMENTATION(), config.receiptImplementation);
+        vm.assertEq(deployer.iReceiptImplementation(), config.receiptImplementation);
         vm.assertEq(
-            deployer.I_ERC20_PRICE_ORACLE_RECEIPT_VAULT_IMPLEMENTATION(),
+            deployer.iErc20PriceOracleReceiptVaultImplementation(),
             config.erc20PriceOracleReceiptVaultImplementation
         );
     }

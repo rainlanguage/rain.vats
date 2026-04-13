@@ -20,20 +20,20 @@ import {
 import {Clones} from "openzeppelin-contracts/contracts/proxy/Clones.sol";
 
 contract OffchainAssetReceiptVaultTest is Test {
-    OffchainAssetReceiptVault internal immutable I_IMPLEMENTATION;
-    OffchainAssetReceiptVaultAuthorizerV1 internal immutable I_AUTHORIZER_IMPLEMENTATION;
-    ReceiptContract internal immutable I_RECEIPT_IMPLEMENTATION;
-    OffchainAssetReceiptVaultBeaconSetDeployer internal immutable I_DEPLOYER;
+    OffchainAssetReceiptVault internal immutable iImplementation;
+    OffchainAssetReceiptVaultAuthorizerV1 internal immutable iAuthorizerImplementation;
+    ReceiptContract internal immutable iReceiptImplementation;
+    OffchainAssetReceiptVaultBeaconSetDeployer internal immutable iDeployer;
 
     constructor() {
-        I_RECEIPT_IMPLEMENTATION = new ReceiptContract();
-        I_IMPLEMENTATION = new OffchainAssetReceiptVault();
-        I_AUTHORIZER_IMPLEMENTATION = new OffchainAssetReceiptVaultAuthorizerV1();
-        I_DEPLOYER = new OffchainAssetReceiptVaultBeaconSetDeployer(
+        iReceiptImplementation = new ReceiptContract();
+        iImplementation = new OffchainAssetReceiptVault();
+        iAuthorizerImplementation = new OffchainAssetReceiptVaultAuthorizerV1();
+        iDeployer = new OffchainAssetReceiptVaultBeaconSetDeployer(
             OffchainAssetReceiptVaultBeaconSetDeployerConfig({
                 initialOwner: address(this),
-                initialReceiptImplementation: address(I_RECEIPT_IMPLEMENTATION),
-                initialOffchainAssetReceiptVaultImplementation: address(I_IMPLEMENTATION)
+                initialReceiptImplementation: address(iReceiptImplementation),
+                initialOffchainAssetReceiptVaultImplementation: address(iImplementation)
             })
         );
     }
@@ -42,7 +42,7 @@ contract OffchainAssetReceiptVaultTest is Test {
         internal
         returns (OffchainAssetReceiptVault)
     {
-        OffchainAssetReceiptVault vault = I_DEPLOYER.newOffchainAssetReceiptVault(
+        OffchainAssetReceiptVault vault = iDeployer.newOffchainAssetReceiptVault(
             OffchainAssetReceiptVaultConfigV2({
                 initialAdmin: admin,
                 receiptVaultConfig: ReceiptVaultConfigV2({
@@ -54,7 +54,7 @@ contract OffchainAssetReceiptVaultTest is Test {
             })
         );
         OffchainAssetReceiptVaultAuthorizerV1 authorizer =
-            OffchainAssetReceiptVaultAuthorizerV1(Clones.clone(address(I_AUTHORIZER_IMPLEMENTATION)));
+            OffchainAssetReceiptVaultAuthorizerV1(Clones.clone(address(iAuthorizerImplementation)));
         vm.startPrank(admin);
         authorizer.initialize(abi.encode(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: admin})));
         vault.setAuthorizer(authorizer);

@@ -41,7 +41,7 @@ contract OffchainAssetReceiptVaultAuthorizeTest is OffchainAssetReceiptVaultTest
         address authorizer = address(vault.authorizer());
         (bool isProxy, address implementation) = LibExtrospectERC1167Proxy.isERC1167Proxy(authorizer.code);
         assertTrue(isProxy);
-        assertEq(implementation, address(I_AUTHORIZER_IMPLEMENTATION));
+        assertEq(implementation, address(iAuthorizerImplementation));
         CertifyStateChange memory certifyStateChange = CertifyStateChange({
             oldCertifiedUntil: 0,
             newCertifiedUntil: 1234,
@@ -70,7 +70,7 @@ contract OffchainAssetReceiptVaultAuthorizeTest is OffchainAssetReceiptVaultTest
         address authorizer = address(vault.authorizer());
         (bool isProxy, address implementation) = LibExtrospectERC1167Proxy.isERC1167Proxy(authorizer.code);
         assertTrue(isProxy);
-        assertEq(implementation, address(I_AUTHORIZER_IMPLEMENTATION));
+        assertEq(implementation, address(iAuthorizerImplementation));
 
         AlwaysAuthorize alwaysAuthorize = new AlwaysAuthorize();
 

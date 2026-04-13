@@ -50,7 +50,7 @@ contract ERC20PriceOracleReceiptVaultInitializeTest is ERC20PriceOracleReceiptVa
         // Assert that the event log was found
         assertTrue(eventFound, "ERC20PriceOracleReceiptVaultInitializedV2 event log not found");
 
-        assertEq(msgSender, address(I_DEPLOYER));
+        assertEq(msgSender, address(iDeployer));
         assert(address(vault) != address(0));
 
         assertEq(keccak256(bytes(vault.name())), keccak256(bytes(config.receiptVaultConfig.name)));
@@ -59,7 +59,7 @@ contract ERC20PriceOracleReceiptVaultInitializeTest is ERC20PriceOracleReceiptVa
         assertEq(keccak256(bytes(vault.symbol())), keccak256(bytes(config.receiptVaultConfig.symbol)));
         assertEq(config.receiptVaultConfig.symbol, shareSymbol);
 
-        assertEq(address(config.receiptVaultConfig.asset), address(I_ASSET));
+        assertEq(address(config.receiptVaultConfig.asset), address(iAsset));
 
         assertTrue(address(config.receiptVaultConfig.receipt) != address(0));
         assertEq(address(config.receiptVaultConfig.receipt), address(vault.receipt()));
@@ -85,7 +85,7 @@ contract ERC20PriceOracleReceiptVaultInitializeTest is ERC20PriceOracleReceiptVa
         // Simulate transaction from alice
         vm.prank(alice);
 
-        ERC20PriceOracleReceiptVault vault = createVault(I_VAULT_ORACLE, shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, shareName, shareSymbol);
 
         assert(address(vault) != address(0));
         assertEq(keccak256(bytes(vault.name())), keccak256(bytes(shareName)));
@@ -94,7 +94,7 @@ contract ERC20PriceOracleReceiptVaultInitializeTest is ERC20PriceOracleReceiptVa
         // Simulate transaction from alice
         vm.prank(bob);
 
-        ERC20PriceOracleReceiptVault vaultTwo = createVault(I_VAULT_ORACLE, shareNameTwo, shareSymbolTwo);
+        ERC20PriceOracleReceiptVault vaultTwo = createVault(iVaultOracle, shareNameTwo, shareSymbolTwo);
 
         assert(address(vaultTwo) != address(0));
         assertEq(keccak256(bytes(vaultTwo.name())), keccak256(bytes(shareNameTwo)));

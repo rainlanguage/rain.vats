@@ -42,10 +42,10 @@ contract OffchainAssetReceiptVaultBeaconSetDeployer {
     event Deployment(address sender, address offchainAssetReceiptVault, address receipt);
 
     /// The beacon for the Receipt implementation contracts.
-    IBeacon public immutable I_RECEIPT_BEACON;
+    IBeacon public immutable iReceiptBeacon;
 
     /// The beacon for the OffchainAssetReceiptVault implementation contracts.
-    IBeacon public immutable I_OFFCHAIN_ASSET_RECEIPT_VAULT_BEACON;
+    IBeacon public immutable iOffchainAssetReceiptVaultBeacon;
 
     /// @param config The configuration for the deployer.
     constructor(OffchainAssetReceiptVaultBeaconSetDeployerConfig memory config) {
@@ -59,8 +59,8 @@ contract OffchainAssetReceiptVaultBeaconSetDeployer {
             revert ZeroBeaconOwner();
         }
 
-        I_RECEIPT_BEACON = new UpgradeableBeacon(address(config.initialReceiptImplementation), config.initialOwner);
-        I_OFFCHAIN_ASSET_RECEIPT_VAULT_BEACON =
+        iReceiptBeacon = new UpgradeableBeacon(address(config.initialReceiptImplementation), config.initialOwner);
+        iOffchainAssetReceiptVaultBeacon =
             new UpgradeableBeacon(address(config.initialOffchainAssetReceiptVaultImplementation), config.initialOwner);
     }
 
@@ -80,9 +80,9 @@ contract OffchainAssetReceiptVaultBeaconSetDeployer {
 
         if (config.initialAdmin == address(0)) revert ZeroInitialAdmin();
 
-        Receipt receipt = Receipt(address(new BeaconProxy(address(I_RECEIPT_BEACON), "")));
+        Receipt receipt = Receipt(address(new BeaconProxy(address(iReceiptBeacon), "")));
         OffchainAssetReceiptVault offchainAssetReceiptVault = OffchainAssetReceiptVault(
-            payable(address(new BeaconProxy(address(I_OFFCHAIN_ASSET_RECEIPT_VAULT_BEACON), "")))
+            payable(address(new BeaconProxy(address(iOffchainAssetReceiptVaultBeacon), "")))
         );
 
         if (receipt.initialize(abi.encode(offchainAssetReceiptVault)) != ICLONEABLE_V2_SUCCESS) {

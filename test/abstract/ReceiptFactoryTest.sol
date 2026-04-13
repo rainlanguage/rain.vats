@@ -24,14 +24,14 @@ contract ReceiptFactoryTest is Test {
         string name;
     }
 
-    ICloneableFactoryV2 internal immutable I_FACTORY;
-    ReceiptContract internal immutable I_RECEIPT_IMPLEMENTATION;
-    ERC20PriceOracleReceipt internal immutable I_ERC20_PRICE_ORACLE_RECEIPT_IMPLEMENTATION;
+    ICloneableFactoryV2 internal immutable iFactory;
+    ReceiptContract internal immutable iReceiptImplementation;
+    ERC20PriceOracleReceipt internal immutable iErc20PriceOracleReceiptImplementation;
 
     constructor() {
-        I_FACTORY = new CloneFactory();
-        I_RECEIPT_IMPLEMENTATION = new ReceiptContract();
-        I_ERC20_PRICE_ORACLE_RECEIPT_IMPLEMENTATION = new ERC20PriceOracleReceipt();
+        iFactory = new CloneFactory();
+        iReceiptImplementation = new ReceiptContract();
+        iErc20PriceOracleReceiptImplementation = new ERC20PriceOracleReceipt();
     }
 
     function decodeMetadataURI(string memory uri) internal pure returns (Metadata memory) {
