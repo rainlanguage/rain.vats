@@ -12,12 +12,14 @@ import {OffchainAssetReceiptVaultConfigV2} from "../concrete/deploy/OffchainAsse
 /// contracts on-chain have this ABI.
 interface IOffchainAssetReceiptVaultBeaconSetDeployerV1 {
     /// @return The beacon for the Receipt implementation contracts.
-    // solhint-disable-next-line func-name-mixedcase
+    // Matches deployed on-chain ABI.
+    //slither-disable-next-line naming-convention
     function I_RECEIPT_BEACON() external view returns (IBeacon);
 
     /// @return The beacon for the OffchainAssetReceiptVault implementation
     /// contracts.
-    // solhint-disable-next-line func-name-mixedcase
+    // Matches deployed on-chain ABI.
+    //slither-disable-next-line naming-convention
     function I_OFFCHAIN_ASSET_RECEIPT_VAULT_BEACON() external view returns (IBeacon);
 
     /// @notice Deploy a new OffchainAssetReceiptVault with its Receipt.

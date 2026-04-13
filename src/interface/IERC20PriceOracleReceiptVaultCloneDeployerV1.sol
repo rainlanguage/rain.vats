@@ -13,11 +13,13 @@ import {
 /// this ABI.
 interface IERC20PriceOracleReceiptVaultCloneDeployerV1 {
     /// @return The address of the Receipt implementation contract.
-    // solhint-disable-next-line func-name-mixedcase
+    // Matches deployed on-chain ABI.
+    //slither-disable-next-line naming-convention
     function I_RECEIPT_IMPLEMENTATION() external view returns (address);
 
     /// @return The address of the ERC20PriceOracleReceiptVault implementation.
-    // solhint-disable-next-line func-name-mixedcase
+    // Matches deployed on-chain ABI.
+    //slither-disable-next-line naming-convention
     function I_ERC20_PRICE_ORACLE_RECEIPT_VAULT_IMPLEMENTATION() external view returns (address);
 
     /// @notice Deploy a new ERC20PriceOracleReceiptVault with its Receipt.

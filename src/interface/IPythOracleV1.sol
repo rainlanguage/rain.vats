@@ -8,10 +8,13 @@ import {IPyth} from "pyth-sdk/IPyth.sol";
 /// @notice V1 interface for PythOracle. Uses the original I_ naming
 /// convention. Deployed contracts on-chain have this ABI.
 interface IPythOracleV1 {
-    // solhint-disable-next-line func-name-mixedcase
+    // Matches deployed on-chain ABI.
+    //slither-disable-next-line naming-convention
     function I_PRICE_FEED_ID() external view returns (bytes32);
-    // solhint-disable-next-line func-name-mixedcase
+    // Matches deployed on-chain ABI.
+    //slither-disable-next-line naming-convention
     function I_STALE_AFTER() external view returns (uint256);
-    // solhint-disable-next-line func-name-mixedcase
+    // Matches deployed on-chain ABI.
+    //slither-disable-next-line naming-convention
     function I_PYTH_CONTRACT() external view returns (IPyth);
 }
