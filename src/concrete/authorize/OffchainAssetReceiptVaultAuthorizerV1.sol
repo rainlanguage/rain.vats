@@ -64,7 +64,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1 is IAuthorizeV1, ICloneableV2, Ac
     /// Initialization logic without the initializer modifier so inheriting
     /// contracts can access it and be the initializer. Accepts the decoded
     /// config so child contracts don't need to double-decode.
-    function _initialize(OffchainAssetReceiptVaultAuthorizerV1Config memory config) internal returns (bytes32) {
+    function _initialize(OffchainAssetReceiptVaultAuthorizerV1Config memory config) internal virtual returns (bytes32) {
         __AccessControl_init();
 
         // The config admin MUST be set.
