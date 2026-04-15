@@ -128,10 +128,10 @@ abstract contract ReceiptVault is
     }
 
     /// Deposits are payable so this allows refunds.
-    fallback() external payable {}
+    fallback() external payable virtual {}
 
     /// Deposits are payable so this allows refunds.
-    receive() external payable {}
+    receive() external payable virtual {}
 
     /// Initialize the `ReceiptVault`.
     /// @param config All config required for initialization.
