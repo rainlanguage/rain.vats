@@ -42,6 +42,12 @@ contract OffchainAssetReceiptVaultAuthorizerV1AuthorizeTest is OffchainAssetRece
         // The sender must not be the admin, otherwise they may hold roles
         // that make the authorize call succeed instead of reverting.
         vm.assume(sender != initialAdmin);
+        // The user must not be the admin either — `authorize` returns early
+        // when `hasRole(permission, user)` is true, and the admin holds
+        // every *_ADMIN role granted in `initialize`. With user == admin
+        // and a permission matching one of those admin roles, the call
+        // succeeds even though the sender has no role.
+        vm.assume(user != initialAdmin);
         OffchainAssetReceiptVaultAuthorizerV1 authorizer = newAuthorizer(initialAdmin);
 
         checkDefaultOffchainAssetReceiptVaultAuthorizerV1AuthorizeUnauthorized(
