@@ -92,6 +92,12 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
         vm.assume(uint160(paymentToken) > type(uint160).max / 2);
         vm.assume(maxSharesSupply > 0);
         vm.assume(uint160(sender) > type(uint160).max / 2);
+        // The first check in `authorize` only reverts when sender is NOT the
+        // receipt vault. With sender == receiptVault the call falls into the
+        // DEPOSIT / TRANSFER_* branches; an empty `data` then trips
+        // `abi.decode` and reverts without the Unauthorized error selector,
+        // which fails the test's `expectRevert(Unauthorized.selector)`.
+        vm.assume(sender != receiptVault);
         checkDefaultOffchainAssetReceiptVaultAuthorizerV1AuthorizeUnauthorized(
             newAuthorizer(receiptVault, owner, paymentToken, paymentTokenDecimals, maxSharesSupply),
             sender,
