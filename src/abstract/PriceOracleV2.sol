@@ -17,8 +17,8 @@ abstract contract PriceOracleV2 is IPriceOracleV2 {
     }
 
     /// Need to accept refunds from the oracle.
-    fallback() external payable {}
+    fallback() external payable virtual {}
 
     /// Need to accept refunds from the oracle.
-    receive() external payable {}
+    receive() external payable virtual {}
 }
