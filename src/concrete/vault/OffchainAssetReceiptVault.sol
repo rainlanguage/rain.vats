@@ -11,6 +11,7 @@ import {
 } from "../../abstract/ReceiptVault.sol";
 import {Math} from "openzeppelin-contracts/contracts/utils/math/Math.sol";
 import {IAuthorizeV1, Unauthorized} from "../../interface/IAuthorizeV1.sol";
+import {IAuthorizableV1} from "../../interface/IAuthorizableV1.sol";
 import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
 
 import {ZeroInitialAdmin} from "../authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
@@ -229,7 +230,7 @@ bytes32 constant WITHDRAW = keccak256("WITHDRAW");
 /// - `ERC20` shares in the vault that can be traded minted/burned to track a peg
 /// - `ERC4626` inspired vault interface (inherited from `ReceiptVault`)
 /// - Fine grained standard Open Zeppelin access control for all system roles
-contract OffchainAssetReceiptVault is IAuthorizeV1, ReceiptVault, OwnerFreezable {
+contract OffchainAssetReceiptVault is IAuthorizableV1, IAuthorizeV1, ReceiptVault, OwnerFreezable {
     using Math for uint256;
 
     /// Contract has initialized.
@@ -337,8 +338,8 @@ contract OffchainAssetReceiptVault is IAuthorizeV1, ReceiptVault, OwnerFreezable
         return interfaceId == type(IAuthorizeV1).interfaceId || super.supportsInterface(interfaceId);
     }
 
-    /// Returns the current authorizer contract.
-    function authorizer() external view returns (IAuthorizeV1) {
+    /// @inheritdoc IAuthorizableV1
+    function authorizer() external view override returns (IAuthorizeV1) {
         OffchainAssetReceiptVault7201Storage storage s = getStorageOffchainAssetReceiptVault();
         return s.authorizer;
     }
