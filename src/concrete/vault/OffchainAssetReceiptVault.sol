@@ -12,6 +12,7 @@ import {
 import {Math} from "openzeppelin-contracts/contracts/utils/math/Math.sol";
 import {IAuthorizeV1, Unauthorized} from "../../interface/IAuthorizeV1.sol";
 import {IAuthorizableV1} from "../../interface/IAuthorizableV1.sol";
+import {ICertifiableV1} from "../../interface/ICertifiableV1.sol";
 import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
 
 import {ZeroInitialAdmin} from "../authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
@@ -230,7 +231,7 @@ bytes32 constant WITHDRAW = keccak256("WITHDRAW");
 /// - `ERC20` shares in the vault that can be traded minted/burned to track a peg
 /// - `ERC4626` inspired vault interface (inherited from `ReceiptVault`)
 /// - Fine grained standard Open Zeppelin access control for all system roles
-contract OffchainAssetReceiptVault is IAuthorizableV1, IAuthorizeV1, ReceiptVault, OwnerFreezable {
+contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthorizeV1, ReceiptVault, OwnerFreezable {
     using Math for uint256;
 
     /// Contract has initialized.
@@ -604,7 +605,8 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, IAuthorizeV1, ReceiptVaul
         s.authorizer.authorize(_msgSender(), CERTIFY, abi.encode(certifyStateChange));
     }
 
-    function isCertificationExpired() public view returns (bool) {
+    /// @inheritdoc ICertifiableV1
+    function isCertificationExpired() public view override returns (bool) {
         OffchainAssetReceiptVault7201Storage storage s = getStorageOffchainAssetReceiptVault();
         return block.timestamp > s.certifiedUntil;
     }
