@@ -47,17 +47,20 @@ bytes32 constant OWNER_FREEZABLE_V1_STORAGE_LOCATION =
 /// addresses, to mitigate the risk that the attacker opens up the ability to
 /// dump on the LPs en masse after the snapshot.
 abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
-    /// @param ownerFrozenUntil Contract is frozen until this time.
+    /// @param ownerFrozenUntil Contract is frozen through and including this
+    /// time. Inclusive boundary — at `block.timestamp == ownerFrozenUntil`
+    /// the contract is still frozen; the freeze releases on the first block
+    /// where `block.timestamp > ownerFrozenUntil`.
     /// @param alwaysAllowedFroms Mapping of `from` addresses that are always
     /// allowed to send. If the protected time is any non-zero value then the
-    /// `from` address is always allowed to send. While the current time is less
-    /// than the protected time the `from` address cannot be removed from the
-    /// always allowed list.
+    /// `from` address is always allowed to send. While the current time is at
+    /// or before the protected time the `from` address cannot be removed from
+    /// the always allowed list (inclusive boundary).
     /// @param alwaysAllowedTos Mapping of `to` addresses that are always
     /// allowed to receive. If the protected time is any non-zero value then the
-    /// `to` address is always allowed to receive. While the current time is less
-    /// than the protected time the `to` address cannot be removed from the
-    /// always allowed list.
+    /// `to` address is always allowed to receive. While the current time is at
+    /// or before the protected time the `to` address cannot be removed from the
+    /// always allowed list (inclusive boundary).
     /// @custom:storage-location erc7201:rain.storage.owner-freezable.1
     struct OwnerFreezableV17201Storage {
         uint256 ownerFrozenUntil;
@@ -137,9 +140,12 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
     function ownerFreezeStopAlwaysAllowingFrom(address from) external onlyOwner {
         OwnerFreezableV17201Storage storage s = getStorageOwnerFreezable();
 
-        // If the current time is after the protection for this `from` then
-        // we can remove it. Otherwise we revert to respect the protection.
-        if (block.timestamp < s.alwaysAllowedFroms[from]) {
+        // Inclusive boundary: protection is active through and including
+        // `protectedUntil`. Removal becomes possible only once
+        // `block.timestamp > protectedUntil`. Matches the convention used
+        // by `OffchainAssetReceiptVault.certifiedUntil` and the corporate
+        // action `effectiveTime` semantics on consumers.
+        if (block.timestamp <= s.alwaysAllowedFroms[from]) {
             revert OwnerFreezeAlwaysAllowedFromProtected(from, s.alwaysAllowedFroms[from]);
         }
 
@@ -173,9 +179,8 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
     function ownerFreezeStopAlwaysAllowingTo(address to) external onlyOwner {
         OwnerFreezableV17201Storage storage s = getStorageOwnerFreezable();
 
-        // If the current time is after the protection for this `to` then
-        // we can remove it. Otherwise we revert to respect the protection.
-        if (block.timestamp < s.alwaysAllowedTos[to]) {
+        // Inclusive boundary — see `ownerFreezeStopAlwaysAllowingFrom`.
+        if (block.timestamp <= s.alwaysAllowedTos[to]) {
             revert IOwnerFreezableV1.OwnerFreezeAlwaysAllowedToProtected(to, s.alwaysAllowedTos[to]);
         }
 
@@ -193,7 +198,10 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
         // We either simply revert or no-op for this check.
         // Revert if the contract is frozen and neither the `from` nor `to` are
         // in their respective always allowed lists.
-        if (block.timestamp < s.ownerFrozenUntil && s.alwaysAllowedFroms[from] == 0 && s.alwaysAllowedTos[to] == 0) {
+        // Inclusive boundary: the freeze is active through and including
+        // `ownerFrozenUntil`. Matches the convention used by
+        // `OffchainAssetReceiptVault.certifiedUntil`.
+        if (block.timestamp <= s.ownerFrozenUntil && s.alwaysAllowedFroms[from] == 0 && s.alwaysAllowedTos[to] == 0) {
             revert IOwnerFreezableV1.OwnerFrozen(s.ownerFrozenUntil, from, to);
         }
     }
