@@ -335,4 +335,72 @@ abstract contract OwnerFreezableOwnerFreezeUntilTest is OffchainAssetReceiptVaul
         );
         sOwnerFreezable.ownerFreezeStopAlwaysAllowingTo(to);
     }
+
+    /// Inclusive boundary: at exactly `block.timestamp == protectUntil` the
+    /// `from`-side protection is still active. A regression flipping the
+    /// `<=` back to `<` would silently pass the existing pre-boundary-only
+    /// fuzz (which only deterministically covers `< protectUntil`).
+    function testOwnerFreezableAlwaysAllowFromProtectedRevertsAtExactBoundary(address from, uint256 protectUntil)
+        external
+    {
+        vm.assume(from != address(0));
+        protectUntil = bound(protectUntil, 1, type(uint256).max);
+        checkOwnerFreezeAlwaysAllowFrom(from, protectUntil, protectUntil);
+
+        vm.warp(protectUntil);
+        vm.prank(sAlice);
+        vm.expectRevert(
+            abi.encodeWithSelector(IOwnerFreezableV1.OwnerFreezeAlwaysAllowedFromProtected.selector, from, protectUntil)
+        );
+        sOwnerFreezable.ownerFreezeStopAlwaysAllowingFrom(from);
+    }
+
+    /// Inclusive boundary: at exactly `block.timestamp == protectUntil` the
+    /// `to`-side protection is still active. Mirror of the `from` boundary
+    /// pin above.
+    function testOwnerFreezableAlwaysAllowToProtectedRevertsAtExactBoundary(address to, uint256 protectUntil) external {
+        vm.assume(to != address(0));
+        protectUntil = bound(protectUntil, 1, type(uint256).max);
+        checkOwnerFreezeAlwaysAllowTo(to, protectUntil, protectUntil);
+
+        vm.warp(protectUntil);
+        vm.prank(sAlice);
+        vm.expectRevert(
+            abi.encodeWithSelector(IOwnerFreezableV1.OwnerFreezeAlwaysAllowedToProtected.selector, to, protectUntil)
+        );
+        sOwnerFreezable.ownerFreezeStopAlwaysAllowingTo(to);
+    }
+
+    /// Inclusive boundary: at exactly `block.timestamp == protectUntil + 1`
+    /// the protection releases and removal succeeds. Pinned alongside the
+    /// boundary-revert tests so a regression that shifted the inclusivity
+    /// in either direction trips one of the two.
+    function testOwnerFreezableAlwaysAllowFromRemovableJustPastBoundary(address from, uint256 protectUntil) external {
+        vm.assume(from != address(0));
+        protectUntil = bound(protectUntil, 1, type(uint256).max - 1);
+        checkOwnerFreezeAlwaysAllowFrom(from, protectUntil, protectUntil);
+
+        vm.warp(protectUntil + 1);
+        vm.prank(sAlice);
+        vm.expectEmit(true, true, true, true);
+        emit IOwnerFreezableV1.OwnerFreezeAlwaysAllowedFrom(sAlice, from, 0, 0);
+        sOwnerFreezable.ownerFreezeStopAlwaysAllowingFrom(from);
+        assertEq(sOwnerFreezable.ownerFreezeAlwaysAllowedFrom(from), 0);
+    }
+
+    /// Inclusive boundary: at exactly `block.timestamp == protectUntil + 1`
+    /// the `to`-side protection releases. Mirror of the `from` post-boundary
+    /// pin above.
+    function testOwnerFreezableAlwaysAllowToRemovableJustPastBoundary(address to, uint256 protectUntil) external {
+        vm.assume(to != address(0));
+        protectUntil = bound(protectUntil, 1, type(uint256).max - 1);
+        checkOwnerFreezeAlwaysAllowTo(to, protectUntil, protectUntil);
+
+        vm.warp(protectUntil + 1);
+        vm.prank(sAlice);
+        vm.expectEmit(true, true, true, true);
+        emit IOwnerFreezableV1.OwnerFreezeAlwaysAllowedTo(sAlice, to, 0, 0);
+        sOwnerFreezable.ownerFreezeStopAlwaysAllowingTo(to);
+        assertEq(sOwnerFreezable.ownerFreezeAlwaysAllowedTo(to), 0);
+    }
 }

@@ -73,6 +73,42 @@ contract OffchainAssetReceiptVaultOwnerFreezeUntilTest is OwnerFreezableOwnerFre
         assertTrue(vault.transfer(sAlice, 1e18));
     }
 
+    /// Inclusive boundary: at exactly `block.timestamp == ownerFrozenUntil`
+    /// the freeze is still active and transfers revert with `OwnerFrozen`.
+    /// `testTokenTransferFroze` only covers `freezeUntil - 1` (strictly
+    /// before); without this boundary pin, a regression flipping the
+    /// `<=` back to `<` in `ownerFreezeCheckTransaction` would silently
+    /// pass the existing tests while breaking the inclusive contract.
+    function testTokenTransferFrozenAtExactBoundaryReverts() external {
+        OffchainAssetReceiptVault vault = setupTokenTransferTest();
+
+        uint256 freezeUntil = block.timestamp + 1;
+        vm.prank(sAlice);
+        vault.ownerFreezeUntil(freezeUntil);
+
+        vm.warp(freezeUntil);
+        vm.prank(sBob);
+        vm.expectRevert(abi.encodeWithSelector(IOwnerFreezableV1.OwnerFrozen.selector, freezeUntil, sBob, sAlice));
+        assertFalse(vault.transfer(sAlice, 1e18));
+    }
+
+    /// Inclusive boundary, post-release side: at exactly `block.timestamp
+    /// == ownerFrozenUntil + 1` the freeze releases and a transfer with
+    /// no allow-list entries succeeds. Pinned alongside the boundary-
+    /// revert test so a regression that shifted the inclusivity in either
+    /// direction trips one of the two.
+    function testTokenTransferUnfrozenJustAfterBoundary() external {
+        OffchainAssetReceiptVault vault = setupTokenTransferTest();
+
+        uint256 freezeUntil = block.timestamp + 1;
+        vm.prank(sAlice);
+        vault.ownerFreezeUntil(freezeUntil);
+
+        vm.warp(freezeUntil + 1);
+        vm.prank(sBob);
+        assertTrue(vault.transfer(sAlice, 1e18));
+    }
+
     function testTokenTransferFroze(uint256 seed) external {
         OffchainAssetReceiptVault vault = setupTokenTransferTest();
 
