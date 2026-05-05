@@ -90,7 +90,17 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
 
     /// @dev Init-time guard against the `block.timestamp == 0` corner.
     /// Inheritors MUST call this from their initializer.
-    // slither-disable-next-line dead-code
+    /// slither-disable-next-line is documented per rule:
+    /// - dead-code: function is internal and called by every inheritor's
+    ///   own initializer; slither doesn't see the inheritance graph here.
+    /// - naming-convention: matches OpenZeppelin Upgradeable's
+    ///   `__Foo_init` convention for initializer fragments rather than
+    ///   the standard mixedCase rule.
+    /// - incorrect-equality: the `== 0` check is the entire point —
+    ///   detecting the genesis sentinel state. Inequality comparisons
+    ///   would either let in negative inputs (impossible for uint) or
+    ///   miss the exact zero we need to reject.
+    // slither-disable-next-line dead-code,naming-convention,incorrect-equality
     function __OwnerFreezable_init() internal {
         if (block.timestamp == 0) revert CorruptedEnvironmentBlockTimestampZero();
     }
