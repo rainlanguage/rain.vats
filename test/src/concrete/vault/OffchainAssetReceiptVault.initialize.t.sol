@@ -9,11 +9,41 @@ import {
     ZeroInitialAdmin,
     NonZeroAsset
 } from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {CorruptedEnvironmentBlockTimestampZero} from "src/abstract/OwnerFreezable.sol";
 import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
 import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 
 contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTest {
+    /// Inclusive timestamp comparisons in `OwnerFreezable` treat the
+    /// stored 0 sentinel as an active deadline at `block.timestamp == 0`.
+    /// Production timestamps are never 0 (genesis is decades past) so
+    /// the ambiguous state is unreachable in real execution. The
+    /// `__OwnerFreezable_init` guard pins this contractually:
+    /// `initialize` reverts with `CorruptedEnvironmentBlockTimestampZero` if
+    /// somehow called at `block.timestamp == 0`, so no inheritor lands
+    /// in the ambiguous state even under contrived test setups.
+    function testInitAtGenesisTimestampReverts(string memory shareName, string memory shareSymbol) external {
+        ReceiptContract receipt = ReceiptContract(address(new BeaconProxy(address(iDeployer.iReceiptBeacon()), "")));
+        OffchainAssetReceiptVault offchainAssetReceiptVault = OffchainAssetReceiptVault(
+            payable(address(new BeaconProxy(address(iDeployer.iOffchainAssetReceiptVaultBeacon()), "")))
+        );
+        receipt.initialize(abi.encode(offchainAssetReceiptVault));
+
+        vm.warp(0);
+        vm.expectRevert(CorruptedEnvironmentBlockTimestampZero.selector);
+        offchainAssetReceiptVault.initialize(
+            abi.encode(
+                OffchainAssetReceiptVaultConfigV2({
+                    initialAdmin: address(1),
+                    receiptVaultConfig: ReceiptVaultConfigV2({
+                        asset: address(0), name: shareName, symbol: shareSymbol, receipt: address(receipt)
+                    })
+                })
+            )
+        );
+    }
+
     /// Test that admin is not address zero
     function testZeroInitialAdmin(string memory shareName, string memory shareSymbol) external {
         ReceiptContract receipt = ReceiptContract(address(new BeaconProxy(address(iDeployer.iReceiptBeacon()), "")));

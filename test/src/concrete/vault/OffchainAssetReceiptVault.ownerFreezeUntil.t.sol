@@ -30,7 +30,13 @@ contract OffchainAssetReceiptVaultOwnerFreezeUntilTest is OwnerFreezableOwnerFre
         vm.startPrank(sAlice);
         OffchainAssetReceiptVault vault = OffchainAssetReceiptVault(payable(address(sOwnerFreezable)));
         IAccessControl(address(vault.authorizer())).grantRole(CERTIFY, sAlice);
-        vault.certify(block.timestamp + 1, false, "");
+        // Certify well past any freeze deadline used in these tests. The
+        // freeze tests warp past `frozenUntil` to verify the freeze
+        // releases; with inclusive freeze semantics that warp lands at
+        // `frozenUntil + 1`, which would also expire a certification set
+        // to `block.timestamp + 1`. Set certification far enough out that
+        // it stays valid across every warp the tests perform.
+        vault.certify(type(uint128).max, false, "");
 
         IAccessControl(address(vault.authorizer())).grantRole(DEPOSIT, sAlice);
         vault.deposit(1e18, sBob, 0, "");
@@ -54,13 +60,51 @@ contract OffchainAssetReceiptVaultOwnerFreezeUntilTest is OwnerFreezableOwnerFre
         } else {
             console2.log("Giving reason to transfer from:", from, "to:", to);
             uint256 frozenUntil = vault.ownerFrozenUntil();
-            vm.warp(frozenUntil);
+            // Inclusive boundary: freeze releases at the first block where
+            // `block.timestamp > frozenUntil`. Warp past the deadline.
+            vm.warp(frozenUntil + 1);
         }
     }
 
     function testTokenTransferNotFroze() external {
         OffchainAssetReceiptVault vault = setupTokenTransferTest();
 
+        vm.prank(sBob);
+        assertTrue(vault.transfer(sAlice, 1e18));
+    }
+
+    /// Inclusive boundary: at exactly `block.timestamp == ownerFrozenUntil`
+    /// the freeze is still active and transfers revert with `OwnerFrozen`.
+    /// `testTokenTransferFroze` only covers `freezeUntil - 1` (strictly
+    /// before); without this boundary pin, a regression flipping the
+    /// `<=` back to `<` in `ownerFreezeCheckTransaction` would silently
+    /// pass the existing tests while breaking the inclusive contract.
+    function testTokenTransferFrozenAtExactBoundaryReverts() external {
+        OffchainAssetReceiptVault vault = setupTokenTransferTest();
+
+        uint256 freezeUntil = block.timestamp + 1;
+        vm.prank(sAlice);
+        vault.ownerFreezeUntil(freezeUntil);
+
+        vm.warp(freezeUntil);
+        vm.prank(sBob);
+        vm.expectRevert(abi.encodeWithSelector(IOwnerFreezableV1.OwnerFrozen.selector, freezeUntil, sBob, sAlice));
+        assertFalse(vault.transfer(sAlice, 1e18));
+    }
+
+    /// Inclusive boundary, post-release side: at exactly `block.timestamp
+    /// == ownerFrozenUntil + 1` the freeze releases and a transfer with
+    /// no allow-list entries succeeds. Pinned alongside the boundary-
+    /// revert test so a regression that shifted the inclusivity in either
+    /// direction trips one of the two.
+    function testTokenTransferUnfrozenJustAfterBoundary() external {
+        OffchainAssetReceiptVault vault = setupTokenTransferTest();
+
+        uint256 freezeUntil = block.timestamp + 1;
+        vm.prank(sAlice);
+        vault.ownerFreezeUntil(freezeUntil);
+
+        vm.warp(freezeUntil + 1);
         vm.prank(sBob);
         assertTrue(vault.transfer(sAlice, 1e18));
     }

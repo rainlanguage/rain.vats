@@ -8,6 +8,19 @@ import {IOwnerFreezableV1, IERC5313} from "../interface/IOwnerFreezableV1.sol";
 /// @dev String ID for the OwnerFreezableV1 storage location v1.
 string constant OWNER_FREEZABLE_V1_STORAGE_ID = "rain.storage.owner-freezable.1";
 
+/// @dev Thrown when an inheritor's initializer runs at `block.timestamp ==
+/// 0`. This indicates a corrupted execution environment, not a user
+/// input error: every real EVM has a non-zero block timestamp from
+/// genesis onward (decades in the past), so a zero timestamp can only
+/// arise under contrived test setups (`vm.warp(0)`) or a malformed
+/// fork. `OwnerFreezable`'s inclusive timestamp checks treat the
+/// stored 0 sentinel as an active deadline at the genesis timestamp,
+/// so allowing initialization through this state would let the
+/// inheritor wedge itself in an ambiguous freeze permanently.
+/// Refuse the deployment at the boundary instead of carrying the
+/// ambiguity forward.
+error CorruptedEnvironmentBlockTimestampZero();
+
 /// @dev "rain.storage.owner-freezable.1" with the erc7201 formula.
 bytes32 constant OWNER_FREEZABLE_V1_STORAGE_LOCATION =
     0x04485615b1da6633eec3daf54aadca2a89ef8b155744e223a046f4a6e38be700;
@@ -47,17 +60,20 @@ bytes32 constant OWNER_FREEZABLE_V1_STORAGE_LOCATION =
 /// addresses, to mitigate the risk that the attacker opens up the ability to
 /// dump on the LPs en masse after the snapshot.
 abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
-    /// @param ownerFrozenUntil Contract is frozen until this time.
+    /// @param ownerFrozenUntil Contract is frozen through and including this
+    /// time. Inclusive boundary — at `block.timestamp == ownerFrozenUntil`
+    /// the contract is still frozen; the freeze releases on the first block
+    /// where `block.timestamp > ownerFrozenUntil`.
     /// @param alwaysAllowedFroms Mapping of `from` addresses that are always
     /// allowed to send. If the protected time is any non-zero value then the
-    /// `from` address is always allowed to send. While the current time is less
-    /// than the protected time the `from` address cannot be removed from the
-    /// always allowed list.
+    /// `from` address is always allowed to send. While the current time is at
+    /// or before the protected time the `from` address cannot be removed from
+    /// the always allowed list (inclusive boundary).
     /// @param alwaysAllowedTos Mapping of `to` addresses that are always
     /// allowed to receive. If the protected time is any non-zero value then the
-    /// `to` address is always allowed to receive. While the current time is less
-    /// than the protected time the `to` address cannot be removed from the
-    /// always allowed list.
+    /// `to` address is always allowed to receive. While the current time is at
+    /// or before the protected time the `to` address cannot be removed from the
+    /// always allowed list (inclusive boundary).
     /// @custom:storage-location erc7201:rain.storage.owner-freezable.1
     struct OwnerFreezableV17201Storage {
         uint256 ownerFrozenUntil;
@@ -70,6 +86,23 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
         assembly ("memory-safe") {
             s.slot := OWNER_FREEZABLE_V1_STORAGE_LOCATION
         }
+    }
+
+    /// @dev Init-time guard against the `block.timestamp == 0` corner.
+    /// Inheritors MUST call this from their initializer.
+    /// slither-disable-next-line is documented per rule:
+    /// - dead-code: function is internal and called by every inheritor's
+    ///   own initializer; slither doesn't see the inheritance graph here.
+    /// - naming-convention: matches OpenZeppelin Upgradeable's
+    ///   `__Foo_init` convention for initializer fragments rather than
+    ///   the standard mixedCase rule.
+    /// - incorrect-equality: the `== 0` check is the entire point —
+    ///   detecting the genesis sentinel state. Inequality comparisons
+    ///   would either let in negative inputs (impossible for uint) or
+    ///   miss the exact zero we need to reject.
+    // slither-disable-next-line dead-code,naming-convention,incorrect-equality
+    function __OwnerFreezable_init() internal {
+        if (block.timestamp == 0) revert CorruptedEnvironmentBlockTimestampZero();
     }
 
     /// @inheritdoc IERC5313
@@ -137,9 +170,12 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
     function ownerFreezeStopAlwaysAllowingFrom(address from) external onlyOwner {
         OwnerFreezableV17201Storage storage s = getStorageOwnerFreezable();
 
-        // If the current time is after the protection for this `from` then
-        // we can remove it. Otherwise we revert to respect the protection.
-        if (block.timestamp < s.alwaysAllowedFroms[from]) {
+        // Inclusive boundary: protection is active through and including
+        // `protectedUntil`. Removal becomes possible only once
+        // `block.timestamp > protectedUntil`. Matches the convention used
+        // by `OffchainAssetReceiptVault.certifiedUntil` and the corporate
+        // action `effectiveTime` semantics on consumers.
+        if (block.timestamp <= s.alwaysAllowedFroms[from]) {
             revert OwnerFreezeAlwaysAllowedFromProtected(from, s.alwaysAllowedFroms[from]);
         }
 
@@ -173,9 +209,8 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
     function ownerFreezeStopAlwaysAllowingTo(address to) external onlyOwner {
         OwnerFreezableV17201Storage storage s = getStorageOwnerFreezable();
 
-        // If the current time is after the protection for this `to` then
-        // we can remove it. Otherwise we revert to respect the protection.
-        if (block.timestamp < s.alwaysAllowedTos[to]) {
+        // Inclusive boundary — see `ownerFreezeStopAlwaysAllowingFrom`.
+        if (block.timestamp <= s.alwaysAllowedTos[to]) {
             revert IOwnerFreezableV1.OwnerFreezeAlwaysAllowedToProtected(to, s.alwaysAllowedTos[to]);
         }
 
@@ -193,7 +228,10 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
         // We either simply revert or no-op for this check.
         // Revert if the contract is frozen and neither the `from` nor `to` are
         // in their respective always allowed lists.
-        if (block.timestamp < s.ownerFrozenUntil && s.alwaysAllowedFroms[from] == 0 && s.alwaysAllowedTos[to] == 0) {
+        // Inclusive boundary: the freeze is active through and including
+        // `ownerFrozenUntil`. Matches the convention used by
+        // `OffchainAssetReceiptVault.certifiedUntil`.
+        if (block.timestamp <= s.ownerFrozenUntil && s.alwaysAllowedFroms[from] == 0 && s.alwaysAllowedTos[to] == 0) {
             revert IOwnerFreezableV1.OwnerFrozen(s.ownerFrozenUntil, from, to);
         }
     }
