@@ -301,6 +301,8 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
     /// logic.
     /// @param data All config required to initialize abi encoded.
     function initialize(bytes memory data) public virtual override initializer returns (bytes32) {
+        __OwnerFreezable_init();
+
         OffchainAssetReceiptVaultConfigV2 memory config = abi.decode(data, (OffchainAssetReceiptVaultConfigV2));
 
         __ReceiptVault_init(config.receiptVaultConfig);

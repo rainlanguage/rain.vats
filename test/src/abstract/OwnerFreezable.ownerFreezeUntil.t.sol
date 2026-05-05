@@ -7,6 +7,7 @@ import {OwnerFreezable} from "src/abstract/OwnerFreezable.sol";
 
 contract TestOwnerFreezable is OwnerFreezable {
     constructor() {
+        __OwnerFreezable_init();
         _transferOwnership(msg.sender);
     }
 }

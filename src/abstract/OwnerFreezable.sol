@@ -8,6 +8,19 @@ import {IOwnerFreezableV1, IERC5313} from "../interface/IOwnerFreezableV1.sol";
 /// @dev String ID for the OwnerFreezableV1 storage location v1.
 string constant OWNER_FREEZABLE_V1_STORAGE_ID = "rain.storage.owner-freezable.1";
 
+/// @dev Thrown when an inheritor's initializer runs at `block.timestamp ==
+/// 0`. This indicates a corrupted execution environment, not a user
+/// input error: every real EVM has a non-zero block timestamp from
+/// genesis onward (decades in the past), so a zero timestamp can only
+/// arise under contrived test setups (`vm.warp(0)`) or a malformed
+/// fork. `OwnerFreezable`'s inclusive timestamp checks treat the
+/// stored 0 sentinel as an active deadline at the genesis timestamp,
+/// so allowing initialization through this state would let the
+/// inheritor wedge itself in an ambiguous freeze permanently.
+/// Refuse the deployment at the boundary instead of carrying the
+/// ambiguity forward.
+error CorruptedEnvironmentBlockTimestampZero();
+
 /// @dev "rain.storage.owner-freezable.1" with the erc7201 formula.
 bytes32 constant OWNER_FREEZABLE_V1_STORAGE_LOCATION =
     0x04485615b1da6633eec3daf54aadca2a89ef8b155744e223a046f4a6e38be700;
@@ -73,6 +86,13 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
         assembly ("memory-safe") {
             s.slot := OWNER_FREEZABLE_V1_STORAGE_LOCATION
         }
+    }
+
+    /// @dev Init-time guard against the `block.timestamp == 0` corner.
+    /// Inheritors MUST call this from their initializer.
+    // slither-disable-next-line dead-code
+    function __OwnerFreezable_init() internal {
+        if (block.timestamp == 0) revert CorruptedEnvironmentBlockTimestampZero();
     }
 
     /// @inheritdoc IERC5313
