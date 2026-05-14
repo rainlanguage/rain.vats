@@ -272,6 +272,10 @@ abstract contract ReceiptVault is
         // `_calculateRedeem`. A zero share ratio means a withdraw at this id
         // is undefined / never had a corresponding deposit, so the max
         // withdrawable is 0.
+        //
+        // Strict equality is the correct check here: any nonzero ratio is
+        // safe to divide by, only an exact zero produces the panic.
+        //slither-disable-next-line incorrect-equality
         if (shareRatio == 0) {
             return 0;
         }
