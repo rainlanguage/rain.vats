@@ -6,7 +6,7 @@ import {console2} from "forge-std-1.16.1/src/Test.sol";
 import {
     OwnerFreezableOwnerFreezeUntilTest,
     IOwnerFreezableV1
-} from "test/abstract/OwnerFreezableOwnerFreezeUntilTest.sol";
+} from "test/abstract/OwnerFreezableOwnerFreezeUntilTest.t.sol";
 import {OffchainAssetReceiptVault} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {IReceiptV3} from "src/concrete/receipt/Receipt.sol";
 import {
