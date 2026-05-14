@@ -4,15 +4,15 @@ pragma solidity ^0.8.25;
 
 import {IERC20} from "forge-std-1.16.1/src/interfaces/IERC20.sol";
 import {ERC20PriceOracleReceiptVault} from "src/concrete/vault/ERC20PriceOracleReceiptVault.sol";
-import {LibFork} from "rain-flare-0.1.1/src/../test/fork/LibFork.sol";
+import {LibFork} from "rain-flare-0.1.2/src/../test/fork/LibFork.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
 } from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 import {Vm} from "forge-std-1.16.1/src/Vm.sol";
-import {SFLR_CONTRACT} from "rain-flare-0.1.1/src/lib/sflr/LibSceptreStakedFlare.sol";
-import {LibFtsoV2LTS, FLR_USD_FEED_ID} from "rain-flare-0.1.1/src/lib/lts/LibFtsoV2LTS.sol";
-import {LibSceptreStakedFlare} from "rain-flare-0.1.1/src/lib/sflr/LibSceptreStakedFlare.sol";
+import {SFLR_CONTRACT} from "rain-flare-0.1.2/src/lib/sflr/LibSceptreStakedFlare.sol";
+import {LibFtsoV2LTS, FLR_USD_FEED_ID} from "rain-flare-0.1.2/src/lib/lts/LibFtsoV2LTS.sol";
+import {LibSceptreStakedFlare} from "rain-flare-0.1.2/src/lib/sflr/LibSceptreStakedFlare.sol";
 
 library LibERC20PriceOracleReceiptVaultFork {
     using LibFixedPointDecimalArithmeticOpenZeppelin for uint256;

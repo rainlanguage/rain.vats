@@ -101,7 +101,7 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
     ///   would either let in negative inputs (impossible for uint) or
     ///   miss the exact zero we need to reject.
     // slither-disable-next-line dead-code,naming-convention,incorrect-equality
-    function __OwnerFreezable_init() internal {
+    function __OwnerFreezable_init() internal view {
         if (block.timestamp == 0) revert CorruptedEnvironmentBlockTimestampZero();
     }
 
