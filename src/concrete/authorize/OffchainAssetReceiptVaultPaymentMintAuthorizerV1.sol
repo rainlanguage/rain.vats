@@ -16,7 +16,10 @@ import {
     DEPOSIT_ADMIN,
     WITHDRAW_ADMIN
 } from "./OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {LibFixedPointDecimalScale, FLAG_ROUND_UP} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalScale.sol";
+import {
+    LibFixedPointDecimalScale,
+    FLAG_ROUND_UP
+} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalScale.sol";
 import {VerifyStatus, IVerifyV1, VERIFY_STATUS_APPROVED} from "rain-verify-interface-0.1.0/src/interface/IVerifyV1.sol";
 
 /// @dev String ID for the OffchainAssetReceiptVaultPaymentMintAuthorizerV1

@@ -9,12 +9,7 @@ interface IPythEvents {
     /// @param publishTime Publish time of the given price update.
     /// @param price Price of the given price update.
     /// @param conf Confidence interval of the given price update.
-    event PriceFeedUpdate(
-        bytes32 indexed id,
-        uint64 publishTime,
-        int64 price,
-        uint64 conf
-    );
+    event PriceFeedUpdate(bytes32 indexed id, uint64 publishTime, int64 price, uint64 conf);
 
     /// @dev Emitted when the TWAP price feed with `id` has received a fresh update.
     /// @param id The Pyth Price Feed ID.
@@ -24,11 +19,6 @@ interface IPythEvents {
     /// @param twapConf Confidence interval of the TWAP.
     /// @param downSlotsRatio Down slot ratio of the TWAP.
     event TwapPriceFeedUpdate(
-        bytes32 indexed id,
-        uint64 startTime,
-        uint64 endTime,
-        int64 twapPrice,
-        uint64 twapConf,
-        uint32 downSlotsRatio
+        bytes32 indexed id, uint64 startTime, uint64 endTime, int64 twapPrice, uint64 twapConf, uint32 downSlotsRatio
     );
 }

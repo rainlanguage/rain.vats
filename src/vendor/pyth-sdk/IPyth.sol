@@ -16,19 +16,14 @@ interface IPyth is IPythEvents {
     /// sufficiently recent for their application. If you are considering using this function, it may be
     /// safer / easier to use `getPriceNoOlderThan`.
     /// @return price - please read the documentation of PythStructs.Price to understand how to use this safely.
-    function getPriceUnsafe(
-        bytes32 id
-    ) external view returns (PythStructs.Price memory price);
+    function getPriceUnsafe(bytes32 id) external view returns (PythStructs.Price memory price);
 
     /// @notice Returns the price that is no older than `age` seconds of the current time.
     /// @dev This function is a sanity-checked version of `getPriceUnsafe` which is useful in
     /// applications that require a sufficiently-recent price. Reverts if the price wasn't updated sufficiently
     /// recently.
     /// @return price - please read the documentation of PythStructs.Price to understand how to use this safely.
-    function getPriceNoOlderThan(
-        bytes32 id,
-        uint age
-    ) external view returns (PythStructs.Price memory price);
+    function getPriceNoOlderThan(bytes32 id, uint256 age) external view returns (PythStructs.Price memory price);
 
     /// @notice Returns the exponentially-weighted moving average price of a price feed without any sanity checks.
     /// @dev This function returns the same price as `getEmaPrice` in the case where the price is available.
@@ -41,9 +36,7 @@ interface IPyth is IPythEvents {
     /// sufficiently recent for their application. If you are considering using this function, it may be
     /// safer / easier to use either `getEmaPrice` or `getEmaPriceNoOlderThan`.
     /// @return price - please read the documentation of PythStructs.Price to understand how to use this safely.
-    function getEmaPriceUnsafe(
-        bytes32 id
-    ) external view returns (PythStructs.Price memory price);
+    function getEmaPriceUnsafe(bytes32 id) external view returns (PythStructs.Price memory price);
 
     /// @notice Returns the exponentially-weighted moving average price that is no older than `age` seconds
     /// of the current time.
@@ -51,10 +44,7 @@ interface IPyth is IPythEvents {
     /// applications that require a sufficiently-recent price. Reverts if the price wasn't updated sufficiently
     /// recently.
     /// @return price - please read the documentation of PythStructs.Price to understand how to use this safely.
-    function getEmaPriceNoOlderThan(
-        bytes32 id,
-        uint age
-    ) external view returns (PythStructs.Price memory price);
+    function getEmaPriceNoOlderThan(bytes32 id, uint256 age) external view returns (PythStructs.Price memory price);
 
     /// @notice Update price feeds with given update messages.
     /// This method requires the caller to pay a fee in wei; the required fee can be computed by calling
@@ -90,16 +80,12 @@ interface IPyth is IPythEvents {
     /// @notice Returns the required fee to update an array of price updates.
     /// @param updateData Array of price update data.
     /// @return feeAmount The required fee in Wei.
-    function getUpdateFee(
-        bytes[] calldata updateData
-    ) external view returns (uint feeAmount);
+    function getUpdateFee(bytes[] calldata updateData) external view returns (uint256 feeAmount);
 
     /// @notice Returns the required fee to update a TWAP price.
     /// @param updateData Array of price update data.
     /// @return feeAmount The required fee in Wei.
-    function getTwapUpdateFee(
-        bytes[] calldata updateData
-    ) external view returns (uint feeAmount);
+    function getTwapUpdateFee(bytes[] calldata updateData) external view returns (uint256 feeAmount);
 
     /// @notice Parse `updateData` and return price feeds of the given `priceIds` if they are all published
     /// within `minPublishTime` and `maxPublishTime`.
@@ -154,13 +140,7 @@ interface IPyth is IPythEvents {
         bool checkUniqueness,
         bool checkUpdateDataIsMinimal,
         bool storeUpdatesIfFresh
-    )
-        external
-        payable
-        returns (
-            PythStructs.PriceFeed[] memory priceFeeds,
-            uint64[] memory slots
-        );
+    ) external payable returns (PythStructs.PriceFeed[] memory priceFeeds, uint64[] memory slots);
 
     /// @notice Parse time-weighted average price (TWAP) from two consecutive price updates for the given `priceIds`.
     ///
@@ -180,10 +160,7 @@ interface IPyth is IPythEvents {
     /// @param updateData Array containing exactly two price updates (start and end points for TWAP calculation)
     /// @param priceIds Array of price ids to calculate TWAP for
     /// @return twapPriceFeeds Array of TWAP price feeds corresponding to the given `priceIds` (with the same order)
-    function parseTwapPriceFeedUpdates(
-        bytes[] calldata updateData,
-        bytes32[] calldata priceIds
-    )
+    function parseTwapPriceFeedUpdates(bytes[] calldata updateData, bytes32[] calldata priceIds)
         external
         payable
         returns (PythStructs.TwapPriceFeed[] memory twapPriceFeeds);

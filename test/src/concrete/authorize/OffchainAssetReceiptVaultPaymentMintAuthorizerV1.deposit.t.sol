@@ -17,7 +17,10 @@ import {DepositStateChange, DEPOSIT, CERTIFY} from "src/concrete/vault/OffchainA
 import {IERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/IERC20.sol";
 import {OffchainAssetReceiptVault} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/VerifyAlwaysApproved.sol";
-import {LibFixedPointDecimalScale, FLAG_ROUND_UP} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalScale.sol";
+import {
+    LibFixedPointDecimalScale,
+    FLAG_ROUND_UP
+} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalScale.sol";
 import {IERC20Errors} from "@openzeppelin-contracts-upgradeable-5.6.1/token/ERC20/ERC20Upgradeable.sol";
 
 import {TestErc20} from "test/concrete/TestErc20.sol";

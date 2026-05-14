@@ -27,9 +27,7 @@ import {
     WrongManager
 } from "../error/ErrReceiptVault.sol";
 import {UnmanagedReceiptTransfer} from "../interface/IReceiptManagerV2.sol";
-import {
-    ERC165Upgradeable
-} from "@openzeppelin-contracts-upgradeable-5.6.1/utils/introspection/ERC165Upgradeable.sol";
+import {ERC165Upgradeable} from "@openzeppelin-contracts-upgradeable-5.6.1/utils/introspection/ERC165Upgradeable.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
 
 /// @dev String ID for the ReceiptVault storage location v1.

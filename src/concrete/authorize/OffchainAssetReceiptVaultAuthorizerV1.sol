@@ -4,9 +4,7 @@ pragma solidity =0.8.25;
 
 import {IAuthorizeV1, Unauthorized} from "../../interface/IAuthorizeV1.sol";
 
-import {
-    AccessControlUpgradeable
-} from "@openzeppelin-contracts-upgradeable-5.6.1/access/AccessControlUpgradeable.sol";
+import {AccessControlUpgradeable} from "@openzeppelin-contracts-upgradeable-5.6.1/access/AccessControlUpgradeable.sol";
 import {IAccessControl} from "@openzeppelin-contracts-5.6.1/access/IAccessControl.sol";
 import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.1.0/src/interface/ICloneableV2.sol";
 import {

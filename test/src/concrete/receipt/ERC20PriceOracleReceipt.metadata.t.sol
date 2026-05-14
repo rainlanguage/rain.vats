@@ -13,7 +13,11 @@ import {
 import {FIXED_POINT_ONE} from "rain-math-fixedpoint-0.2.0/src/lib/FixedPointDecimalConstants.sol";
 import {ZeroReceiptId} from "src/error/ErrReceipt.sol";
 import {LibConformString} from "rain-string-0.2.0/src/lib/mut/LibConformString.sol";
-import {CMASK_QUOTATION_MARK, CMASK_PRINTABLE, CMASK_BACKSLASH} from "rain-string-0.2.0/src/lib/parse/LibParseCMask.sol";
+import {
+    CMASK_QUOTATION_MARK,
+    CMASK_PRINTABLE,
+    CMASK_BACKSLASH
+} from "rain-string-0.2.0/src/lib/parse/LibParseCMask.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
 
 /// This contract is used to test the metadata of the `Receipt` contract.
