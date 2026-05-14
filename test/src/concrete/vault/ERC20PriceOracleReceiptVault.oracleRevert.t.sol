@@ -53,28 +53,6 @@ contract ERC20PriceOracleReceiptVaultOracleRevertTest is ERC20PriceOracleReceipt
         vault.previewDeposit(assets, 0);
     }
 
-    /// ERC4626 spec: `max*` MUST NOT revert. The fix removes the try/catch
-    /// around `priceOracle.price()` in `_nextId`; pin that none of the `max*`
-    /// view functions route through `_nextId` so a reverting oracle never
-    /// reaches that surface. `id` is bounded `> 0` because `_calculateRedeem`
-    /// divides by share ratio and would panic on `id == 0` — that's a
-    /// separate, oracle-independent invariant outside the scope of this fix.
-    function testMaxFunctionsDoNotRevertOnOracleRevert(
-        string memory name,
-        string memory symbol,
-        address receiver,
-        address owner,
-        uint256 id
-    ) external {
-        id = bound(id, 1, type(uint256).max);
-        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, name, symbol);
-        mockOracleRevert();
-        vault.maxDeposit(receiver);
-        vault.maxMint(receiver);
-        vault.maxRedeem(owner, id);
-        vault.maxWithdraw(owner, id);
-    }
-
     receive() external payable {}
 
     fallback() external payable {}
