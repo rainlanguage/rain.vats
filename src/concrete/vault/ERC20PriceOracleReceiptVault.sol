@@ -124,25 +124,21 @@ contract ERC20PriceOracleReceiptVault is ReceiptVault {
     function _nextId() internal virtual override returns (uint256) {
         ERC20PriceOracleReceiptVault7201Storage storage s = getStorageERC20PriceOracleReceiptVault();
 
-        // The oracle CAN error so we wrap in a try block to meet spec
-        // requirement that calls MUST NOT revert.
-        // This contract is never intended to hold gas, it's only here to pay the
-        // oracles that might need to be paid. The contract's assets are always
-        // ERC20 tokens. This means the slither detector here is a false positive.
+        // Oracle reverts propagate. Catching them here collapses every oracle
+        // error into a downstream `Panic(0x12)` from divide-by-zero in
+        // `_calculate{Deposit,Mint}`, hiding the actual selector (e.g. Pyth
+        // `StalePrice()`) from integrators, frontends and on-chain monitoring.
+        // The ERC4626 "MUST NOT revert" requirement applies to the view-only
+        // `max*` functions; `mint`/`deposit` may revert, and `previewMint`/
+        // `previewDeposit` may revert "due to other conditions that would
+        // also cause deposit/mint to revert" — a reverting oracle qualifies.
+        //
+        // This contract is never intended to hold gas, it's only here to pay
+        // the oracles that might need to be paid. The contract's assets are
+        // always ERC20 tokens. This means the slither detector here is a
+        // false positive.
         //slither-disable-next-line arbitrary-send-eth
-        try s.priceOracle.price{value: address(this).balance}()
-        // slither puts false positives on `try/catch/returns`.
-        // https://github.com/crytic/slither/issues/511
-        //slither-disable-next-line
-        returns (
-            uint256 price
-        ) {
-            return price;
-        } catch {
-            // Depositing assets while the price oracle is erroring will give 0
-            // shares (a real deposit will revert due to 0 ratio).
-            return 0;
-        }
+        return s.priceOracle.price{value: address(this).balance}();
     }
 
     /// The ID-less share ratio is the current oracle price, which will be the
