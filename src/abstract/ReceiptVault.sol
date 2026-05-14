@@ -264,14 +264,21 @@ abstract contract ReceiptVault is
 
     /// @inheritdoc IReceiptVaultV1
     function maxWithdraw(address owner, uint256 id) public view virtual returns (uint256) {
+        // Assume the owner is hypothetically withdrawing for themselves.
+        uint256 shareRatio = _shareRatio(owner, owner, id, ShareAction.Burn);
+        // ERC-4626 maxWithdraw MUST NOT revert. Subclasses (e.g.
+        // `ERC20PriceOracleReceiptVault`) return `id` as the share ratio, so
+        // `id == 0` produces a zero share ratio that would divide by zero in
+        // `_calculateRedeem`. A zero share ratio means a withdraw at this id
+        // is undefined / never had a corresponding deposit, so the max
+        // withdrawable is 0.
+        if (shareRatio == 0) {
+            return 0;
+        }
         // Using `_calculateRedeem` instead of `_calculateWithdraw` because the
         // latter requires knowing the assets being withdrawn, which is what we
         // are attempting to reverse engineer from the owner's receipt balance.
-        return _calculateRedeem(
-            receipt().balanceOf(owner, id),
-            // Assume the owner is hypothetically withdrawing for themselves.
-            _shareRatio(owner, owner, id, ShareAction.Burn)
-        );
+        return _calculateRedeem(receipt().balanceOf(owner, id), shareRatio);
     }
 
     /// @inheritdoc IReceiptVaultV1

@@ -68,4 +68,13 @@ contract ERC20PriceOracleReceiptVaultMaxRedeemTest is ERC20PriceOracleReceiptVau
 
         assertEqUint(maxWithdraw, 0);
     }
+
+    /// ERC-4626 maxWithdraw MUST NOT revert
+    /// (https://eips.ethereum.org/EIPS/eip-4626#maxwithdraw). `id == 0` makes
+    /// `_shareRatioUserAgnostic` return 0 for this vault, which would divide
+    /// by zero inside `_calculateRedeem` without the short-circuit guard.
+    function testMaxWithdrawZeroIdDoesNotRevert(string memory name, string memory symbol, address owner) external {
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, name, symbol);
+        assertEqUint(vault.maxWithdraw(owner, 0), 0);
+    }
 }
