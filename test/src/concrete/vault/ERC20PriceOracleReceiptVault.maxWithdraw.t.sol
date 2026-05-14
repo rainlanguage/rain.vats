@@ -77,4 +77,15 @@ contract ERC20PriceOracleReceiptVaultMaxRedeemTest is ERC20PriceOracleReceiptVau
         ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, name, symbol);
         assertEqUint(vault.maxWithdraw(owner, 0), 0);
     }
+
+    /// Fuzzing every `id` across the full uint256 range. ERC-4626 says
+    /// maxWithdraw MUST NOT revert under any input — including ids the vault
+    /// has never minted a receipt for, including `id == 0` (zero share
+    /// ratio), including caller-controlled garbage.
+    function testMaxWithdrawAnyIdDoesNotRevert(string memory name, string memory symbol, address owner, uint256 id)
+        external
+    {
+        ERC20PriceOracleReceiptVault vault = createVault(iVaultOracle, name, symbol);
+        vault.maxWithdraw(owner, id);
+    }
 }
