@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {IPriceOracleV2} from "../interface/IPriceOracleV2.sol";
-import {Address} from "openzeppelin-contracts/contracts/utils/Address.sol";
+import {Address} from "@openzeppelin-contracts-5.6.1/utils/Address.sol";
 
 abstract contract PriceOracleV2 is IPriceOracleV2 {
     /// Hook for implementing contracts to define their own price logic.

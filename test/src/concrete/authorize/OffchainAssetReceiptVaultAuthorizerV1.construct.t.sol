@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test} from "forge-std/Test.sol";
+import {Test} from "forge-std-1.16.1/src/Test.sol";
 
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
@@ -19,8 +19,8 @@ import {
     WITHDRAW,
     ZeroInitialAdmin
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {CloneFactory} from "rain.factory/concrete/CloneFactory.sol";
-import {Initializable} from "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import {CloneFactory} from "rain-factory-0.1.0/src/concrete/CloneFactory.sol";
+import {Initializable} from "@openzeppelin-contracts-upgradeable-5.6.1/proxy/utils/Initializable.sol";
 
 contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
     function testOffchainAssetReceiptVaultAuthorizerV1Construct(address initialAdmin) external {

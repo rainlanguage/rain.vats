@@ -6,3 +6,4 @@ bin
 out
 forge-cache
 .DS_Store
+dependencies

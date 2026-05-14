@@ -8,11 +8,11 @@ import {OffchainAssetReceiptVaultTest, Vm, ReceiptContract} from "test/abstract/
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain.math.fixedpoint/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 import {IReceiptVaultV1} from "src/interface/IReceiptVaultV3.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 import {OffchainAssetReceiptVaultAuthorizerV1} from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {IERC20Errors} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
+import {IERC20Errors} from "@openzeppelin-contracts-5.6.1/token/ERC20/ERC20.sol";
 
 contract RedeemTest is OffchainAssetReceiptVaultTest {
     using LibFixedPointDecimalArithmeticOpenZeppelin for uint256;

@@ -9,8 +9,8 @@ import {
     InitializeReceiptFailed,
     InitializeVaultFailed
 } from "../../error/ErrDeployer.sol";
-import {Clones} from "openzeppelin-contracts/contracts/proxy/Clones.sol";
-import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {Clones} from "@openzeppelin-contracts-5.6.1/proxy/Clones.sol";
+import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
 import {
     IERC20PriceOracleReceiptVaultCloneDeployerV2
 } from "../../interface/IERC20PriceOracleReceiptVaultCloneDeployerV2.sol";

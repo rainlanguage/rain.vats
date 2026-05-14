@@ -4,7 +4,7 @@ pragma solidity =0.8.25;
 
 import {OracleTest} from "test/abstract/OracleTest.sol";
 import {SceptreStakedFlrOracle} from "src/concrete/oracle/SceptreStakedFlrOracle.sol";
-import {LibSceptreStakedFlare} from "rain.flare/lib/sflr/LibSceptreStakedFlare.sol";
+import {LibSceptreStakedFlare} from "rain-flare-0.1.1/src/lib/sflr/LibSceptreStakedFlare.sol";
 
 contract SceptreStakedFlrOracleTest is OracleTest {
     function testSceptreStakedFlrOracle() external {

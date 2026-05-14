@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity ^0.8.25;
 
-import {IERC5313} from "openzeppelin-contracts/contracts/interfaces/IERC5313.sol";
+import {IERC5313} from "@openzeppelin-contracts-5.6.1/interfaces/IERC5313.sol";
 
 /// @title IOwnerFreezableV1
 /// @notice Interface for the OwnerFreezable contract.

@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {PriceOracleV2} from "src/abstract/PriceOracleV2.sol";
-import {Test} from "forge-std/Test.sol";
+import {Test} from "forge-std-1.16.1/src/Test.sol";
 
 contract PriceOracleV2TestImpl is PriceOracleV2 {
     uint256 internal sPrice;

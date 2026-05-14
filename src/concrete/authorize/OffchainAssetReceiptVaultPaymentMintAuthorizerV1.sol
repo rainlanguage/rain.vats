@@ -4,20 +4,20 @@ pragma solidity =0.8.25;
 
 import {IAuthorizeV1, Unauthorized} from "../../interface/IAuthorizeV1.sol";
 
-import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain.factory/interface/ICloneableV2.sol";
-import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.1.0/src/interface/ICloneableV2.sol";
+import {SafeERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/IERC20.sol";
 import {DEPOSIT, DepositStateChange} from "../vault/OffchainAssetReceiptVault.sol";
-import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import {IERC20Metadata} from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {OwnableUpgradeable} from "@openzeppelin-contracts-upgradeable-5.6.1/access/OwnableUpgradeable.sol";
+import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
     OffchainAssetReceiptVaultAuthorizerV1Config,
     DEPOSIT_ADMIN,
     WITHDRAW_ADMIN
 } from "./OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {LibFixedPointDecimalScale, FLAG_ROUND_UP} from "rain.math.fixedpoint/lib/LibFixedPointDecimalScale.sol";
-import {VerifyStatus, IVerifyV1, VERIFY_STATUS_APPROVED} from "rain.verify.interface/interface/IVerifyV1.sol";
+import {LibFixedPointDecimalScale, FLAG_ROUND_UP} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalScale.sol";
+import {VerifyStatus, IVerifyV1, VERIFY_STATUS_APPROVED} from "rain-verify-interface-0.1.0/src/interface/IVerifyV1.sol";
 
 /// @dev String ID for the OffchainAssetReceiptVaultPaymentMintAuthorizerV1
 /// storage location v1.

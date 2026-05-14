@@ -4,12 +4,12 @@ pragma solidity =0.8.25;
 
 import {OracleTest} from "test/abstract/OracleTest.sol";
 import {FtsoV2LTSFeedOracle, FtsoV2LTSFeedOracleConfig} from "src/concrete/oracle/FtsoV2LTSFeedOracle.sol";
-import {FLR_USD_FEED_ID} from "rain.flare/lib/lts/LibFtsoV2LTS.sol";
-import {StalePrice} from "rain.flare/err/ErrFtso.sol";
-import {IFeeCalculator} from "flare-smart-contracts-v2/userInterfaces/IFeeCalculator.sol";
-import {LibFlareContractRegistry} from "rain.flare/lib/registry/LibFlareContractRegistry.sol";
-import {IGoverned, IGovernanceSettings} from "rain.flare/interface/IGoverned.sol";
-import {IGovernedFeeCalculator} from "rain.flare/interface/IGovernedFeeCalculator.sol";
+import {FLR_USD_FEED_ID} from "rain-flare-0.1.1/src/lib/lts/LibFtsoV2LTS.sol";
+import {StalePrice} from "rain-flare-0.1.1/src/err/ErrFtso.sol";
+import {IFeeCalculator} from "rain-flare-0.1.1/src/vendor/flare-smart-contracts-v2/userInterfaces/IFeeCalculator.sol";
+import {LibFlareContractRegistry} from "rain-flare-0.1.1/src/lib/registry/LibFlareContractRegistry.sol";
+import {IGoverned, IGovernanceSettings} from "rain-flare-0.1.1/src/interface/IGoverned.sol";
+import {IGovernedFeeCalculator} from "rain-flare-0.1.1/src/interface/IGovernedFeeCalculator.sol";
 
 contract FtsoV2LTSFeedOracleTest is OracleTest {
     function testFtsoV2LTSFeedOracle() external {

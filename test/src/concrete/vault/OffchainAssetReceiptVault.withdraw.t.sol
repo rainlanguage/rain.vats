@@ -18,8 +18,8 @@ import {
     CertificationExpired,
     Unauthorized
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {IERC20Errors} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
-import {IERC1155Errors} from "openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol";
+import {IERC20Errors} from "@openzeppelin-contracts-5.6.1/token/ERC20/ERC20.sol";
+import {IERC1155Errors} from "@openzeppelin-contracts-5.6.1/token/ERC1155/ERC1155.sol";
 
 contract WithdrawTest is OffchainAssetReceiptVaultTest {
     /// Checks that balance owner balance changes after withdraw

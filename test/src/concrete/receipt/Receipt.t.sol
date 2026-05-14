@@ -7,7 +7,7 @@ import {TestReceiptManager, UnauthorizedTransfer} from "test/concrete/TestReceip
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
 import {OnlyManager} from "src/error/ErrReceipt.sol";
-import {IERC1155Errors} from "openzeppelin-contracts-upgradeable/contracts/token/ERC1155/ERC1155Upgradeable.sol";
+import {IERC1155Errors} from "@openzeppelin-contracts-upgradeable-5.6.1/token/ERC1155/ERC1155Upgradeable.sol";
 
 contract ReceiptTest is ReceiptFactoryTest {
     function testInitialize() public {

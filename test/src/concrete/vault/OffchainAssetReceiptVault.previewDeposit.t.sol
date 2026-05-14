@@ -8,7 +8,7 @@ import {OffchainAssetReceiptVault, DEPOSIT} from "src/concrete/vault/OffchainAss
 import {OffchainAssetReceiptVaultAuthorizerV1} from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin
-} from "rain.math.fixedpoint/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 
 contract OffchainAssetReceiptVaultPreviewDepositTest is OffchainAssetReceiptVaultTest {
     using LibFixedPointDecimalArithmeticOpenZeppelin for uint256;

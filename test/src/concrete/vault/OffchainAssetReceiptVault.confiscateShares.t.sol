@@ -11,7 +11,7 @@ import {
 import {OffchainAssetReceiptVaultTest} from "test/abstract/OffchainAssetReceiptVaultTest.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 import {OffchainAssetReceiptVaultAuthorizerV1} from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {Math} from "openzeppelin-contracts/contracts/utils/math/Math.sol";
+import {Math} from "@openzeppelin-contracts-5.6.1/utils/math/Math.sol";
 
 contract ConfiscateSharesTest is OffchainAssetReceiptVaultTest {
     using Math for uint256;

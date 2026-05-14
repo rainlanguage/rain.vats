@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {PriceOracleV2} from "../../abstract/PriceOracleV2.sol";
-import {LibSceptreStakedFlare} from "rain.flare/lib/sflr/LibSceptreStakedFlare.sol";
+import {LibSceptreStakedFlare} from "rain-flare-0.1.1/src/lib/sflr/LibSceptreStakedFlare.sol";
 
 contract SceptreStakedFlrOracle is PriceOracleV2 {
     /// @inheritdoc PriceOracleV2

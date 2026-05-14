@@ -5,7 +5,7 @@ pragma solidity =0.8.25;
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain.math.fixedpoint/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 import {PriceOracleV2, IPriceOracleV2} from "../../abstract/PriceOracleV2.sol";
 import {ErrTwoPriceOracleV2SameQuoteBase} from "../../error/ErrTwoPriceOracleV2.sol";
 

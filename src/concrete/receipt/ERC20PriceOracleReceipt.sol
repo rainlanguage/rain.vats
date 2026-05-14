@@ -3,14 +3,14 @@
 pragma solidity =0.8.25;
 
 import {Receipt, DATA_URI_BASE64_PREFIX, Base64} from "./Receipt.sol";
-import {LibFixedPointDecimalFormat} from "rain.math.fixedpoint/lib/format/LibFixedPointDecimalFormat.sol";
+import {LibFixedPointDecimalFormat} from "rain-math-fixedpoint-0.2.0/src/lib/format/LibFixedPointDecimalFormat.sol";
 import {ZeroReceiptId} from "../../error/ErrReceipt.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain.math.fixedpoint/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
-import {FIXED_POINT_ONE} from "rain.math.fixedpoint/lib/FixedPointDecimalConstants.sol";
-import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
+} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+import {FIXED_POINT_ONE} from "rain-math-fixedpoint-0.2.0/src/lib/FixedPointDecimalConstants.sol";
+import {Strings} from "@openzeppelin-contracts-5.6.1/utils/Strings.sol";
 
 /// @dev The default symbol for the reference asset.
 string constant DEFAULT_REFERENCE_ASSET_SYMBOL = "USD";

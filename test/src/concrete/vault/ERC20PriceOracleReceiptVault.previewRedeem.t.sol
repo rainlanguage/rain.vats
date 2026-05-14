@@ -7,7 +7,7 @@ import {ERC20PriceOracleReceiptVault} from "src/concrete/vault/ERC20PriceOracleR
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain.math.fixedpoint/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 
 contract ERC20PriceOracleReceiptVaultPreviewRedeemTest is ERC20PriceOracleReceiptVaultTest {

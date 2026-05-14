@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test} from "forge-std/Test.sol";
+import {Test} from "forge-std-1.16.1/src/Test.sol";
 import {TwoPriceOracleConfigV2, IPriceOracleV2, TwoPriceOracleV2} from "src/concrete/oracle/TwoPriceOracleV2.sol";
 import {ErrTwoPriceOracleV2SameQuoteBase} from "src/error/ErrTwoPriceOracleV2.sol";
 
