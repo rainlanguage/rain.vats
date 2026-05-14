@@ -10,11 +10,7 @@ evm_version = "cancun"
 bytecode_hash = "none"
 cbor_metadata = false
 
-# Vendored Pyth interface files (Apache-2.0, under src/vendor/pyth-sdk/).
-# pyth-sdk isn't on soldeer; only IPyth/PythStructs/IPythEvents are
-# needed so they're checked in rather than pulled as submodules.
 remappings = [
-  "pyth-sdk/=src/vendor/pyth-sdk/",
   # Third-party soldeer deps whose own source uses unversioned import
   # prefixes; bridge to their actual install location so transitive
   # resolution works. Tracked upstream:
