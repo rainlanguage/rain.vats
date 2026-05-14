@@ -6,7 +6,7 @@ import {OffchainAssetReceiptVaultTest} from "test/abstract/OffchainAssetReceiptV
 import {OffchainAssetReceiptVault, WITHDRAW} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin
-} from "rain.math.fixedpoint/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 import {OffchainAssetReceiptVaultAuthorizerV1} from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 

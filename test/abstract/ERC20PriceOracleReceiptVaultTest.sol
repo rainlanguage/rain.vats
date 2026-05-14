@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test, Vm} from "forge-std/Test.sol";
+import {Test, Vm} from "forge-std-1.16.1/src/Test.sol";
 import {
     ERC20PriceOracleReceiptVault,
     ERC20PriceOracleReceiptVaultConfigV2,
     ReceiptVaultConfigV2
 } from "src/concrete/vault/ERC20PriceOracleReceiptVault.sol";
 import {Receipt as ReceiptContract} from "../../src/concrete/receipt/Receipt.sol";
-import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {IERC20} from "forge-std-1.16.1/src/interfaces/IERC20.sol";
 import {IPriceOracleV2} from "../../src/interface/IPriceOracleV2.sol";
 import {
     ERC20PriceOracleReceiptVaultCloneDeployer,

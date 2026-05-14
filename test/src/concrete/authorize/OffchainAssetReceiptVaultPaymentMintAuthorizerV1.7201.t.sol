@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {LibERC7201} from "test/lib/LibERC7201.sol";
-import {Test} from "forge-std/Test.sol";
+import {Test} from "forge-std-1.16.1/src/Test.sol";
 
 import {
     OFFCHAIN_ASSET_RECEIPT_VAULT_PAYMENT_MINT_AUTHORIZER_V1_STORAGE_LOCATION,

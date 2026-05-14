@@ -4,7 +4,7 @@ pragma solidity =0.8.25;
 
 import {ERC20PriceOracleReceiptVaultTest} from "test/abstract/ERC20PriceOracleReceiptVaultTest.sol";
 import {ERC20PriceOracleReceiptVault} from "src/concrete/vault/ERC20PriceOracleReceiptVault.sol";
-import {IERC20} from "forge-std/interfaces/IERC20.sol";
+import {IERC20} from "forge-std-1.16.1/src/interfaces/IERC20.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 
 contract ERC20PriceOracleReceiptVaultTotalAssetsTest is ERC20PriceOracleReceiptVaultTest {

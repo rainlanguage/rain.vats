@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {PriceOracleV2} from "../../abstract/PriceOracleV2.sol";
-import {LibFtsoV2LTS} from "rain.flare/lib/lts/LibFtsoV2LTS.sol";
+import {LibFtsoV2LTS} from "rain-flare-0.1.1/src/lib/lts/LibFtsoV2LTS.sol";
 
 //forge-lint: disable-next-line(pascal-case-struct)
 struct FtsoV2LTSFeedOracleConfig {

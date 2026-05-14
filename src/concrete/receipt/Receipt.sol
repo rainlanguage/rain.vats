@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain.factory/interface/ICloneableV2.sol";
+import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.1.0/src/interface/ICloneableV2.sol";
 
 import {IReceiptManagerV2} from "../../interface/IReceiptManagerV2.sol";
 import {IReceiptV3} from "../../interface/IReceiptV3.sol";
 import {IReceiptVaultV3} from "../../interface/IReceiptVaultV3.sol";
 import {OnlyManager} from "../../error/ErrReceipt.sol";
-import {ERC1155Upgradeable} from "openzeppelin-contracts-upgradeable/contracts/token/ERC1155/ERC1155Upgradeable.sol";
-import {IERC20Metadata} from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import {Base64} from "openzeppelin-contracts/contracts/utils/Base64.sol";
-import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {ERC1155Upgradeable} from "@openzeppelin-contracts-upgradeable-5.6.1/token/ERC1155/ERC1155Upgradeable.sol";
+import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
+import {Base64} from "@openzeppelin-contracts-5.6.1/utils/Base64.sol";
+import {Strings} from "@openzeppelin-contracts-5.6.1/utils/Strings.sol";
 
 /// @dev String ID for the Receipt storage location v1.
 string constant RECEIPT_STORAGE_ID = "rain.storage.receipt.1";

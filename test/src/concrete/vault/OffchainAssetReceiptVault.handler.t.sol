@@ -15,7 +15,7 @@ import {
     CertificationExpired
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
-import {IERC1155Errors} from "openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol";
+import {IERC1155Errors} from "@openzeppelin-contracts-5.6.1/token/ERC1155/ERC1155.sol";
 
 contract OffchainAssetReceiptVaultHandlerTest is OffchainAssetReceiptVaultTest {
     function setUpAddressesAndBounds(

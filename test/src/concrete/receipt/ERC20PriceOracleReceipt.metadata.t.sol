@@ -5,16 +5,20 @@ pragma solidity =0.8.25;
 import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
 import {TestReceiptManager} from "test/concrete/TestReceiptManager.sol";
 import {ERC20PriceOracleReceipt} from "src/concrete/receipt/ERC20PriceOracleReceipt.sol";
-import {LibFixedPointDecimalFormat} from "rain.math.fixedpoint/lib/format/LibFixedPointDecimalFormat.sol";
+import {LibFixedPointDecimalFormat} from "rain-math-fixedpoint-0.2.0/src/lib/format/LibFixedPointDecimalFormat.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain.math.fixedpoint/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
-import {FIXED_POINT_ONE} from "rain.math.fixedpoint/lib/FixedPointDecimalConstants.sol";
+} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+import {FIXED_POINT_ONE} from "rain-math-fixedpoint-0.2.0/src/lib/FixedPointDecimalConstants.sol";
 import {ZeroReceiptId} from "src/error/ErrReceipt.sol";
-import {LibConformString} from "rain.string/lib/mut/LibConformString.sol";
-import {CMASK_QUOTATION_MARK, CMASK_PRINTABLE, CMASK_BACKSLASH} from "rain.string/lib/parse/LibParseCMask.sol";
-import {IERC20Metadata} from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {LibConformString} from "rain-string-0.2.0/src/lib/mut/LibConformString.sol";
+import {
+    CMASK_QUOTATION_MARK,
+    CMASK_PRINTABLE,
+    CMASK_BACKSLASH
+} from "rain-string-0.2.0/src/lib/parse/LibParseCMask.sol";
+import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
 
 /// This contract is used to test the metadata of the `Receipt` contract.
 /// As all the overridden functions are internal, we need to create a new

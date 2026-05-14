@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity ^0.8.0;
 
-import {IPyth} from "pyth-sdk/IPyth.sol";
+import {IPyth} from "../vendor/pyth-sdk/IPyth.sol";
 
 /// @title IPythOracleV1
 /// @notice V1 interface for PythOracle. Uses the original I_ naming

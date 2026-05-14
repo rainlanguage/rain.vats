@@ -4,11 +4,9 @@ pragma solidity =0.8.25;
 
 import {IAuthorizeV1, Unauthorized} from "../../interface/IAuthorizeV1.sol";
 
-import {
-    AccessControlUpgradeable
-} from "openzeppelin-contracts-upgradeable/contracts/access/AccessControlUpgradeable.sol";
-import {IAccessControl} from "openzeppelin-contracts/contracts/access/IAccessControl.sol";
-import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain.factory/interface/ICloneableV2.sol";
+import {AccessControlUpgradeable} from "@openzeppelin-contracts-upgradeable-5.6.1/access/AccessControlUpgradeable.sol";
+import {IAccessControl} from "@openzeppelin-contracts-5.6.1/access/IAccessControl.sol";
+import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.1.0/src/interface/ICloneableV2.sol";
 import {
     CONFISCATE_RECEIPT,
     CONFISCATE_SHARES,
@@ -20,7 +18,7 @@ import {
     TransferSharesStateChange,
     TransferReceiptStateChange
 } from "../vault/OffchainAssetReceiptVault.sol";
-import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
 
 /// Thrown when the admin is address zero.
 error ZeroInitialAdmin();

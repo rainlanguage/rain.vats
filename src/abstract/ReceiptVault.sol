@@ -2,21 +2,21 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {ERC20Upgradeable} from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
-import {ReentrancyGuard} from "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
-import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import {MulticallUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/utils/MulticallUpgradeable.sol";
+import {ERC20Upgradeable} from "@openzeppelin-contracts-upgradeable-5.6.1/token/ERC20/ERC20Upgradeable.sol";
+import {ReentrancyGuard} from "@openzeppelin-contracts-5.6.1/utils/ReentrancyGuard.sol";
+import {IERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/utils/SafeERC20.sol";
+import {MulticallUpgradeable} from "@openzeppelin-contracts-upgradeable-5.6.1/utils/MulticallUpgradeable.sol";
 import {IReceiptVaultV3, IReceiptVaultV1, IReceiptV3} from "../interface/IReceiptVaultV3.sol";
 import {IReceiptManagerV2} from "../interface/IReceiptManagerV2.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain.math.fixedpoint/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 // Export ICLONEABLE_V2_SUCCESS for concrete implementations.
 // forge-lint: disable-next-line(unused-import)
-import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain.factory/interface/ICloneableV2.sol";
-import {Address} from "openzeppelin-contracts/contracts/utils/Address.sol";
+import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.1.0/src/interface/ICloneableV2.sol";
+import {Address} from "@openzeppelin-contracts-5.6.1/utils/Address.sol";
 import {
     InvalidId,
     ZeroReceiver,
@@ -27,10 +27,8 @@ import {
     WrongManager
 } from "../error/ErrReceiptVault.sol";
 import {UnmanagedReceiptTransfer} from "../interface/IReceiptManagerV2.sol";
-import {
-    ERC165Upgradeable
-} from "openzeppelin-contracts-upgradeable/contracts/utils/introspection/ERC165Upgradeable.sol";
-import {IERC20Metadata} from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {ERC165Upgradeable} from "@openzeppelin-contracts-upgradeable-5.6.1/utils/introspection/ERC165Upgradeable.sol";
+import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
 
 /// @dev String ID for the ReceiptVault storage location v1.
 string constant RECEIPT_VAULT_V1_STORAGE_ID = "rain.storage.receipt-vault.1";

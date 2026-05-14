@@ -4,10 +4,10 @@ pragma solidity =0.8.25;
 
 import {Receipt, ICLONEABLE_V2_SUCCESS} from "../receipt/Receipt.sol";
 import {OffchainAssetReceiptVault, OffchainAssetReceiptVaultConfigV2} from "../vault/OffchainAssetReceiptVault.sol";
-import {IBeacon} from "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol";
-import {UpgradeableBeacon} from "openzeppelin-contracts/contracts/proxy/beacon/UpgradeableBeacon.sol";
-import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
-import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {IBeacon} from "@openzeppelin-contracts-5.6.1/proxy/beacon/IBeacon.sol";
+import {UpgradeableBeacon} from "@openzeppelin-contracts-5.6.1/proxy/beacon/UpgradeableBeacon.sol";
+import {BeaconProxy} from "@openzeppelin-contracts-5.6.1/proxy/beacon/BeaconProxy.sol";
+import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
 import {
     IOffchainAssetReceiptVaultBeaconSetDeployerV2
 } from "../../interface/IOffchainAssetReceiptVaultBeaconSetDeployerV2.sol";

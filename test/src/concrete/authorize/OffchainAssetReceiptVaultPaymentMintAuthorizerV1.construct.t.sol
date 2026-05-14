@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test} from "forge-std/Test.sol";
+import {Test} from "forge-std-1.16.1/src/Test.sol";
 
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config,
@@ -13,11 +13,11 @@ import {
     ZeroPaymentToken,
     ZeroMaxSharesSupply
 } from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
-import {CloneFactory} from "rain.factory/concrete/CloneFactory.sol";
-import {IERC20Metadata} from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import {ICloneableV2} from "rain.factory/interface/ICloneableV2.sol";
+import {CloneFactory} from "rain-factory-0.1.0/src/concrete/CloneFactory.sol";
+import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
+import {ICloneableV2} from "rain-factory-0.1.0/src/interface/ICloneableV2.sol";
 import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
-import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
 import {
     WITHDRAW,
     DEPOSIT,
@@ -32,8 +32,8 @@ import {
     CONFISCATE_SHARES_ADMIN,
     CERTIFY_ADMIN
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {VerifyAlwaysApproved} from "rain.verify.interface/concrete/VerifyAlwaysApproved.sol";
-import {Initializable} from "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/VerifyAlwaysApproved.sol";
+import {Initializable} from "@openzeppelin-contracts-upgradeable-5.6.1/proxy/utils/Initializable.sol";
 
 contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1Construct() external {

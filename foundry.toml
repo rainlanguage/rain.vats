@@ -1,24 +1,35 @@
 [profile.default]
+libs = ['dependencies']
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
 
 solc = "0.8.25"
 optimizer = true
 optimizer_runs = 100000
-
 evm_version = "cancun"
-
-remappings = [
-    "openzeppelin-contracts/=lib/openzeppelin-contracts/",
-    "openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/",
-    "rain.factory/=lib/rain.factory/src/",
-    "rain.intorastring/=lib/rain.interpreter/lib/rain.intorastring/src/",
-    "rain.flare/=lib/rain.flare/src/",
-    "chainlink/=lib/rain.chainlink/lib/chainlink/contracts/src/",
-    "rain.math.fixedpoint/=lib/rain.math.fixedpoint/src/",
-    "rain.extrospection/=lib/rain.factory/lib/rain.extrospection/src/",
-    "rain.math.float/=lib/rain.flare/lib/rain.interpreter/lib/rain.interpreter.interface/lib/rain.math.float/src/",
-]
-
 bytecode_hash = "none"
 cbor_metadata = false
+
+remappings = [
+  # Third-party soldeer deps whose own source uses unversioned import
+  # prefixes; bridge to their actual install location so transitive
+  # resolution works. Tracked upstream:
+  # - OpenZeppelin/openzeppelin-contracts-upgradeable#232
+  "@openzeppelin/contracts/=dependencies/@openzeppelin-contracts-5.6.1/",
+]
+
+[dependencies]
+forge-std = "1.16.1"
+"@openzeppelin-contracts" = "5.6.1"
+"@openzeppelin-contracts-upgradeable" = "5.6.1"
+"rain-extrospection" = "0.1.0"
+"rain-factory" = "0.1.0"
+"rain-flare" = "0.1.1"
+"rain-math-fixedpoint" = "0.2.0"
+"rain-math-float" = "0.1.1"
+"rain-string" = "0.2.0"
+"rain-verify-interface" = "0.1.0"
+"solady" = "0.1.26"
+
+[soldeer]
+recursive_deps = false

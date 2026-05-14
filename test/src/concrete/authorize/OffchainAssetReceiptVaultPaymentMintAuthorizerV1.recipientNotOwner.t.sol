@@ -3,14 +3,14 @@
 pragma solidity =0.8.25;
 
 import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainAssetReceiptVaultAuthorizerV1Test.sol";
-import {CloneFactory} from "rain.factory/concrete/CloneFactory.sol";
+import {CloneFactory} from "rain-factory-0.1.0/src/concrete/CloneFactory.sol";
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1,
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config
 } from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
 import {DepositStateChange, DEPOSIT} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
-import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import {VerifyAlwaysApproved} from "rain.verify.interface/concrete/VerifyAlwaysApproved.sol";
+import {IERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/IERC20.sol";
+import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/VerifyAlwaysApproved.sol";
 import {TestErc20} from "test/concrete/TestErc20.sol";
 
 contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1RecipientNotOwnerTest is

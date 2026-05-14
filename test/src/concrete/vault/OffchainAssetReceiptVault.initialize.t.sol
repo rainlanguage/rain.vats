@@ -11,7 +11,7 @@ import {
 } from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {CorruptedEnvironmentBlockTimestampZero} from "src/abstract/OwnerFreezable.sol";
 import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
-import {BeaconProxy} from "openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol";
+import {BeaconProxy} from "@openzeppelin-contracts-5.6.1/proxy/beacon/BeaconProxy.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 
 contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTest {

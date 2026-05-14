@@ -2,20 +2,27 @@ version = 1
 
 [[annotations]]
 path = [
-    ".gas-snapshot",
-    ".github/workflows/**/",
-    ".gitignore",
-    ".gitmodules",
-    ".idea/**/",
-    "README.md",
-    "erc1155Metadata/**/",
-    "flake.lock",
-    "flake.nix",
-    "foundry.toml",
-    "slither.config.json",
-    "REUSE.toml",
-    "foundry.lock",
-    "audit/**/",
+  ".gas-snapshot",
+  ".github/workflows/**/",
+  ".gitignore",
+  ".idea/**/",
+  ".soldeerignore",
+  "README.md",
+  "erc1155Metadata/**/",
+  "flake.lock",
+  "flake.nix",
+  "foundry.toml",
+  "remappings.txt",
+  "slither.config.json",
+  "REUSE.toml",
+  "soldeer.lock",
+  "audit/**/",
 ]
 SPDX-FileCopyrightText = "Copyright (c) 2020 Rain Open Source Software Ltd"
 SPDX-License-Identifier = "LicenseRef-DCL-1.0"
+
+# Vendored Pyth interface files (upstream Apache-2.0, see LICENSES/Apache-2.0.txt).
+[[annotations]]
+path = ["src/vendor/pyth-sdk/**/"]
+SPDX-FileCopyrightText = "Copyright (c) 2025 Pyth Data Association"
+SPDX-License-Identifier = "Apache-2.0"

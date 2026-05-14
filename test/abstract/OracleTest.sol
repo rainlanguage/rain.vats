@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test} from "forge-std/Test.sol";
-import {LibFork} from "rain.flare/../test/fork/LibFork.sol";
+import {Test} from "forge-std-1.16.1/src/Test.sol";
+import {LibFork} from "rain-flare-0.1.1/src/../test/fork/LibFork.sol";
 
 abstract contract OracleTest is Test {
     uint256 constant BLOCK_NUMBER = 31993648;

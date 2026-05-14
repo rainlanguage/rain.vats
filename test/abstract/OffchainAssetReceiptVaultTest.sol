@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test, Vm} from "forge-std/Test.sol";
+import {Test, Vm} from "forge-std-1.16.1/src/Test.sol";
 import {
     OffchainAssetReceiptVaultConfigV2,
     OffchainAssetReceiptVault,
@@ -17,7 +17,7 @@ import {
     OffchainAssetReceiptVaultBeaconSetDeployer,
     OffchainAssetReceiptVaultBeaconSetDeployerConfig
 } from "../../src/concrete/deploy/OffchainAssetReceiptVaultBeaconSetDeployer.sol";
-import {Clones} from "openzeppelin-contracts/contracts/proxy/Clones.sol";
+import {Clones} from "@openzeppelin-contracts-5.6.1/proxy/Clones.sol";
 
 contract OffchainAssetReceiptVaultTest is Test {
     OffchainAssetReceiptVault internal immutable iImplementation;

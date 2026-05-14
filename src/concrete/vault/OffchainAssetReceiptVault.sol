@@ -9,11 +9,11 @@ import {
     InvalidId,
     ICLONEABLE_V2_SUCCESS
 } from "../../abstract/ReceiptVault.sol";
-import {Math} from "openzeppelin-contracts/contracts/utils/math/Math.sol";
+import {Math} from "@openzeppelin-contracts-5.6.1/utils/math/Math.sol";
 import {IAuthorizeV1, Unauthorized} from "../../interface/IAuthorizeV1.sol";
 import {IAuthorizableV1} from "../../interface/IAuthorizableV1.sol";
 import {ICertifiableV1} from "../../interface/ICertifiableV1.sol";
-import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
 
 import {ZeroInitialAdmin} from "../authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {OwnerFreezable} from "../../abstract/OwnerFreezable.sol";
