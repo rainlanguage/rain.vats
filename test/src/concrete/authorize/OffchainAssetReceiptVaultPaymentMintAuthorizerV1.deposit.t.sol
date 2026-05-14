@@ -53,6 +53,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1DepositTest is Offchain
         uint256 firstShares
     ) external {
         vm.assume(uint160(alice) > type(uint160).max / 2 && uint160(bob) > type(uint160).max / 2 && alice != bob);
+        vm.assume(alice.code.length == 0 && bob.code.length == 0);
 
         vm.prank(bob);
         TestErc20 paymentToken = new TestErc20();
