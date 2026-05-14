@@ -29,7 +29,7 @@ contract PythInterfaceProdTest is Test {
     /// IPyth.getPriceNoOlderThan — the only IPyth method this repo invokes,
     /// via PythOracle.price().
     function testPythGetPriceNoOlderThan() external {
-        vm.createSelectFork(vm.envString("RPC_URL_ARBITRUM_FORK"));
+        vm.createSelectFork(vm.envString("ARBITRUM_RPC_URL"));
         PythStructs.Price memory p = PYTH.getPriceNoOlderThan(BTC_USD_FEED_ID, STALE_AFTER);
         assertTrue(p.price > 0, "BTC price is non-positive");
         assertTrue(p.conf > 0, "BTC confidence is zero");
