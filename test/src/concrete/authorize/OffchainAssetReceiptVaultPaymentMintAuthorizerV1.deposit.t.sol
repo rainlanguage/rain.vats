@@ -53,6 +53,12 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1DepositTest is Offchain
         uint256 firstShares
     ) external {
         vm.assume(uint160(alice) > type(uint160).max / 2 && uint160(bob) > type(uint160).max / 2 && alice != bob);
+        // The mint path calls `_mint` on the ERC1155 receipt, which invokes
+        // `onERC1155Received` on receiver contracts. Filter out fuzzer-
+        // generated addresses that happen to have code so the mint reverts
+        // with the asserted `ERC20InsufficientBalance` rather than an
+        // `ERC1155InvalidReceiver` from the upstream OZ contract.
+        vm.assume(alice.code.length == 0 && bob.code.length == 0);
 
         vm.prank(bob);
         TestErc20 paymentToken = new TestErc20();
