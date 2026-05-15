@@ -372,7 +372,7 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
     /// Sets the authorizer contract. This is a critical operation and should be
     /// done with extreme care by the owner.
     /// @param newAuthorizer The new authorizer contract.
-    function setAuthorizer(IAuthorizeV1 newAuthorizer) external virtual onlyOwner {
+    function setAuthorizer(IAuthorizeV1 newAuthorizer) public virtual onlyOwner {
         _setAuthorizer(newAuthorizer);
     }
 
