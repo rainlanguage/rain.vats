@@ -360,7 +360,7 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
     /// control so it MUST only be externally accessible by functions with an
     /// access check.
     /// @param newAuthorizer The new authorizer contract.
-    function _setAuthorizer(IAuthorizeV1 newAuthorizer) internal {
+    function _setAuthorizer(IAuthorizeV1 newAuthorizer) internal virtual {
         if (!IERC165(address(newAuthorizer)).supportsInterface(type(IAuthorizeV1).interfaceId)) {
             revert IncompatibleAuthorizer();
         }
@@ -372,7 +372,7 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
     /// Sets the authorizer contract. This is a critical operation and should be
     /// done with extreme care by the owner.
     /// @param newAuthorizer The new authorizer contract.
-    function setAuthorizer(IAuthorizeV1 newAuthorizer) external onlyOwner {
+    function setAuthorizer(IAuthorizeV1 newAuthorizer) external virtual onlyOwner {
         _setAuthorizer(newAuthorizer);
     }
 
