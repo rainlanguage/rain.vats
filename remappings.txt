@@ -1,8 +1,8 @@
 @openzeppelin-contracts-5.6.1/=dependencies/@openzeppelin-contracts-5.6.1/
 @openzeppelin-contracts-upgradeable-5.6.1/=dependencies/@openzeppelin-contracts-upgradeable-5.6.1/
 forge-std-1.16.1/=dependencies/forge-std-1.16.1/
-rain-extrospection-0.1.0/=dependencies/rain-extrospection-0.1.0/
-rain-factory-0.1.0/=dependencies/rain-factory-0.1.0/
+rain-extrospection-0.1.1/=dependencies/rain-extrospection-0.1.1/
+rain-factory-0.1.1/=dependencies/rain-factory-0.1.1/
 rain-flare-0.1.2/=dependencies/rain-flare-0.1.2/
 rain-math-fixedpoint-0.2.0/=dependencies/rain-math-fixedpoint-0.2.0/
 rain-math-float-0.1.1/=dependencies/rain-math-float-0.1.1/

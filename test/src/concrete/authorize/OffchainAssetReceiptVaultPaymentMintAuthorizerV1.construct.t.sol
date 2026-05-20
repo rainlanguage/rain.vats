@@ -13,9 +13,9 @@ import {
     ZeroPaymentToken,
     ZeroMaxSharesSupply
 } from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
-import {CloneFactory} from "rain-factory-0.1.0/src/concrete/CloneFactory.sol";
+import {CloneFactory} from "rain-factory-0.1.1/src/concrete/CloneFactory.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
-import {ICloneableV2} from "rain-factory-0.1.0/src/interface/ICloneableV2.sol";
+import {ICloneableV2} from "rain-factory-0.1.1/src/interface/ICloneableV2.sol";
 import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
 import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
 import {

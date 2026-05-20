@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {ReceiptVault, ReceiptVaultConfigV2} from "../../src/abstract/ReceiptVault.sol";
-import {ICLONEABLE_V2_SUCCESS} from "rain-factory-0.1.0/src/interface/ICloneableV2.sol";
+import {ICLONEABLE_V2_SUCCESS} from "rain-factory-0.1.1/src/interface/ICloneableV2.sol";
 
 contract ConcreteReceiptVault is ReceiptVault {
     function initialize(bytes calldata data) external virtual override initializer returns (bytes32) {

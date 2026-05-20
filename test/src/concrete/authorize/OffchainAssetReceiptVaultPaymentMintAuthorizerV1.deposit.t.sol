@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainAssetReceiptVaultAuthorizerV1Test.sol";
-import {CloneFactory} from "rain-factory-0.1.0/src/concrete/CloneFactory.sol";
+import {CloneFactory} from "rain-factory-0.1.1/src/concrete/CloneFactory.sol";
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1,
     PaymentTokenDecimalMismatch,
