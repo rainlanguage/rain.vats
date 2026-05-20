@@ -11,7 +11,7 @@ import {
     CERTIFY,
     CertifyStateChange
 } from "src/concrete/vault/OffchainAssetReceiptVault.sol";
-import {LibExtrospectERC1167Proxy} from "rain-extrospection-0.1.0/src/lib/LibExtrospectERC1167Proxy.sol";
+import {LibExtrospectERC1167Proxy} from "rain-extrospection-0.1.1/src/lib/LibExtrospectERC1167Proxy.sol";
 import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
 import {OwnableUpgradeable as Ownable} from "@openzeppelin-contracts-upgradeable-5.6.1/access/OwnableUpgradeable.sol";
 

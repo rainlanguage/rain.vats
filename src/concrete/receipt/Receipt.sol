@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.1.0/src/interface/ICloneableV2.sol";
+import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.1.1/src/interface/ICloneableV2.sol";
 
 import {IReceiptManagerV2} from "../../interface/IReceiptManagerV2.sol";
 import {IReceiptV3} from "../../interface/IReceiptV3.sol";
