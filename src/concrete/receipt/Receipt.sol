@@ -103,6 +103,20 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
         getStorageReceipt().operator = address(0);
     }
 
+    /// Returns the operator to authorize the current transfer as, consuming any
+    /// single-use operator a manager call planted via `withOperator`. Falls back
+    /// to the true caller when none is set (direct transfers, and transfers that
+    /// re-enter once the operator has been consumed).
+    function _consumeOperator() internal returns (address) {
+        Receipt7201Storage storage s = getStorageReceipt();
+        address operator = s.operator;
+        if (operator == address(0)) {
+            return _msgSender();
+        }
+        s.operator = address(0);
+        return operator;
+    }
+
     /// Initializes the `Receipt` so that it is usable as a clonable
     /// implementation in `ReceiptFactory`.
     /// Compatible with `ICloneableV2`.
@@ -219,23 +233,8 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
         virtual
         override
     {
-        Receipt7201Storage storage s = getStorageReceipt();
-
-        // `s.operator` is the transfer initiator forwarded to the authorizer. A
-        // manager call plants it via `withOperator(...)`; `_msgSender()` is never
-        // overridden, so ERC1155 permission checks always see the true caller.
-        address operator = s.operator;
-        if (operator == address(0)) {
-            // No operator planted: a direct transfer, or a transfer whose operator
-            // was already consumed below (e.g. one re-entering during the
-            // acceptance callback). Authorize as the true caller.
-            operator = _msgSender();
-        } else {
-            // Operator planted by a manager call. Forward it once and clear it, so
-            // no later transfer in this transaction can reuse it.
-            s.operator = address(0);
-        }
-        s.manager.authorizeReceiptTransfer3(operator, from, to, ids, amounts);
+        address operator = _consumeOperator();
+        getStorageReceipt().manager.authorizeReceiptTransfer3(operator, from, to, ids, amounts);
         super._update(from, to, ids, amounts);
     }
 
