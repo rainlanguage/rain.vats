@@ -21,10 +21,11 @@ contract PythInterfaceProdTest is Test {
     /// @dev BTC/USD price feed ID (Pyth canonical feed).
     bytes32 constant BTC_USD_FEED_ID = 0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43;
 
-    /// @dev Generous staleness window so the test is robust across pinned fork
-    /// blocks; the only thing under test is that the call returns plausible
-    /// values, not that the price is fresh.
-    uint256 constant STALE_AFTER = 1 hours;
+    /// @dev Effectively unbounded staleness window. The test pins the live
+    /// contract's ABI and return decoding, not price freshness — Pyth is a pull
+    /// oracle, so a tight window forking at latest reverts StalePrice whenever
+    /// BTC/USD hasn't been pushed recently.
+    uint256 constant STALE_AFTER = 36500 days;
 
     /// IPyth.getPriceNoOlderThan — the only IPyth method this repo invokes,
     /// via PythOracle.price().
