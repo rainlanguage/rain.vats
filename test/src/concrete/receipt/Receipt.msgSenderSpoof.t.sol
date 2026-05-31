@@ -43,23 +43,18 @@ contract MaliciousReceiver is IERC1155Receiver {
 }
 
 /// @title ReceiptMsgSenderSpoofTest
-/// @notice Demonstrates issue #309: ERC1155 acceptance callback enables
-/// persistent operator approval via `_msgSender` spoofing.
+/// @notice Regression test for issue #309: an ERC1155 acceptance callback must
+/// NOT be able to spoof the depositor's identity. With the fix (no `_msgSender`
+/// override), the callback observes the true `msg.sender` (the malicious
+/// receiver), so a `setApprovalForAll` made during the callback lands on the
+/// receiver itself, never on the spoofed depositor.
 contract ReceiptMsgSenderSpoofTest is ReceiptFactoryTest {
-    /// During `managerMint(victim, maliciousReceiver, ...)` the `withSender`
-    /// modifier sets the receipt's stored sender to `victim` for the whole
-    /// call. `_mint` then fires `onERC1155Received` on the malicious receiver,
-    /// which calls `setApprovalForAll(attacker, true)`. The receipt's
-    /// `_msgSender()` returns the spoofed `victim`, so the approval is recorded
-    /// as `isApprovedForAll[victim][attacker] == true` — an approval the victim
-    /// never made, letting the attacker drain all of the victim's receipts and
-    /// block redemption of the underlying shares/assets.
-    ///
-    /// This test asserts the (currently buggy) spoofed approval IS granted, so
-    /// it passes against the vulnerable code and serves as an executable PoC for
-    /// #309. When #309 is fixed the assertions should be inverted: the callback
-    /// must observe the malicious receiver as `msg.sender`, so the victim must
-    /// NOT end up approving the attacker.
+    /// The vault calls `managerMint(victim, maliciousReceiver, ...)` when the
+    /// victim deposits with a malicious contract as `receiver`. `_mint` fires
+    /// `onERC1155Received` on the malicious receiver, which calls
+    /// `setApprovalForAll(attacker, true)`. Pre-fix this was recorded as the
+    /// victim (spoofed `_msgSender()`); post-fix it is recorded as the malicious
+    /// receiver (the true caller), so the victim is never made to approve anyone.
     function testReceiptMsgSenderSpoofGrantsOperatorApproval(uint256 id, uint256 amount, bytes memory data) external {
         amount = bound(amount, 1, type(uint256).max);
 
@@ -77,27 +72,22 @@ contract ReceiptMsgSenderSpoofTest is ReceiptFactoryTest {
         testManager.setFrom(address(0));
         testManager.setTo(address(maliciousReceiver));
 
-        // The victim has not approved the attacker before the deposit.
         assertFalse(receipt.isApprovedForAll(victim, attacker), "precondition: no approval");
 
-        // The vault calls managerMint(victim, maliciousReceiver, ...) when the
-        // victim deposits with the malicious contract as `receiver`. The receipt
-        // sender is the victim (TestReceiptManager forwards its own msg.sender).
         vm.prank(victim);
         testManager.managerMint(receipt, address(maliciousReceiver), id, amount, data);
 
-        // BUG (#309): the malicious receiver's callback granted the attacker
-        // operator approval over the VICTIM's receipts, spoofed as the victim.
-        assertTrue(
-            receipt.isApprovedForAll(victim, attacker),
-            "victim's identity was spoofed to grant the attacker operator approval"
+        // FIXED (#309): the spoof is gone. The victim was NOT made to approve the
+        // attacker...
+        assertFalse(
+            receipt.isApprovedForAll(victim, attacker), "victim must not be spoofed into approving the attacker"
         );
 
-        // The attacker did NOT receive the approval under its own identity — the
-        // whole point is that it was attributed to the victim instead.
-        assertFalse(
+        // ...the approval the malicious callback made is attributed to the
+        // malicious receiver itself (the true `msg.sender`), which is harmless.
+        assertTrue(
             receipt.isApprovedForAll(address(maliciousReceiver), attacker),
-            "approval was attributed to the victim, not the malicious receiver"
+            "callback approval lands on the true caller, not the victim"
         );
     }
 }

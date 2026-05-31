@@ -36,11 +36,15 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
     /// @param manager The manager of the `Receipt` contract.
     /// Set during `initialize` and cannot be changed.
     /// Intended to be a `ReceiptVault` contract.
-    /// @param sender The sender for the duration of the function call.
+    /// @param operator The authorization operator for the duration of a manager
+    /// call (the depositor/confiscator that the vault passed). Used ONLY to pass
+    /// the correct operator to `authorizeReceiptTransfer3`; it deliberately does
+    /// NOT affect `_msgSender()`, so the inherited ERC1155 functions and their
+    /// acceptance callbacks observe the true `msg.sender` and cannot be spoofed.
     /// @custom:storage-location erc7201:rain.storage.receipt.1
     struct Receipt7201Storage {
         IReceiptManagerV2 manager;
-        address sender;
+        address operator;
     }
 
     /// @dev Accessor for receipt storage.
@@ -71,36 +75,30 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
         }
     }
 
-    /// Sets the sender for the duration of the function call. Requires that
-    /// `_msgSender()` is used consistently instead of `msg.sender` so that the
-    /// sender that is set here is actually used.
-    /// @param sender The address to set as the sender.
-    modifier withSender(address sender) {
-        _withSenderBefore(sender);
+    /// Sets the authorization operator for the duration of a manager call. This
+    /// is the address the vault passed (the depositor/confiscator) and is used
+    /// ONLY to pass the correct operator to `authorizeReceiptTransfer3` in
+    /// `_update`. It deliberately does NOT override `_msgSender()`, so the
+    /// inherited ERC1155 functions and acceptance callbacks observe the true
+    /// `msg.sender` and cannot be spoofed (see #309).
+    /// @param operator The address to set as the authorization operator.
+    modifier withOperator(address operator) {
+        _withOperatorBefore(operator);
         _;
-        _withSenderAfter();
+        _withOperatorAfter();
     }
 
-    /// Sets the sender to `sender`. Dedicated function to avoid code bloat from
-    /// using a modifier directly.
-    /// @param sender The address to set as the sender.
-    function _withSenderBefore(address sender) internal {
-        Receipt7201Storage storage s = getStorageReceipt();
-        s.sender = sender;
+    /// Sets the operator. Dedicated function to avoid code bloat from using a
+    /// modifier directly.
+    /// @param operator The address to set as the authorization operator.
+    function _withOperatorBefore(address operator) internal {
+        getStorageReceipt().operator = operator;
     }
-    /// Resets the sender to address(0). Dedicated function to avoid code bloat
+
+    /// Resets the operator to address(0). Dedicated function to avoid code bloat
     /// from using a modifier directly.
-
-    function _withSenderAfter() internal {
-        Receipt7201Storage storage s = getStorageReceipt();
-        s.sender = address(0);
-    }
-
-    /// Overrides `_msgSender` to allow `withSender` modifier to set the sender.
-    function _msgSender() internal view virtual override returns (address) {
-        Receipt7201Storage storage s = getStorageReceipt();
-        address sender = s.sender;
-        return sender == address(0) ? msg.sender : sender;
+    function _withOperatorAfter() internal {
+        getStorageReceipt().operator = address(0);
     }
 
     /// Initializes the `Receipt` so that it is usable as a clonable
@@ -182,7 +180,7 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
         external
         virtual
         onlyManager
-        withSender(sender)
+        withOperator(sender)
     {
         _receiptInformation(sender, id, data);
         _mint(account, id, amount, data);
@@ -193,7 +191,7 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
         external
         virtual
         onlyManager
-        withSender(sender)
+        withOperator(sender)
     {
         _receiptInformation(sender, id, data);
         _burn(account, id, amount);
@@ -207,7 +205,7 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
         uint256 id,
         uint256 amount,
         bytes memory data
-    ) external virtual onlyManager withSender(sender) {
+    ) external virtual onlyManager withOperator(sender) {
         _safeTransferFrom(from, to, id, amount, data);
     }
 
@@ -220,8 +218,19 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
         override
     {
         Receipt7201Storage storage s = getStorageReceipt();
-        // _msgSender = operator in OZ 5.
-        s.manager.authorizeReceiptTransfer3(_msgSender(), from, to, ids, amounts);
+        // The authorization operator is the explicit operator set by the active
+        // manager call (the depositor/confiscator the vault passed), falling
+        // back to the real caller for direct peer-to-peer transfers. This is
+        // kept separate from `_msgSender()` on purpose: `_msgSender()` is NOT
+        // overridden, so ERC1155 acceptance callbacks cannot spoof identities
+        // (#309), while `authorizeReceiptTransfer3` still receives the true
+        // initiator (e.g. a confiscator must still be seen for the
+        // confiscation-during-certification-expiry bypass).
+        address operator = s.operator;
+        if (operator == address(0)) {
+            operator = _msgSender();
+        }
+        s.manager.authorizeReceiptTransfer3(operator, from, to, ids, amounts);
         super._update(from, to, ids, amounts);
     }
 
