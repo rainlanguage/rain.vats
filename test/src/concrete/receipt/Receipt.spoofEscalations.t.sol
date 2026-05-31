@@ -9,7 +9,10 @@ import {ApprovalSpoofReceiver} from "test/concrete/ApprovalSpoofReceiver.sol";
 import {AtomicDrainReceiver} from "test/concrete/AtomicDrainReceiver.sol";
 import {BatchDrainReceiver} from "test/concrete/BatchDrainReceiver.sol";
 import {BenignReceiver} from "test/concrete/BenignReceiver.sol";
+import {ManagerForgeReceiver} from "test/concrete/ManagerForgeReceiver.sol";
 import {SpyReceiptManager} from "test/concrete/SpyReceiptManager.sol";
+import {IReceiptV3} from "src/interface/IReceiptV3.sol";
+import {OnlyManager} from "src/error/ErrReceipt.sol";
 import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
 import {IERC1155Errors} from "@openzeppelin-contracts-5.6.1/interfaces/draft-IERC6093.sol";
 
@@ -191,5 +194,28 @@ contract ReceiptSpoofEscalationsTest is ReceiptFactoryTest {
         assertFalse(receipt.isApprovedForAll(from, attacker), "from must not be spoofed");
         assertFalse(receipt.isApprovedForAll(confiscator, attacker), "sender must not be spoofed");
         assertTrue(receipt.isApprovedForAll(address(receiver), attacker), "approval lands on the true caller");
+    }
+
+    /// E3 (neutralized): a malicious receiver cannot forge a manager-only call
+    /// from inside the acceptance callback. The fix leaves `_msgSender()` as the
+    /// true caller, so a re-entrant `managerMint` from the receiver fails
+    /// `_onlyManager` (receiver != manager) and reverts `OnlyManager`, unwinding
+    /// the whole deposit. This closes the "impersonate the manager to mint/burn/
+    /// confiscate during the callback" escalation.
+    function testReentrantManagerForgeRevertsOnlyManager(uint256 id, uint256 amount) external {
+        amount = bound(amount, 1, type(uint128).max);
+
+        (FreeTransferReceiptManager manager, ReceiptContract receipt) = _setup();
+        address depositor = makeAddr("depositor");
+
+        ManagerForgeReceiver forger = new ManagerForgeReceiver(IReceiptV3(address(receipt)), id, amount);
+
+        // The deposit delivers to the forger; its callback tries to mint to
+        // itself as the manager. `_onlyManager` rejects the forged call.
+        vm.expectRevert(abi.encodeWithSelector(OnlyManager.selector));
+        manager.mint(receipt, depositor, address(forger), id, amount, "");
+
+        // Nothing was minted to the forger — the whole operation reverted.
+        assertEq(receipt.balanceOf(address(forger), id), 0, "no receipts minted to the forger");
     }
 }
