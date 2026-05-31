@@ -230,6 +230,14 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
         if (operator == address(0)) {
             operator = _msgSender();
         }
+        // Clear the stored operator now that it has been captured, BEFORE
+        // authorizing and BEFORE `super._update` fires any ERC1155 acceptance
+        // callback. Otherwise a transfer that re-enters during the callback (or
+        // a malicious authorizer) would inherit this call's operator for its own
+        // `authorizeReceiptTransfer3` instead of its true caller. Each manager
+        // call performs exactly one `_update`, so clearing here does not affect
+        // the operator the rest of this call sees.
+        s.operator = address(0);
         s.manager.authorizeReceiptTransfer3(operator, from, to, ids, amounts);
         super._update(from, to, ids, amounts);
     }

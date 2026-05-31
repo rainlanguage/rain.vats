@@ -6,6 +6,8 @@ import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
 import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
 import {SpyReceiptManager} from "test/concrete/SpyReceiptManager.sol";
 import {RecordingReceiver} from "test/concrete/RecordingReceiver.sol";
+import {ReentrantTransferReceiver} from "test/concrete/ReentrantTransferReceiver.sol";
+import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
 
 /// @title ReceiptOperatorIdentityTest
 /// @notice Validates the operator identity the #309 fix forwards to
@@ -182,5 +184,33 @@ contract ReceiptOperatorIdentityTest is ReceiptFactoryTest {
         receipt.safeBatchTransferFrom(alice, bob, ids, amounts, "");
 
         assertEq(manager.lastOperator(), operator, "batch operator transfer forwards the operator");
+    }
+
+    /// A transfer that RE-ENTERS during a manager call's acceptance callback uses
+    /// its own true caller as the operator, NOT the stale stored operator from
+    /// the outer manager call. The stored operator is cleared before the callback
+    /// fires, so it cannot leak (e.g. a confiscation-style authz bypass) into
+    /// re-entrant transfers.
+    function testReentrantTransferDuringCallbackUsesRealCaller(uint256 id, uint256 amount) external {
+        amount = bound(amount, 1, type(uint128).max);
+        (SpyReceiptManager manager, ReceiptContract receipt) = _setup();
+        address depositor = makeAddr("depositor");
+        address thirdParty = makeAddr("thirdParty");
+
+        ReentrantTransferReceiver receiver =
+            new ReentrantTransferReceiver(IERC1155(address(receipt)), thirdParty, id, amount);
+
+        // managerMint delivers to the receiver, which re-enters during its
+        // acceptance callback to forward its own tokens to `thirdParty`. That
+        // nested transfer is the LAST authz the spy records.
+        manager.mint(receipt, depositor, address(receiver), id, amount, "");
+
+        assertEq(manager.lastFrom(), address(receiver), "nested transfer is from the receiver");
+        assertEq(manager.lastTo(), thirdParty);
+        assertEq(
+            manager.lastOperator(),
+            address(receiver),
+            "re-entrant transfer operator is its true caller, not the stale outer operator"
+        );
     }
 }
