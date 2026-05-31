@@ -140,6 +140,26 @@ contract ReceiptOperatorIdentityTest is ReceiptFactoryTest {
         assertEq(manager.lastOperator(), bob, "operator was reset; direct caller is used");
     }
 
+    /// Edge case of the consume-once sentinel: `address(0)` doubles as the "no
+    /// operator set" marker, so a manager call that passes `sender == address(0)`
+    /// is indistinguishable from a direct transfer and falls back to forwarding
+    /// the true caller (the manager) as the operator — never `address(0)` itself.
+    /// This is benign (real vaults never pass a zero initiator: `_msgSender()`
+    /// cannot be the zero address), but pinning it guards the sentinel logic
+    /// against silent change.
+    function testManagerCallWithZeroSenderFallsBackToCaller(uint256 id, uint256 amount) external {
+        amount = bound(amount, 1, type(uint128).max);
+        (SpyReceiptManager manager, ReceiptContract receipt) = _setup();
+        address account = makeAddr("account");
+
+        manager.mint(receipt, address(0), account, id, amount, "");
+
+        assertEq(manager.lastOperator(), address(manager), "zero sender falls back to the caller, not address(0)");
+        assertTrue(manager.lastOperator() != address(0), "operator is never the zero sentinel");
+        assertEq(manager.lastFrom(), address(0));
+        assertEq(manager.lastTo(), account);
+    }
+
     /// The batch entrypoint forwards the same operator identity as the single
     /// one: a direct `safeBatchTransferFrom` forwards the real caller.
     function testDirectBatchTransferOperatorIsCaller(uint256 id, uint256 amount) external {
