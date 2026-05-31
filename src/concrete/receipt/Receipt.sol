@@ -36,11 +36,13 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
     /// @param manager The manager of the `Receipt` contract.
     /// Set during `initialize` and cannot be changed.
     /// Intended to be a `ReceiptVault` contract.
-    /// @param operator The authorization operator for the duration of a manager
-    /// call (the depositor/confiscator that the vault passed). Used ONLY to pass
-    /// the correct operator to `authorizeReceiptTransfer3`; it deliberately does
-    /// NOT affect `_msgSender()`, so the inherited ERC1155 functions and their
-    /// acceptance callbacks observe the true `msg.sender` and cannot be spoofed.
+    /// @param operator The authorization operator the active manager call passed
+    /// (the depositor/confiscator). It is a SINGLE-USE token: `_update` consumes
+    /// it (clears it) as it authorizes the one transfer the manager initiated, so
+    /// any later transfer — including one that re-enters during an ERC1155
+    /// acceptance callback — falls back to the true `msg.sender`. It deliberately
+    /// does NOT affect `_msgSender()`, so the inherited ERC1155 functions and
+    /// their callbacks observe the true caller and cannot be spoofed.
     /// @custom:storage-location erc7201:rain.storage.receipt.1
     struct Receipt7201Storage {
         IReceiptManagerV2 manager;
@@ -218,26 +220,23 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
         override
     {
         Receipt7201Storage storage s = getStorageReceipt();
-        // The authorization operator is the explicit operator set by the active
-        // manager call (the depositor/confiscator the vault passed), falling
-        // back to the real caller for direct peer-to-peer transfers. This is
-        // kept separate from `_msgSender()` on purpose: `_msgSender()` is NOT
-        // overridden, so ERC1155 acceptance callbacks cannot spoof identities
-        // (#309), while `authorizeReceiptTransfer3` still receives the true
-        // initiator (e.g. a confiscator must still be seen for the
-        // confiscation-during-certification-expiry bypass).
+        // The manager-supplied `operator` (the depositor/confiscator) authorizes
+        // the one transfer the manager initiated; any other transfer authorizes
+        // as its true caller. We CONSUME the operator here — read it, then clear
+        // it — so it cannot leak into a later transfer. This single-use model is
+        // necessary (not just a flag) because OZ fires the ERC1155 acceptance
+        // callback from a PRIVATE `_updateWithAcceptanceCheck`, AFTER this
+        // override returns: a reentrancy flag scoped to `_update` would already
+        // be reset before the callback runs, but a consumed (cleared) operator
+        // stays cleared, so a transfer re-entering during the callback correctly
+        // falls back to `_msgSender()`. `_msgSender()` itself is NOT overridden,
+        // so the inherited ERC1155 permission checks cannot be spoofed (#309).
         address operator = s.operator;
         if (operator == address(0)) {
             operator = _msgSender();
+        } else {
+            s.operator = address(0);
         }
-        // Clear the stored operator now that it has been captured, BEFORE
-        // authorizing and BEFORE `super._update` fires any ERC1155 acceptance
-        // callback. Otherwise a transfer that re-enters during the callback (or
-        // a malicious authorizer) would inherit this call's operator for its own
-        // `authorizeReceiptTransfer3` instead of its true caller. Each manager
-        // call performs exactly one `_update`, so clearing here does not affect
-        // the operator the rest of this call sees.
-        s.operator = address(0);
         s.manager.authorizeReceiptTransfer3(operator, from, to, ids, amounts);
         super._update(from, to, ids, amounts);
     }
