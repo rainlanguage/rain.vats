@@ -220,21 +220,19 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
         override
     {
         Receipt7201Storage storage s = getStorageReceipt();
-        // The manager-supplied `operator` (the depositor/confiscator) authorizes
-        // the one transfer the manager initiated; any other transfer authorizes
-        // as its true caller. We CONSUME the operator here — read it, then clear
-        // it — so it cannot leak into a later transfer. This single-use model is
-        // necessary (not just a flag) because OZ fires the ERC1155 acceptance
-        // callback from a PRIVATE `_updateWithAcceptanceCheck`, AFTER this
-        // override returns: a reentrancy flag scoped to `_update` would already
-        // be reset before the callback runs, but a consumed (cleared) operator
-        // stays cleared, so a transfer re-entering during the callback correctly
-        // falls back to `_msgSender()`. `_msgSender()` itself is NOT overridden,
-        // so the inherited ERC1155 permission checks cannot be spoofed (#309).
+
+        // `s.operator` is the transfer initiator forwarded to the authorizer. A
+        // manager call plants it via `withOperator(...)`; `_msgSender()` is never
+        // overridden, so ERC1155 permission checks always see the true caller.
         address operator = s.operator;
         if (operator == address(0)) {
+            // No operator planted: a direct transfer, or a transfer whose operator
+            // was already consumed below (e.g. one re-entering during the
+            // acceptance callback). Authorize as the true caller.
             operator = _msgSender();
         } else {
+            // Operator planted by a manager call. Forward it once and clear it, so
+            // no later transfer in this transaction can reuse it.
             s.operator = address(0);
         }
         s.manager.authorizeReceiptTransfer3(operator, from, to, ids, amounts);

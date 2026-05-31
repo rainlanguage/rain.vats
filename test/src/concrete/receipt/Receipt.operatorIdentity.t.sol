@@ -232,5 +232,12 @@ contract ReceiptOperatorIdentityTest is ReceiptFactoryTest {
             address(receiver),
             "re-entrant transfer operator is its true caller, not the stale outer operator"
         );
+
+        // The legitimate nested forward also SUCCEEDS end-to-end: a receiver
+        // moving its own just-received tokens during the callback is authorized
+        // as itself, so the balances actually move. This is the benign case the
+        // consume-once must not break.
+        assertEq(receipt.balanceOf(thirdParty, id), amount, "forwarded tokens landed at the third party");
+        assertEq(receipt.balanceOf(address(receiver), id), 0, "receiver forwarded everything it received");
     }
 }
