@@ -3,117 +3,13 @@
 pragma solidity =0.8.25;
 
 import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
-import {IReceiptV3} from "src/interface/IReceiptV3.sol";
-import {IReceiptManagerV2} from "src/interface/IReceiptManagerV2.sol";
 import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
-import {IERC1155Receiver} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155Receiver.sol";
+import {FreeTransferReceiptManager} from "test/concrete/FreeTransferReceiptManager.sol";
+import {ApprovalSpoofReceiver} from "test/concrete/ApprovalSpoofReceiver.sol";
+import {AtomicDrainReceiver} from "test/concrete/AtomicDrainReceiver.sol";
+import {BenignReceiver} from "test/concrete/BenignReceiver.sol";
 import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
 import {IERC1155Errors} from "@openzeppelin-contracts-5.6.1/interfaces/draft-IERC6093.sol";
-
-/// @title FreeTransferReceiptManager
-/// @notice Minimal manager that authorizes ALL receipt transfers (no-op
-/// `authorizeReceiptTransfer3`) — the worst case for the #309 spoofing bug,
-/// where receipts are unconditionally transferable and there is no per-transfer
-/// authorization hook to lean on (e.g. any vault inheriting the base
-/// `ReceiptVault` no-op authorizer). `mint` takes an explicit `sender` so tests
-/// can drive the operator directly, the way a vault passes `_msgSender()` (the
-/// depositor) into `managerMint`.
-contract FreeTransferReceiptManager is IReceiptManagerV2 {
-    function authorizeReceiptTransfer3(address, address, address, uint256[] memory, uint256[] memory) external {}
-
-    function mint(IReceiptV3 receipt, address sender, address account, uint256 id, uint256 amount, bytes memory data)
-        external
-    {
-        receipt.managerMint(sender, account, id, amount, data);
-    }
-}
-
-/// Re-enters the receipt during the acceptance callback and tries to grant
-/// `attacker` operator approval. Pre-fix this was spoofed onto the depositor;
-/// post-fix it lands on this contract (the true `msg.sender`).
-contract ApprovalSpoofReceiver is IERC1155Receiver {
-    IERC1155 internal immutable iReceipt;
-    address internal immutable iAttacker;
-
-    constructor(IERC1155 receipt, address attacker) {
-        iReceipt = receipt;
-        iAttacker = attacker;
-    }
-
-    function onERC1155Received(address, address, uint256, uint256, bytes calldata) external returns (bytes4) {
-        iReceipt.setApprovalForAll(iAttacker, true);
-        return IERC1155Receiver.onERC1155Received.selector;
-    }
-
-    function onERC1155BatchReceived(address, address, uint256[] calldata, uint256[] calldata, bytes calldata)
-        external
-        pure
-        returns (bytes4)
-    {
-        return IERC1155Receiver.onERC1155BatchReceived.selector;
-    }
-
-    function supportsInterface(bytes4) external pure returns (bool) {
-        return true;
-    }
-}
-
-/// Re-enters the receipt during the acceptance callback and tries to drain the
-/// victim's pre-existing receipts. Pre-fix the spoof made `_msgSender()` the
-/// victim so OZ's `from == sender` check passed; post-fix `_msgSender()` is this
-/// contract, so the transfer reverts with `ERC1155MissingApprovalForAll`.
-contract AtomicDrainReceiver is IERC1155Receiver {
-    IERC1155 internal immutable iReceipt;
-    address internal immutable iVictim;
-    address internal immutable iAttacker;
-    uint256 internal immutable iDrainId;
-    uint256 internal immutable iDrainAmount;
-
-    constructor(IERC1155 receipt, address victim, address attacker, uint256 drainId, uint256 drainAmount) {
-        iReceipt = receipt;
-        iVictim = victim;
-        iAttacker = attacker;
-        iDrainId = drainId;
-        iDrainAmount = drainAmount;
-    }
-
-    function onERC1155Received(address, address, uint256, uint256, bytes calldata) external returns (bytes4) {
-        iReceipt.safeTransferFrom(iVictim, iAttacker, iDrainId, iDrainAmount, "");
-        return IERC1155Receiver.onERC1155Received.selector;
-    }
-
-    function onERC1155BatchReceived(address, address, uint256[] calldata, uint256[] calldata, bytes calldata)
-        external
-        pure
-        returns (bytes4)
-    {
-        return IERC1155Receiver.onERC1155BatchReceived.selector;
-    }
-
-    function supportsInterface(bytes4) external pure returns (bool) {
-        return true;
-    }
-}
-
-/// A benign receiver that does nothing in the callback — models a trusted
-/// recipient such as a pass-through mint/deposit wrapper.
-contract BenignReceiver is IERC1155Receiver {
-    function onERC1155Received(address, address, uint256, uint256, bytes calldata) external pure returns (bytes4) {
-        return IERC1155Receiver.onERC1155Received.selector;
-    }
-
-    function onERC1155BatchReceived(address, address, uint256[] calldata, uint256[] calldata, bytes calldata)
-        external
-        pure
-        returns (bytes4)
-    {
-        return IERC1155Receiver.onERC1155BatchReceived.selector;
-    }
-
-    function supportsInterface(bytes4) external pure returns (bool) {
-        return true;
-    }
-}
 
 /// @title ReceiptSpoofEscalationsTest
 /// @notice Regression tests for issue #309 against a free-transfer (no-op

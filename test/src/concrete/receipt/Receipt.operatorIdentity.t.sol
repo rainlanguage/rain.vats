@@ -3,76 +3,9 @@
 pragma solidity =0.8.25;
 
 import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
-import {IReceiptV3} from "src/interface/IReceiptV3.sol";
-import {IReceiptManagerV2} from "src/interface/IReceiptManagerV2.sol";
 import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
-import {IERC1155Receiver} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155Receiver.sol";
-
-/// @title SpyReceiptManager
-/// @notice Manager that authorizes ALL transfers and records the
-/// `(operator, from, to)` of the most recent `authorizeReceiptTransfer3` call,
-/// so tests can assert exactly what operator identity the receipt forwards. The
-/// `mint`/`burn`/`transferFrom` helpers forward to the manager-gated functions
-/// with an explicit `sender`.
-contract SpyReceiptManager is IReceiptManagerV2 {
-    address public lastOperator;
-    address public lastFrom;
-    address public lastTo;
-
-    function authorizeReceiptTransfer3(address operator, address from, address to, uint256[] memory, uint256[] memory)
-        external
-    {
-        lastOperator = operator;
-        lastFrom = from;
-        lastTo = to;
-    }
-
-    function mint(IReceiptV3 receipt, address sender, address account, uint256 id, uint256 amount, bytes memory data)
-        external
-    {
-        receipt.managerMint(sender, account, id, amount, data);
-    }
-
-    function burn(IReceiptV3 receipt, address sender, address account, uint256 id, uint256 amount, bytes memory data)
-        external
-    {
-        receipt.managerBurn(sender, account, id, amount, data);
-    }
-
-    function transferFrom(
-        IReceiptV3 receipt,
-        address sender,
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) external {
-        receipt.managerTransferFrom(sender, from, to, id, amount, data);
-    }
-}
-
-/// Records the `operator` it is told about in the ERC1155 acceptance callback.
-contract RecordingReceiver is IERC1155Receiver {
-    address public lastOperator;
-
-    function onERC1155Received(address operator, address, uint256, uint256, bytes calldata) external returns (bytes4) {
-        lastOperator = operator;
-        return IERC1155Receiver.onERC1155Received.selector;
-    }
-
-    function onERC1155BatchReceived(address operator, address, uint256[] calldata, uint256[] calldata, bytes calldata)
-        external
-        returns (bytes4)
-    {
-        lastOperator = operator;
-        return IERC1155Receiver.onERC1155BatchReceived.selector;
-    }
-
-    function supportsInterface(bytes4) external pure returns (bool) {
-        return true;
-    }
-}
+import {SpyReceiptManager} from "test/concrete/SpyReceiptManager.sol";
+import {RecordingReceiver} from "test/concrete/RecordingReceiver.sol";
 
 /// @title ReceiptOperatorIdentityTest
 /// @notice Validates the operator identity the #309 fix forwards to
