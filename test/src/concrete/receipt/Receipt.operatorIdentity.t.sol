@@ -137,4 +137,50 @@ contract ReceiptOperatorIdentityTest is ReceiptFactoryTest {
 
         assertEq(manager.lastOperator(), bob, "operator was reset; direct caller is used");
     }
+
+    /// The batch entrypoint forwards the same operator identity as the single
+    /// one: a direct `safeBatchTransferFrom` forwards the real caller.
+    function testDirectBatchTransferOperatorIsCaller(uint256 id, uint256 amount) external {
+        amount = bound(amount, 1, type(uint128).max);
+        (SpyReceiptManager manager, ReceiptContract receipt) = _setup();
+        address alice = makeAddr("alice");
+        address bob = makeAddr("bob");
+
+        manager.mint(receipt, alice, alice, id, amount, "");
+
+        uint256[] memory ids = new uint256[](1);
+        ids[0] = id;
+        uint256[] memory amounts = new uint256[](1);
+        amounts[0] = amount;
+
+        vm.prank(alice);
+        receipt.safeBatchTransferFrom(alice, bob, ids, amounts, "");
+
+        assertEq(manager.lastOperator(), alice, "direct batch transfer operator is the caller");
+    }
+
+    /// An approved-operator `safeBatchTransferFrom` forwards the operator, not
+    /// the owner.
+    function testApprovedOperatorBatchTransferOperatorIsOperator(uint256 id, uint256 amount) external {
+        amount = bound(amount, 1, type(uint128).max);
+        (SpyReceiptManager manager, ReceiptContract receipt) = _setup();
+        address alice = makeAddr("alice");
+        address operator = makeAddr("operator");
+        address bob = makeAddr("bob");
+
+        manager.mint(receipt, alice, alice, id, amount, "");
+
+        vm.prank(alice);
+        receipt.setApprovalForAll(operator, true);
+
+        uint256[] memory ids = new uint256[](1);
+        ids[0] = id;
+        uint256[] memory amounts = new uint256[](1);
+        amounts[0] = amount;
+
+        vm.prank(operator);
+        receipt.safeBatchTransferFrom(alice, bob, ids, amounts, "");
+
+        assertEq(manager.lastOperator(), operator, "batch operator transfer forwards the operator");
+    }
 }

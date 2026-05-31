@@ -9,6 +9,7 @@ import {ApprovalSpoofReceiver} from "test/concrete/ApprovalSpoofReceiver.sol";
 import {AtomicDrainReceiver} from "test/concrete/AtomicDrainReceiver.sol";
 import {BatchDrainReceiver} from "test/concrete/BatchDrainReceiver.sol";
 import {BenignReceiver} from "test/concrete/BenignReceiver.sol";
+import {SpyReceiptManager} from "test/concrete/SpyReceiptManager.sol";
 import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
 import {IERC1155Errors} from "@openzeppelin-contracts-5.6.1/interfaces/draft-IERC6093.sol";
 
@@ -159,5 +160,36 @@ contract ReceiptSpoofEscalationsTest is ReceiptFactoryTest {
         vm.prank(operator);
         vm.expectRevert(abi.encodeWithSelector(IERC1155Errors.ERC1155MissingApprovalForAll.selector, operator, victim));
         receipt.safeTransferFrom(victim, operator, id2, amount, "");
+    }
+
+    /// The transfer callback is spoof-safe too, not just the mint callback. A
+    /// `managerTransferFrom` (e.g. confiscation) that delivers a receipt to a
+    /// malicious contract `to` cannot let that contract spoof the `sender`
+    /// (confiscator) or the `from` party: the `setApprovalForAll` it makes in the
+    /// callback lands on itself.
+    function testManagerTransferFromCallbackCannotSpoof(uint256 amount) external {
+        amount = bound(amount, 1, type(uint128).max);
+
+        SpyReceiptManager manager = new SpyReceiptManager();
+        ReceiptContract receipt =
+            ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(manager))));
+        address from = makeAddr("from");
+        address confiscator = makeAddr("confiscator");
+        address attacker = makeAddr("attacker");
+        uint256 id = 1;
+
+        manager.mint(receipt, makeAddr("mintSender"), from, id, amount, "");
+
+        ApprovalSpoofReceiver receiver = new ApprovalSpoofReceiver(IERC1155(address(receipt)), attacker);
+
+        // Confiscation-style transfer delivers `from`'s receipt to the malicious
+        // contract; its callback grants `attacker` approval.
+        manager.transferFrom(receipt, confiscator, from, address(receiver), id, amount, "");
+
+        // The approval lands on the receiver (the true caller), not on the
+        // spoofable `from` or `sender` identities.
+        assertFalse(receipt.isApprovedForAll(from, attacker), "from must not be spoofed");
+        assertFalse(receipt.isApprovedForAll(confiscator, attacker), "sender must not be spoofed");
+        assertTrue(receipt.isApprovedForAll(address(receiver), attacker), "approval lands on the true caller");
     }
 }
