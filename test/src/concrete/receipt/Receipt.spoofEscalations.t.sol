@@ -7,6 +7,7 @@ import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
 import {FreeTransferReceiptManager} from "test/concrete/FreeTransferReceiptManager.sol";
 import {ApprovalSpoofReceiver} from "test/concrete/ApprovalSpoofReceiver.sol";
 import {AtomicDrainReceiver} from "test/concrete/AtomicDrainReceiver.sol";
+import {BatchDrainReceiver} from "test/concrete/BatchDrainReceiver.sol";
 import {BenignReceiver} from "test/concrete/BenignReceiver.sol";
 import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
 import {IERC1155Errors} from "@openzeppelin-contracts-5.6.1/interfaces/draft-IERC6093.sol";
@@ -49,6 +50,30 @@ contract ReceiptSpoofEscalationsTest is ReceiptFactoryTest {
         manager.mint(receipt, victim, address(drainer), 2, 1, "");
 
         // Victim keeps everything; attacker got nothing.
+        assertEq(receipt.balanceOf(victim, legitId), legitAmount, "victim's receipts untouched");
+        assertEq(receipt.balanceOf(attacker, legitId), 0, "attacker drained nothing");
+    }
+
+    /// E1 batch variant (neutralized): the same drain via `safeBatchTransferFrom`
+    /// reverts too, exercising the batch `_update` / acceptance path.
+    function testBatchDrainAttemptReverts(uint256 legitAmount) external {
+        legitAmount = bound(legitAmount, 1, type(uint128).max);
+
+        (FreeTransferReceiptManager manager, ReceiptContract receipt) = _setup();
+        address victim = makeAddr("victim");
+        address attacker = makeAddr("attacker");
+        uint256 legitId = 1;
+
+        manager.mint(receipt, victim, victim, legitId, legitAmount, "");
+
+        BatchDrainReceiver drainer =
+            new BatchDrainReceiver(IERC1155(address(receipt)), victim, attacker, legitId, legitAmount);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(IERC1155Errors.ERC1155MissingApprovalForAll.selector, address(drainer), victim)
+        );
+        manager.mint(receipt, victim, address(drainer), 2, 1, "");
+
         assertEq(receipt.balanceOf(victim, legitId), legitAmount, "victim's receipts untouched");
         assertEq(receipt.balanceOf(attacker, legitId), 0, "attacker drained nothing");
     }
