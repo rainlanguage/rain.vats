@@ -174,6 +174,12 @@ contract Receipt is IReceiptV3, ICloneableV2, ERC1155Upgradeable {
     /// Provides the symbol of the ERC20 asset token that the `ReceiptVault`
     /// managing this `Receipt` is accepting for mints. Can be overridden if the
     /// manager is not going to be a `ReceiptVault`.
+    ///
+    /// Reverts for a manager whose `asset()` is `address(0)` — e.g.
+    /// `OffchainAssetReceiptVault`, whose assets are off-chain — because it calls
+    /// `IERC20Metadata(address(0)).symbol()`. Such managers MUST use a receipt
+    /// implementation that overrides this (so `uri`/metadata does not revert)
+    /// rather than the generic `Receipt`.
     function _vaultAssetSymbol() internal view virtual returns (string memory) {
         Receipt7201Storage storage s = getStorageReceipt();
         return IERC20Metadata(IReceiptVaultV3(payable(address(s.manager))).asset()).symbol();

@@ -307,7 +307,12 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
 
         __ReceiptVault_init(config.receiptVaultConfig);
 
-        // There is no asset, the asset is offchain.
+        // There is no asset, the asset is offchain. Because `asset()` is
+        // therefore `address(0)`, the generic `Receipt` metadata path
+        // (`_vaultAssetSymbol` calls `IERC20Metadata(address(0)).symbol()`)
+        // reverts, so this vault MUST be paired with a receipt implementation
+        // that overrides the asset-symbol metadata rather than the generic
+        // `Receipt`.
         if (config.receiptVaultConfig.asset != address(0)) {
             revert NonZeroAsset();
         }
@@ -633,8 +638,13 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
     }
 
     /// Confiscators can confiscate ERC20 vault shares from `confiscatee`.
-    /// Confiscation BYPASSES TRANSFER RESTRICTIONS due to system freeze and
-    /// IGNORES ALLOWANCES set by the confiscatee.
+    /// Confiscation BYPASSES the CERTIFICATION-EXPIRY transfer restriction (the
+    /// authorizer permits a confiscator to move tokens while certification is
+    /// expired) and IGNORES ALLOWANCES set by the confiscatee. It does NOT
+    /// bypass the OWNER FREEZE: confiscation runs through the same
+    /// `ownerFreezeCheckTransaction` as any other transfer, so while an owner
+    /// freeze is active a confiscation reverts unless `from` and `to` are
+    /// allowlisted via `ownerFreezeAlwaysAllowFrom` / `ownerFreezeAlwaysAllowTo`.
     ///
     /// The LIMITATION ON CONFISCATION is that the confiscatee MUST NOT have the
     /// minimum tier for transfers. I.e. confiscation is a two step process.
