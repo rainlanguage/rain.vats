@@ -12,18 +12,8 @@ import {
     CertifyStateChange
 } from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {LibExtrospectERC1167Proxy} from "rain-extrospection-0.1.1/src/lib/LibExtrospectERC1167Proxy.sol";
-import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
 import {OwnableUpgradeable as Ownable} from "@openzeppelin-contracts-upgradeable-5.6.1/access/OwnableUpgradeable.sol";
-
-contract AlwaysAuthorize is IAuthorizeV1, IERC165 {
-    /// @inheritdoc IERC165
-    function supportsInterface(bytes4 interfaceId) external pure override returns (bool) {
-        return interfaceId == type(IAuthorizeV1).interfaceId || interfaceId == type(IERC165).interfaceId;
-    }
-
-    /// @inheritdoc IAuthorizeV1
-    function authorize(address, bytes32, bytes memory) external pure override {}
-}
+import {AlwaysAuthorize} from "test/concrete/AlwaysAuthorize.sol";
 
 contract OffchainAssetReceiptVaultAuthorizeTest is OffchainAssetReceiptVaultTest {
     /// Test that authorize contract is as initialized.

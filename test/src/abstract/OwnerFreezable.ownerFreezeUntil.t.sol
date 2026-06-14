@@ -3,14 +3,7 @@
 pragma solidity =0.8.25;
 
 import {OwnerFreezableOwnerFreezeUntilTest} from "test/abstract/OwnerFreezableOwnerFreezeUntilTest.t.sol";
-import {OwnerFreezable} from "src/abstract/OwnerFreezable.sol";
-
-contract TestOwnerFreezable is OwnerFreezable {
-    constructor() {
-        __OwnerFreezable_init();
-        _transferOwnership(msg.sender);
-    }
-}
+import {TestOwnerFreezable} from "test/concrete/TestOwnerFreezable.sol";
 
 contract OwnerFreezableTestOwnerFreezeUntil is OwnerFreezableOwnerFreezeUntilTest {
     constructor() {
