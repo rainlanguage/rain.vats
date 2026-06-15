@@ -4,21 +4,12 @@ pragma solidity =0.8.25;
 
 import {IReceiptV3} from "src/interface/IReceiptV3.sol";
 import {IReceiptManagerV2} from "src/interface/IReceiptManagerV2.sol";
+import {TestReceiptManagerAsset} from "test/concrete/TestReceiptManagerAsset.sol";
 
 /// Thrown when a transfer is not authorized.
 /// @param from The transfer attempted from this address.
 /// @param to The transfer attemped to this address.
 error UnauthorizedTransfer(address from, address to);
-
-contract TestReceiptManagerAsset {
-    function symbol() external pure returns (string memory) {
-        return "TRMAsset";
-    }
-
-    function name() external pure returns (string memory) {
-        return "TestReceiptManagerAsset";
-    }
-}
 
 /// @title TestReceiptManager
 /// @notice TEST contract that can be the manager of an `IReceiptV3` and forward
