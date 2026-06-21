@@ -56,9 +56,13 @@ contract OffchainAssetReceiptVaultERC4626SpecTest is OffchainAssetReceiptVaultTe
     /// convertToAssets(convertToShares(amount)) == amount for any non-zero id.
     /// convertToShares is payable and calls Address.sendValue back to msg.sender;
     /// the prank must be an EOA (not the test contract) to accept that call.
-    function testConvertToInverses(string memory name, string memory symbol, uint256 aliceSeed, uint256 amount, uint256 id)
-        external
-    {
+    function testConvertToInverses(
+        string memory name,
+        string memory symbol,
+        uint256 aliceSeed,
+        uint256 amount,
+        uint256 id
+    ) external {
         address alice = vm.addr(bound(aliceSeed, 1, type(uint128).max));
         id = bound(id, 1, type(uint256).max);
         amount = bound(amount, 1, type(uint128).max);
