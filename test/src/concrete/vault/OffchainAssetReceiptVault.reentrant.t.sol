@@ -276,9 +276,8 @@ contract OffchainAssetReceiptVaultReentrantTest is OffchainAssetReceiptVaultTest
         // expired); the confiscator can confiscate receipts.
         vm.startPrank(admin);
         OffchainAssetReceiptVaultAuthorizerV1(address(vault.authorizer())).grantRole(DEPOSIT, alice);
-        OffchainAssetReceiptVaultAuthorizerV1(address(vault.authorizer())).grantRole(
-            CONFISCATE_RECEIPT, address(confiscator)
-        );
+        OffchainAssetReceiptVaultAuthorizerV1(address(vault.authorizer()))
+            .grantRole(CONFISCATE_RECEIPT, address(confiscator));
         vm.stopPrank();
 
         // alice deposits, receiving receipt id 1.

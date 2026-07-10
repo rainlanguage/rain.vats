@@ -104,7 +104,9 @@ contract ERC20PriceOracleReceiptVaultReentrantTest is ERC20PriceOracleReceiptVau
     {
         return iDeployer.newERC20PriceOracleReceiptVault(
             ERC20PriceOracleReceiptVaultConfigV2({
-                receiptVaultConfig: ReceiptVaultConfigV2({asset: vaultAsset, name: name, symbol: sym, receipt: address(0)}),
+                receiptVaultConfig: ReceiptVaultConfigV2({
+                    asset: vaultAsset, name: name, symbol: sym, receipt: address(0)
+                }),
                 priceOracle: priceOracle
             })
         );
@@ -124,8 +126,7 @@ contract ERC20PriceOracleReceiptVaultReentrantTest is ERC20PriceOracleReceiptVau
         setVaultOraclePrice(1e18);
 
         ReentrantAsset asset = new ReentrantAsset();
-        ERC20PriceOracleReceiptVault vault =
-            createVaultWithAsset(iVaultOracle, address(asset), shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVaultWithAsset(iVaultOracle, address(asset), shareName, shareSymbol);
 
         address depositor = makeAddr("depositor");
         asset.mint(depositor, assets);
@@ -157,8 +158,7 @@ contract ERC20PriceOracleReceiptVaultReentrantTest is ERC20PriceOracleReceiptVau
         setVaultOraclePrice(1e18);
 
         ReentrantAsset asset = new ReentrantAsset();
-        ERC20PriceOracleReceiptVault vault =
-            createVaultWithAsset(iVaultOracle, address(asset), shareName, shareSymbol);
+        ERC20PriceOracleReceiptVault vault = createVaultWithAsset(iVaultOracle, address(asset), shareName, shareSymbol);
 
         address alice = makeAddr("alice");
         asset.mint(alice, assets);
