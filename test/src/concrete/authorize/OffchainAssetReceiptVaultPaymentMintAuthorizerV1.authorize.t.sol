@@ -18,7 +18,7 @@ import {
     WITHDRAW_ADMIN,
     WITHDRAW
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {CloneFactory} from "rain-factory-0.1.1/src/concrete/CloneFactory.sol";
+import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
 import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/VerifyAlwaysApproved.sol";
 import {IAccessControl} from "@openzeppelin-contracts-5.6.1/access/IAccessControl.sol";
@@ -48,7 +48,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
         vm.mockCall(
             paymentToken, abi.encodeWithSelector(IERC20Metadata.decimals.selector), abi.encode(paymentTokenDecimals)
         );
-        return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.clone(address(implementation), initData));
+        return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1UnauthorizedCaller(

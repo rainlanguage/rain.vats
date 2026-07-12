@@ -13,9 +13,9 @@ import {
     ZeroPaymentToken,
     ZeroMaxSharesSupply
 } from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
-import {CloneFactory} from "rain-factory-0.1.1/src/concrete/CloneFactory.sol";
+import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
-import {ICloneableV2} from "rain-factory-0.1.1/src/interface/ICloneableV2.sol";
+import {ICloneableV2} from "rain-factory-0.1.5/src/interface/ICloneableV2.sol";
 import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
 import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
 import {
@@ -70,7 +70,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
             })
         );
         vm.expectRevert(ZeroReceiptVault.selector);
-        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.clone(address(implementation), initData));
+        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1ZeroInitialOwner(address receiptVault) external {
@@ -90,7 +90,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
             })
         );
         vm.expectRevert(ZeroInitialOwner.selector);
-        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.clone(address(implementation), initData));
+        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1ZeroVerifyContract(address receiptVault, address owner)
@@ -112,7 +112,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
             })
         );
         vm.expectRevert(ZeroVerifyContract.selector);
-        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.clone(address(implementation), initData));
+        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1ZeroPaymentToken(address receiptVault, address owner)
@@ -131,7 +131,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
             })
         );
         vm.expectRevert(ZeroPaymentToken.selector);
-        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.clone(address(implementation), initData));
+        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1ZeroMaxSharesSupply(
@@ -153,7 +153,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
             })
         );
         vm.expectRevert(ZeroMaxSharesSupply.selector);
-        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.clone(address(implementation), initData));
+        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1Initialize(
@@ -204,7 +204,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
             receiptVault, verify, owner, paymentToken, paymentTokenDecimals, maxSharesSupply
         );
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 authorizer =
-            OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.clone(address(implementation), initData));
+            OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
         assertEq(authorizer.receiptVault(), receiptVault);
         assertEq(authorizer.paymentToken(), paymentToken);
         assertEq(authorizer.maxSharesSupply(), maxSharesSupply);

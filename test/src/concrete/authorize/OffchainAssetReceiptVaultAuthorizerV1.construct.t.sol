@@ -19,7 +19,7 @@ import {
     WITHDRAW,
     ZeroInitialAdmin
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {CloneFactory} from "rain-factory-0.1.1/src/concrete/CloneFactory.sol";
+import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.6.1/proxy/utils/Initializable.sol";
 
 contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
@@ -53,7 +53,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
         CloneFactory factory = new CloneFactory();
 
         OffchainAssetReceiptVaultAuthorizerV1 authorizer =
-            OffchainAssetReceiptVaultAuthorizerV1(factory.clone(address(authorizerImplementation), initData));
+            OffchainAssetReceiptVaultAuthorizerV1(factory.cloneDeterministic(address(authorizerImplementation), initData, bytes32(0)));
 
         vm.assertTrue(authorizer.hasRole(CERTIFY_ADMIN, initialAdmin));
         vm.assertTrue(authorizer.hasRole(CONFISCATE_SHARES_ADMIN, initialAdmin));
@@ -77,6 +77,6 @@ contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
         CloneFactory factory = new CloneFactory();
 
         vm.expectRevert(ZeroInitialAdmin.selector);
-        OffchainAssetReceiptVaultAuthorizerV1(factory.clone(address(authorizerImplementation), initData));
+        OffchainAssetReceiptVaultAuthorizerV1(factory.cloneDeterministic(address(authorizerImplementation), initData, bytes32(0)));
     }
 }

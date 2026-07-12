@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity ^0.8.25;
 
-import {ICloneableFactoryV2} from "rain-factory-0.1.1/src/interface/ICloneableFactoryV2.sol";
-import {CloneFactory} from "rain-factory-0.1.1/src/concrete/CloneFactory.sol";
+import {ICloneableFactoryV3} from "rain-factory-0.1.5/src/interface/ICloneableFactoryV3.sol";
+import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
 import {Test} from "forge-std-1.16.1/src/Test.sol";
 import {Receipt as ReceiptContract} from "../../src/concrete/receipt/Receipt.sol";
 import {ERC20PriceOracleReceipt} from "../../src/concrete/receipt/ERC20PriceOracleReceipt.sol";
@@ -24,14 +24,24 @@ contract ReceiptFactoryTest is Test {
         string name;
     }
 
-    ICloneableFactoryV2 internal immutable iFactory;
+    ICloneableFactoryV3 internal immutable iFactory;
     ReceiptContract internal immutable iReceiptImplementation;
     ERC20PriceOracleReceipt internal immutable iErc20PriceOracleReceiptImplementation;
+
+    /// A fresh salt for each shared-factory clone, so repeated deterministic
+    /// clones of the same implementation never collide on their CREATE2 address.
+    uint256 private sCloneSalt;
 
     constructor() {
         iFactory = new CloneFactory();
         iReceiptImplementation = new ReceiptContract();
         iErc20PriceOracleReceiptImplementation = new ERC20PriceOracleReceipt();
+    }
+
+    /// Deterministically clones and initializes `implementation` via the shared
+    /// factory with a fresh salt, so sibling clones in a test never collide.
+    function cloneReceipt(address implementation, bytes memory data) internal returns (address) {
+        return iFactory.cloneDeterministic(implementation, data, bytes32(sCloneSalt++));
     }
 
     function decodeMetadataURI(string memory uri) internal pure returns (Metadata memory) {

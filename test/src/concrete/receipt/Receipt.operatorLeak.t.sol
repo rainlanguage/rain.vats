@@ -19,7 +19,7 @@ import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol
 contract ReceiptOperatorLeakTest is ReceiptFactoryTest {
     function _setup(address privileged) internal returns (FreezeSimReceiptManager manager, ReceiptContract receipt) {
         manager = new FreezeSimReceiptManager(privileged);
-        receipt = ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(manager))));
+        receipt = ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(manager))));
     }
 
     /// The privileged operator does not leak into a re-entrant transfer. A mint
