@@ -48,7 +48,9 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
         vm.mockCall(
             paymentToken, abi.encodeWithSelector(IERC20Metadata.decimals.selector), abi.encode(paymentTokenDecimals)
         );
-        return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
+        return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
+            factory.cloneDeterministic(address(implementation), initData, bytes32(0))
+        );
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1UnauthorizedCaller(

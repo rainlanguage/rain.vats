@@ -42,7 +42,9 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1DepositTest is Offchain
                 maxSharesSupply: maxSharesSupply
             })
         );
-        return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
+        return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
+            factory.cloneDeterministic(address(implementation), initData, bytes32(0))
+        );
     }
 
     function testMintSimpleRealReceiptVault(

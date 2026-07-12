@@ -27,8 +27,9 @@ contract OffchainAssetReceiptVaultAuthorizerV1AuthorizeTest is OffchainAssetRece
             OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: initialAdmin});
 
         CloneFactory factory = new CloneFactory();
-        return
-            OffchainAssetReceiptVaultAuthorizerV1(factory.cloneDeterministic(address(authorizerImplementation), abi.encode(config), bytes32(0)));
+        return OffchainAssetReceiptVaultAuthorizerV1(
+            factory.cloneDeterministic(address(authorizerImplementation), abi.encode(config), bytes32(0))
+        );
     }
 
     function testOffchainAssetReceiptVaultAuthorizerV1AuthorizeUnauthorized(

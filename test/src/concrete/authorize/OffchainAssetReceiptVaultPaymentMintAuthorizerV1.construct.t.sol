@@ -70,7 +70,9 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
             })
         );
         vm.expectRevert(ZeroReceiptVault.selector);
-        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
+        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
+            factory.cloneDeterministic(address(implementation), initData, bytes32(0))
+        );
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1ZeroInitialOwner(address receiptVault) external {
@@ -90,7 +92,9 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
             })
         );
         vm.expectRevert(ZeroInitialOwner.selector);
-        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
+        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
+            factory.cloneDeterministic(address(implementation), initData, bytes32(0))
+        );
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1ZeroVerifyContract(address receiptVault, address owner)
@@ -112,7 +116,9 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
             })
         );
         vm.expectRevert(ZeroVerifyContract.selector);
-        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
+        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
+            factory.cloneDeterministic(address(implementation), initData, bytes32(0))
+        );
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1ZeroPaymentToken(address receiptVault, address owner)
@@ -131,7 +137,9 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
             })
         );
         vm.expectRevert(ZeroPaymentToken.selector);
-        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
+        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
+            factory.cloneDeterministic(address(implementation), initData, bytes32(0))
+        );
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1ZeroMaxSharesSupply(
@@ -153,7 +161,9 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
             })
         );
         vm.expectRevert(ZeroMaxSharesSupply.selector);
-        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
+        OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
+            factory.cloneDeterministic(address(implementation), initData, bytes32(0))
+        );
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1Initialize(
@@ -203,8 +213,9 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
         emit OffchainAssetReceiptVaultPaymentMintAuthorizerV1.Initialized(
             receiptVault, verify, owner, paymentToken, paymentTokenDecimals, maxSharesSupply
         );
-        OffchainAssetReceiptVaultPaymentMintAuthorizerV1 authorizer =
-            OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.cloneDeterministic(address(implementation), initData, bytes32(0)));
+        OffchainAssetReceiptVaultPaymentMintAuthorizerV1 authorizer = OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
+            factory.cloneDeterministic(address(implementation), initData, bytes32(0))
+        );
         assertEq(authorizer.receiptVault(), receiptVault);
         assertEq(authorizer.paymentToken(), paymentToken);
         assertEq(authorizer.maxSharesSupply(), maxSharesSupply);
