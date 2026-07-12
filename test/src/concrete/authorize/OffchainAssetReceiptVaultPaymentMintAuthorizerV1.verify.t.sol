@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainAssetReceiptVaultAuthorizerV1Test.sol";
-import {CloneFactory} from "rain-factory-0.1.1/src/concrete/CloneFactory.sol";
+import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1,
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config,
@@ -36,7 +36,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1VerifyTest is OffchainA
             new OffchainAssetReceiptVaultPaymentMintAuthorizerV1();
         CloneFactory factory = new CloneFactory();
         return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
-            factory.clone(
+            factory.cloneDeterministic(
                 address(implementation),
                 abi.encode(
                     OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config({
@@ -46,7 +46,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1VerifyTest is OffchainA
                         paymentToken: paymentToken,
                         maxSharesSupply: 1e27
                     })
-                )
+                ),
+                bytes32(0)
             )
         );
     }

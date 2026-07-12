@@ -26,7 +26,7 @@ contract ERC20PriceOracleReceiptMetadataTest is ReceiptFactoryTest {
         // Deploy the Receipt contract
         TestReceiptManager testManager = new TestReceiptManager();
         ERC20PriceOracleReceipt receipt = ERC20PriceOracleReceipt(
-            iFactory.clone(address(iErc20PriceOracleReceiptImplementation), abi.encode(address(testManager)))
+            cloneReceipt(address(iErc20PriceOracleReceiptImplementation), abi.encode(address(testManager)))
         );
 
         vm.expectRevert(ZeroReceiptId.selector);
@@ -39,7 +39,7 @@ contract ERC20PriceOracleReceiptMetadataTest is ReceiptFactoryTest {
         // Deploy the Receipt contract
         TestReceiptManager testManager = new TestReceiptManager();
         ERC20PriceOracleReceipt receipt = ERC20PriceOracleReceipt(
-            iFactory.clone(address(iErc20PriceOracleReceiptImplementation), abi.encode(address(testManager)))
+            cloneReceipt(address(iErc20PriceOracleReceiptImplementation), abi.encode(address(testManager)))
         );
 
         string memory uri = receipt.uri(id);
@@ -69,7 +69,7 @@ contract ERC20PriceOracleReceiptMetadataTest is ReceiptFactoryTest {
         // Deploy the Receipt contract
         TestReceiptManager testManager = new TestReceiptManager();
         ERC20PriceOracleReceipt receipt = ERC20PriceOracleReceipt(
-            iFactory.clone(address(iErc20PriceOracleReceiptImplementation), abi.encode(address(testManager)))
+            cloneReceipt(address(iErc20PriceOracleReceiptImplementation), abi.encode(address(testManager)))
         );
 
         assertEq(receipt.name(), "TRM Receipt");
@@ -79,7 +79,7 @@ contract ERC20PriceOracleReceiptMetadataTest is ReceiptFactoryTest {
         // Deploy the Receipt contract
         TestReceiptManager testManager = new TestReceiptManager();
         ERC20PriceOracleReceipt receipt = ERC20PriceOracleReceipt(
-            iFactory.clone(address(iErc20PriceOracleReceiptImplementation), abi.encode(address(testManager)))
+            cloneReceipt(address(iErc20PriceOracleReceiptImplementation), abi.encode(address(testManager)))
         );
 
         assertEq(receipt.symbol(), "TRM RCPT");

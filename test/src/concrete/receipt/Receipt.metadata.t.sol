@@ -11,7 +11,7 @@ contract ReceiptMetadataTest is ReceiptFactoryTest {
         // Deploy the Receipt contract
         TestReceiptManager testManager = new TestReceiptManager();
         ReceiptContract receipt =
-            ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(testManager))));
+            ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(testManager))));
 
         string memory uri = receipt.uri(id);
 
@@ -35,7 +35,7 @@ contract ReceiptMetadataTest is ReceiptFactoryTest {
         // Deploy the Receipt contract
         TestReceiptManager testManager = new TestReceiptManager();
         ReceiptContract receipt =
-            ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(testManager))));
+            ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(testManager))));
 
         assertEq(receipt.name(), "TRM Receipt");
     }
@@ -44,7 +44,7 @@ contract ReceiptMetadataTest is ReceiptFactoryTest {
         // Deploy the Receipt contract
         TestReceiptManager testManager = new TestReceiptManager();
         ReceiptContract receipt =
-            ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(testManager))));
+            ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(testManager))));
 
         assertEq(receipt.symbol(), "TRM RCPT");
     }
