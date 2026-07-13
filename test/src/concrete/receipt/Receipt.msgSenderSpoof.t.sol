@@ -29,7 +29,7 @@ contract ReceiptMsgSenderSpoofTest is ReceiptFactoryTest {
 
         TestReceiptManager testManager = new TestReceiptManager();
         ReceiptContract receipt =
-            ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(testManager))));
+            ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(testManager))));
 
         ApprovalSpoofReceiver maliciousReceiver = new ApprovalSpoofReceiver(IERC1155(address(receipt)), attacker);
 

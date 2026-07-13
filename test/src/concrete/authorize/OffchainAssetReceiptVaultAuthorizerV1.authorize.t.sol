@@ -16,7 +16,7 @@ import {
     WITHDRAW,
     CertificationExpired
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {CloneFactory} from "rain-factory-0.1.1/src/concrete/CloneFactory.sol";
+import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
 import {TransferSharesStateChange, TransferReceiptStateChange} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 
 contract OffchainAssetReceiptVaultAuthorizerV1AuthorizeTest is OffchainAssetReceiptVaultAuthorizerV1Test {
@@ -27,8 +27,9 @@ contract OffchainAssetReceiptVaultAuthorizerV1AuthorizeTest is OffchainAssetRece
             OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: initialAdmin});
 
         CloneFactory factory = new CloneFactory();
-        return
-            OffchainAssetReceiptVaultAuthorizerV1(factory.clone(address(authorizerImplementation), abi.encode(config)));
+        return OffchainAssetReceiptVaultAuthorizerV1(
+            factory.cloneDeterministic(address(authorizerImplementation), abi.encode(config), bytes32(0))
+        );
     }
 
     function testOffchainAssetReceiptVaultAuthorizerV1AuthorizeUnauthorized(
