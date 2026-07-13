@@ -1,6 +1,6 @@
 [package]
 name = "rain-vats"
-version = "0.1.7"
+version = "0.1.8"
 
 [profile.default]
 libs = ['dependencies']
