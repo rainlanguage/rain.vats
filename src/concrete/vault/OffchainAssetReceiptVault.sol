@@ -376,6 +376,15 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
 
     /// Sets the authorizer contract. This is a critical operation and should be
     /// done with extreme care by the owner.
+    /// @dev The authorizer is called via non-view `IAuthorizeV1.authorize` from
+    /// `authorizeReceiptTransfer3`, `certify`, `_update`, `_afterDeposit`, and
+    /// `_afterWithdraw`. Installing a hostile or buggy authorizer can therefore
+    /// brick the vault (if it reverts on all calls) or perform arbitrary external
+    /// state mutations. The reentrancy safety of those call-sites assumes a
+    /// non-malicious authorizer; reentrancy into value-moving entrypoints is still
+    /// blocked by `nonReentrant`, but an adversarial authorizer can call other
+    /// non-guarded functions. The owner is the sole trust anchor for the
+    /// authorizer.
     /// @param newAuthorizer The new authorizer contract.
     function setAuthorizer(IAuthorizeV1 newAuthorizer) public virtual onlyOwner {
         _setAuthorizer(newAuthorizer);
@@ -383,6 +392,13 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
 
     /// Apply standard transfer restrictions to receipt transfers.
     /// @inheritdoc ReceiptVault
+    /// @dev Calls `s.authorizer.authorize(...)` which is non-view; the authorizer
+    /// is owner-controlled (see `setAuthorizer`). Reentrancy safety: all receipt
+    /// accounting in `super.authorizeReceiptTransfer3` and freeze checks complete
+    /// before the authorize call; a re-entrant authorizer cannot extract value
+    /// from guarded entrypoints (`deposit`/`withdraw`/`confiscate*`) because
+    /// those are protected by `nonReentrant`. The authorizer-trust assumption
+    /// (owner installs a non-hostile contract) is the remaining guard.
     function authorizeReceiptTransfer3(
         address operator,
         address from,
@@ -580,6 +596,11 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
     /// date of the system. This encouranges multiple certifications to be sought
     /// in parallel if it helps maintain trust in the overall system.
     ///
+    /// @dev Calls `s.authorizer.authorize(...)` (non-view) AFTER writing
+    /// `certifiedUntil` to storage (CEI pattern). A re-entrant authorizer
+    /// re-reads the already-updated `certifiedUntil`; there is no prior state
+    /// to corrupt. The authorizer-trust assumption (owner installs a non-hostile
+    /// contract) is the remaining guard.
     /// @param certifyUntil The new `certifiedUntil` time.
     /// @param forceUntil Whether to force the new certification time even if it
     /// is in the past relative to the existing certification time.
@@ -620,6 +641,12 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
 
     /// Apply standard transfer restrictions to share transfers.
     /// @inheritdoc ReceiptVault
+    /// @dev Calls `s.authorizer.authorize(...)` (non-view) BEFORE `super._update`
+    /// (ERC20 accounting). Reentrancy safety: a re-entrant share transfer would
+    /// require an allowance the caller has not set; even if the authorizer could
+    /// force a call, the ERC20 underflow guard in `super._update` prevents
+    /// overspend. The authorizer-trust assumption (owner installs a non-hostile
+    /// contract) is the remaining guard.
     function _update(address from, address to, uint256 amount) internal virtual override {
         ownerFreezeCheckTransaction(from, to);
 
