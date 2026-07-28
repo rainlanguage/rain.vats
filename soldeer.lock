@@ -28,17 +28,10 @@ integrity = "aa7366cac7d9c7610350a49b8126c667d83812a974539e79ccd38a5577cd626b"
 
 [[dependencies]]
 name = "rain-factory"
-version = "0.1.1"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory/0_1_1_20-05-2026_13:02:17_rain.zip"
-checksum = "6b02e2b87983e196bc88cb8fb802a2720b252783429567864cd13336167c369d"
-integrity = "be6a3343d0ea247d8b495b584cd21c3bf64f0a1396ca21aaa8ce31715df29842"
-
-[[dependencies]]
-name = "rain-flare"
-version = "0.1.2"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-flare/0_1_2_14-05-2026_20:11:33_rain.zip"
-checksum = "4e0902d8987d805bfb1680781ebf2564b624ec279c270dfd4aaa5a524a1d6e85"
-integrity = "5c626ce190137342ea1f1eeb5b894d0f3bffaa1a6b677c11d6e4e78f33f19480"
+version = "0.1.5"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory/0_1_5_12-07-2026_14:01:52_rain.zip"
+checksum = "31f5ac857d16b8dad27eec11218a338ce13721114b0514b05e500b14edf8ce80"
+integrity = "6e6eb9dc5174068e39d6ac80981210723088dde56c9cb0925ffe657ba3154cbc"
 
 [[dependencies]]
 name = "rain-math-fixedpoint"

@@ -22,7 +22,7 @@ contract ReceiptStorageLayoutTest is ReceiptFactoryTest {
 
     function _setup() internal returns (SpyReceiptManager manager, ReceiptContract receipt) {
         manager = new SpyReceiptManager();
-        receipt = ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(manager))));
+        receipt = ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(manager))));
     }
 
     /// `manager` is stored at the base slot (`RECEIPT_STORAGE_LOCATION`).

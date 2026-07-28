@@ -1,6 +1,6 @@
 [package]
 name = "rain-vats"
-version = "0.1.6"
+version = "0.2.0"
 
 [profile.default]
 libs = ['dependencies']
@@ -27,8 +27,7 @@ forge-std = "1.16.1"
 "@openzeppelin-contracts" = "5.6.1"
 "@openzeppelin-contracts-upgradeable" = "5.6.1"
 "rain-extrospection" = "0.1.1"
-"rain-factory" = "0.1.1"
-"rain-flare" = "0.1.2"
+"rain-factory" = "0.1.5"
 "rain-math-fixedpoint" = "0.2.0"
 "rain-math-float" = "0.1.1"
 "rain-string" = "0.2.0"

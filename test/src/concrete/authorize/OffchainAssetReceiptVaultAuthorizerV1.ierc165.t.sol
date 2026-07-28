@@ -7,7 +7,7 @@ import {Test} from "forge-std-1.16.1/src/Test.sol";
 import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
 import {OffchainAssetReceiptVaultAuthorizerV1} from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
-import {ICloneableV2} from "rain-factory-0.1.1/src/interface/ICloneableV2.sol";
+import {ICloneableV2} from "rain-factory-0.1.5/src/interface/ICloneableV2.sol";
 import {IAccessControl} from "@openzeppelin-contracts-5.6.1/access/IAccessControl.sol";
 
 contract OffchainAssetReceiptVaultAuthorizerV1IERC165Test is Test {
