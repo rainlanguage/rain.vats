@@ -9,7 +9,7 @@ import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1,
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config
 } from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
-import {CloneFactory} from "rain-factory-0.1.1/src/concrete/CloneFactory.sol";
+import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
 import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/VerifyAlwaysApproved.sol";
 import {ReentrancyGuard} from "@openzeppelin-contracts-5.6.1/utils/ReentrancyGuard.sol";
 import {ReentrantAsset, IReentrantAssetVault} from "test/concrete/ReentrantAsset.sol";
