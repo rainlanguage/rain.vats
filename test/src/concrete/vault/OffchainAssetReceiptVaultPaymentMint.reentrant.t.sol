@@ -38,7 +38,9 @@ contract OffchainAssetReceiptVaultPaymentMintReentrantTest is OffchainAssetRecei
                 maxSharesSupply: maxSharesSupply
             })
         );
-        return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.clone(address(implementation), initData));
+        return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
+            factory.cloneDeterministic(address(implementation), initData, bytes32(0))
+        );
     }
 
     function testPaymentMintReentrantPaymentTokenGuardFires(
