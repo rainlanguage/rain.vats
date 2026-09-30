@@ -17,6 +17,11 @@ contract ReentrantTransferReceiver is IERC1155Receiver {
     uint256 internal immutable iId;
     uint256 internal immutable iAmount;
 
+    // `to` is where the receiver forwards its own tokens, and the receipt
+    // applies its real `to` checks on that transfer (a zero `to` is rejected
+    // there). What is under observation is the operator identity the manager
+    // sees, not the destination, so there is nothing for this double to guard.
+    // forge-lint: disable-next-line(missing-zero-check)
     constructor(IERC1155 receipt, address to, uint256 id, uint256 amount) {
         iReceipt = receipt;
         iTo = to;

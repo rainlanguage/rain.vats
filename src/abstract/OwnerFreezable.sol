@@ -102,6 +102,11 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
     ///   miss the exact zero we need to reject.
     // slither-disable-next-line dead-code,naming-convention,incorrect-equality
     function __OwnerFreezable_init() internal view {
+        // A sanity check on the environment, not a deadline: every real chain
+        // has a non-zero timestamp from genesis onward, and the seconds a
+        // validator could skew cannot make it zero. The only thing manipulation
+        // could achieve here is to refuse the initializer.
+        // forge-lint: disable-next-line(block-timestamp)
         if (block.timestamp == 0) revert CorruptedEnvironmentBlockTimestampZero();
     }
 
@@ -175,6 +180,12 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
         // `block.timestamp > protectedUntil`. Matches the convention used
         // by `OffchainAssetReceiptVault.certifiedUntil` and the corporate
         // action `effectiveTime` semantics on consumers.
+        //
+        // A deadline the owner chose, not a race: `protectedUntil` is meant to
+        // hold an allowance open for a snapshot window measured in hours or
+        // days, so the seconds a validator could skew cannot change which side
+        // of it we are on, and the comparison only gates the owner's own call.
+        // forge-lint: disable-next-line(block-timestamp)
         if (block.timestamp <= s.alwaysAllowedFroms[from]) {
             revert OwnerFreezeAlwaysAllowedFromProtected(from, s.alwaysAllowedFroms[from]);
         }
@@ -209,7 +220,9 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
     function ownerFreezeStopAlwaysAllowingTo(address to) external onlyOwner {
         OwnerFreezableV17201Storage storage s = getStorageOwnerFreezable();
 
-        // Inclusive boundary — see `ownerFreezeStopAlwaysAllowingFrom`.
+        // Inclusive boundary — see `ownerFreezeStopAlwaysAllowingFrom`, which
+        // also says why validator clock skew cannot matter for this deadline.
+        // forge-lint: disable-next-line(block-timestamp)
         if (block.timestamp <= s.alwaysAllowedTos[to]) {
             revert IOwnerFreezableV1.OwnerFreezeAlwaysAllowedToProtected(to, s.alwaysAllowedTos[to]);
         }
@@ -231,6 +244,13 @@ abstract contract OwnerFreezable is IOwnerFreezableV1, OwnableUpgradeable {
         // Inclusive boundary: the freeze is active through and including
         // `ownerFrozenUntil`. Matches the convention used by
         // `OffchainAssetReceiptVault.certifiedUntil`.
+        //
+        // The freeze deadline is owner-chosen and meant to hold for a snapshot
+        // window of hours or days. The seconds a validator could skew only
+        // reclassify a transfer already sitting on the boundary, and there is
+        // nothing to extract by doing so: frozen or not, every account can
+        // only ever move what it already holds.
+        // forge-lint: disable-next-line(block-timestamp)
         if (block.timestamp <= s.ownerFrozenUntil && s.alwaysAllowedFroms[from] == 0 && s.alwaysAllowedTos[to] == 0) {
             revert IOwnerFreezableV1.OwnerFrozen(s.ownerFrozenUntil, from, to);
         }

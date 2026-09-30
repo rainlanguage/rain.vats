@@ -21,10 +21,18 @@ contract FreezeSimReceiptManager is IReceiptManagerV2 {
     address public immutable privileged;
     address public lastOperator;
 
+    // `privileged_` is the one operator the test wants let through, chosen by
+    // the test that constructs this manager. It holds no funds and no authority
+    // of its own, so a zero check would only refuse a configuration the test
+    // asked for.
+    // forge-lint: disable-next-line(missing-zero-check)
     constructor(address privileged_) {
         privileged = privileged_;
     }
 
+    // `operator` is recorded verbatim so tests can assert exactly what identity
+    // the receipt forwarded, zero included; a zero check would hide the case.
+    // forge-lint: disable-next-line(missing-zero-check)
     function authorizeReceiptTransfer3(address operator, address from, address to, uint256[] memory, uint256[] memory)
         external
     {

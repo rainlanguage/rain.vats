@@ -102,6 +102,9 @@ contract ConfiscateSharesCoverageTest is OffchainAssetReceiptVaultTest {
         // Normal transfer should fail while frozen.
         vm.prank(alice);
         vm.expectRevert();
+        // The call is asserted to REVERT by the `expectRevert` above; a
+        // reverting call has no return value to check.
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         vault.transfer(bob, 1);
 
         // Confiscation should still work.

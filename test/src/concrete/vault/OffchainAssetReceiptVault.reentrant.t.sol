@@ -176,6 +176,9 @@ contract OffchainAssetReceiptVaultReentrantTest is OffchainAssetReceiptVaultTest
         // to also drain them to attacker. The double-move underflows.
         vm.prank(alice);
         vm.expectRevert(abi.encodeWithSelector(IERC20Errors.ERC20InsufficientBalance.selector, alice, 0, amount));
+        // The call is asserted to REVERT by the `expectRevert` above; a
+        // reverting call has no return value to check.
+        // forge-lint: disable-next-line(erc20-unchecked-transfer)
         vault.transfer(bob, amount);
 
         // Nothing moved.

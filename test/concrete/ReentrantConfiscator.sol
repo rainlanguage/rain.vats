@@ -29,6 +29,10 @@ contract ReentrantConfiscator is IERC1155Receiver {
 
     /// Kick off the outer confiscation; this contract is the confiscator and so
     /// the recipient of the confiscated receipt.
+    // `confiscatee` is passed straight to the vault's own `confiscateReceipt`,
+    // which applies the vault's real checks; the outer call here is expected to
+    // revert on the guard regardless. Nothing to protect in this double.
+    // forge-lint: disable-next-line(missing-zero-check)
     function attack(IReentrantConfiscateVault vault, address confiscatee, uint256 id, uint256 targetAmount) external {
         iVault = vault;
         iConfiscatee = confiscatee;

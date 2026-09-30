@@ -41,6 +41,10 @@ contract ReentrantOracle is IPriceOracleV2 {
     }
 
     /// Point the oracle at the vault and configure the nested deposit.
+    // `reenterReceiver` is only ever handed back to the vault's own `deposit`,
+    // which applies the vault's real receiver checks. Guarding it here would
+    // pre-empt the very behaviour the re-entry exists to exercise.
+    // forge-lint: disable-next-line(missing-zero-check)
     function configure(IReentrantOracleVault vault, uint256 reenterAssets, address reenterReceiver) external {
         iVault = vault;
         iReenterAssets = reenterAssets;
