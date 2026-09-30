@@ -37,6 +37,10 @@ contract EthRefundReenterDepositor {
     }
 
     /// Perform the outer deposit, sending `msg.value` to be refunded.
+    // `reenterReceiver` is only ever handed back to the vault's own `deposit`,
+    // which applies the vault's real receiver checks. Guarding it here would
+    // pre-empt the very behaviour the re-entry exists to exercise.
+    // forge-lint: disable-next-line(missing-zero-check)
     function deposit(uint256 outerAssets, address outerReceiver, uint256 reenterAssets, address reenterReceiver)
         external
         payable

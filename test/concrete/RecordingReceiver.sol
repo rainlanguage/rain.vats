@@ -11,11 +11,16 @@ import {IERC1155Receiver} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC
 contract RecordingReceiver is IERC1155Receiver {
     address public lastOperator;
 
+    // `operator` is recorded verbatim so tests can assert exactly what identity
+    // the callback observed, zero included; a zero check would hide the case.
+    // forge-lint: disable-next-line(missing-zero-check)
     function onERC1155Received(address operator, address, uint256, uint256, bytes calldata) external returns (bytes4) {
         lastOperator = operator;
         return IERC1155Receiver.onERC1155Received.selector;
     }
 
+    // Same as `onERC1155Received`: recorded verbatim, zero included.
+    // forge-lint: disable-next-line(missing-zero-check)
     function onERC1155BatchReceived(address operator, address, uint256[] calldata, uint256[] calldata, bytes calldata)
         external
         returns (bytes4)

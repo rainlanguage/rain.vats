@@ -36,6 +36,10 @@ contract ReentrantShareTransferAuthorizer is IAuthorizeV1, IERC165 {
     bool internal iEntered;
 
     /// Configure the overspend attempt.
+    // `victim` and `attacker` are the endpoints of a double-spend the test
+    // expects to be REFUSED by ERC20 accounting; either being zero just changes
+    // which ERC20 revert refuses it. The authorizer holds no funds itself.
+    // forge-lint: disable-next-line(missing-zero-check)
     function configure(IReentrantShareVault vault, address victim, address attacker, uint256 amount) external {
         iVault = vault;
         iVictim = victim;
@@ -55,6 +59,13 @@ contract ReentrantShareTransferAuthorizer is IAuthorizeV1, IERC165 {
             // Try to move the victim's shares a second time inside the
             // pre-balance-write window. Succeeds here (victim still holds them)
             // but dooms the outer transfer to an underflow revert.
+            //
+            // The return value is deliberately ignored: OpenZeppelin's ERC20
+            // never returns false, it reverts, and the test's oracle is the
+            // OUTER transfer's revert, not this call's result. If this call
+            // somehow did nothing the outer transfer would succeed and the
+            // test's `expectRevert` would fail, so nothing is masked.
+            // forge-lint: disable-next-line(erc20-unchecked-transfer)
             iVault.transferFrom(iVictim, iAttacker, iAmount);
         }
     }

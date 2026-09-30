@@ -25,6 +25,10 @@ contract ReentrantLeakReceiver is IERC1155Receiver {
     /// nested call's own state changes are rolled back.
     bytes public nestedRevertData;
 
+    // `attacker` is the destination of a forward the test expects to be DENIED
+    // and whose revert data it captures; a zero attacker just changes which
+    // revert is captured. The receiver holds no funds and no authority.
+    // forge-lint: disable-next-line(missing-zero-check)
     constructor(IERC1155 receipt, address attacker, uint256 id, uint256 amount) {
         iReceipt = receipt;
         iAttacker = attacker;

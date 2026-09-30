@@ -615,6 +615,12 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
     /// @inheritdoc ICertifiableV1
     function isCertificationExpired() public view override returns (bool) {
         OffchainAssetReceiptVault7201Storage storage s = getStorageOffchainAssetReceiptVault();
+        // `certifiedUntil` is a certifier-chosen deadline meant to span days or
+        // longer, so the seconds a validator could skew only reclassify a
+        // transfer already sitting on the boundary. Expiry is also not a
+        // terminal state: a fresh `certify` reopens it, so skew has no lasting
+        // effect in either direction.
+        // forge-lint: disable-next-line(block-timestamp)
         return block.timestamp > s.certifiedUntil;
     }
 

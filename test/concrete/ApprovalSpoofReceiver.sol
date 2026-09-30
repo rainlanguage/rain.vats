@@ -14,6 +14,11 @@ contract ApprovalSpoofReceiver is IERC1155Receiver {
     IERC1155 internal immutable iReceipt;
     address internal immutable iAttacker;
 
+    // `attacker` is whichever address the test wants approval granted to. The
+    // zero address is as good a probe as any, this receiver holds no funds and
+    // no authority of its own, and a zero check would only narrow what a test
+    // can assert.
+    // forge-lint: disable-next-line(missing-zero-check)
     constructor(IERC1155 receipt, address attacker) {
         iReceipt = receipt;
         iAttacker = attacker;

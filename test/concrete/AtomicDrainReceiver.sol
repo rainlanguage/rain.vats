@@ -18,6 +18,10 @@ contract AtomicDrainReceiver is IERC1155Receiver {
     uint256 internal immutable iDrainId;
     uint256 internal immutable iDrainAmount;
 
+    // `victim` and `attacker` are the endpoints of a drain the test expects to
+    // be REFUSED; either being zero just changes which revert refuses it. The
+    // receiver holds no funds and no authority, so there is nothing to guard.
+    // forge-lint: disable-next-line(missing-zero-check)
     constructor(IERC1155 receipt, address victim, address attacker, uint256 drainId, uint256 drainAmount) {
         iReceipt = receipt;
         iVictim = victim;
