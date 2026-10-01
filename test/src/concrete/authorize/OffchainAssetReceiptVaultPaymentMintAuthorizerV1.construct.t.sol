@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test} from "forge-std-1.16.1/src/Test.sol";
+import {Test} from "forge-std-1.17.0/src/Test.sol";
 
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config,
@@ -13,9 +13,9 @@ import {
     ZeroPaymentToken,
     ZeroMaxSharesSupply
 } from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
-import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
+import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
-import {ICloneableV2} from "rain-factory-0.1.5/src/interface/ICloneableV2.sol";
+import {ICloneableV2} from "rain-factory-0.1.30/src/interface/ICloneableV2.sol";
 import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
 import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
 import {
@@ -57,7 +57,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1ZeroReceiptVault() external {
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 implementation =
             new OffchainAssetReceiptVaultPaymentMintAuthorizerV1();
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
         address verify = address(new VerifyAlwaysApproved());
 
         bytes memory initData = abi.encode(
@@ -79,7 +79,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
         vm.assume(receiptVault != address(0));
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 implementation =
             new OffchainAssetReceiptVaultPaymentMintAuthorizerV1();
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
         address verify = address(new VerifyAlwaysApproved());
 
         bytes memory initData = abi.encode(
@@ -104,7 +104,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
         vm.assume(owner != address(0));
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 implementation =
             new OffchainAssetReceiptVaultPaymentMintAuthorizerV1();
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
 
         bytes memory initData = abi.encode(
             OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config({
@@ -128,7 +128,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
         vm.assume(owner != address(0));
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 implementation =
             new OffchainAssetReceiptVaultPaymentMintAuthorizerV1();
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
         address verify = address(new VerifyAlwaysApproved());
 
         bytes memory initData = abi.encode(
@@ -152,7 +152,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
         vm.assume(paymentToken != address(0));
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 implementation =
             new OffchainAssetReceiptVaultPaymentMintAuthorizerV1();
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
         address verify = address(new VerifyAlwaysApproved());
 
         bytes memory initData = abi.encode(
@@ -191,7 +191,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
 
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 implementation =
             new OffchainAssetReceiptVaultPaymentMintAuthorizerV1();
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
 
         address verify = address(new VerifyAlwaysApproved());
 

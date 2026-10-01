@@ -5,11 +5,11 @@ pragma solidity =0.8.25;
 import {ERC20PriceOracleReceiptVaultTest} from "test/abstract/ERC20PriceOracleReceiptVaultTest.sol";
 import {ERC20PriceOracleReceiptVault} from "src/concrete/vault/ERC20PriceOracleReceiptVault.sol";
 import {IPriceOracleV2} from "src/interface/IPriceOracleV2.sol";
-import {IERC20} from "forge-std-1.16.1/src/interfaces/IERC20.sol";
+import {IERC20} from "forge-std-1.17.0/src/interfaces/IERC20.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+} from "rain-math-fixedpoint-0.2.1/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 
 /// @dev ERC-4626 spec compliance tests for ERC20PriceOracleReceiptVault.

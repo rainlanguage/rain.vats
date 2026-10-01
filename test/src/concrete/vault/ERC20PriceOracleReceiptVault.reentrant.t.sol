@@ -6,7 +6,7 @@ import {ERC20PriceOracleReceiptVaultTest} from "test/abstract/ERC20PriceOracleRe
 import {ERC20PriceOracleReceiptVault} from "src/concrete/vault/ERC20PriceOracleReceiptVault.sol";
 import {ReentrantDepositReceiver, IReentrantDepositTarget} from "test/concrete/ReentrantDepositReceiver.sol";
 import {ReentrancyGuard} from "@openzeppelin-contracts-5.6.1/utils/ReentrancyGuard.sol";
-import {IERC20} from "forge-std-1.16.1/src/interfaces/IERC20.sol";
+import {IERC20} from "forge-std-1.17.0/src/interfaces/IERC20.sol";
 import {IPriceOracleV2} from "src/interface/IPriceOracleV2.sol";
 import {ReentrantAsset, IReentrantAssetVault} from "test/concrete/ReentrantAsset.sol";
 import {ReentrantOracle, IReentrantOracleVault} from "test/concrete/ReentrantOracle.sol";
