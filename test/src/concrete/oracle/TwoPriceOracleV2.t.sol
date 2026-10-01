@@ -9,7 +9,10 @@ import {ErrTwoPriceOracleV2SameQuoteBase} from "src/error/ErrTwoPriceOracleV2.so
 contract TwoPriceOracleTest is Test {
     /// A zero address for the base errors construction.
     function testZeroAddressBase(address quote) public {
-        vm.assume(quote != address(0));
+        // The constructor dry-runs `QUOTE.price()` before `BASE.price()`, so
+        // the quote is called: keep it off the forge cheatcode address and the
+        // precompiles.
+        vm.assume(uint160(quote) > type(uint160).max / 2);
         TwoPriceOracleConfigV2 memory config =
             TwoPriceOracleConfigV2({base: IPriceOracleV2(payable(0)), quote: IPriceOracleV2(payable(quote))});
 
@@ -38,8 +41,10 @@ contract TwoPriceOracleTest is Test {
 
     /// Addresses that are not oracles error construction.
     function testNotOracle(address base, address quote) public {
-        vm.assume(base != address(0));
-        vm.assume(quote != address(0));
+        // Both are called by the constructor's price dry run: keep them off the
+        // forge cheatcode address and the precompiles.
+        vm.assume(uint160(base) > type(uint160).max / 2);
+        vm.assume(uint160(quote) > type(uint160).max / 2);
         TwoPriceOracleConfigV2 memory config =
             TwoPriceOracleConfigV2({base: IPriceOracleV2(payable(base)), quote: IPriceOracleV2(payable(quote))});
 

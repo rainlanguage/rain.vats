@@ -66,7 +66,10 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(receiptVault != address(0));
         vm.assume(owner != address(0));
-        vm.assume(paymentToken != address(0));
+        // `newAuthorizer` calls `decimals()` on the payment token, so it must
+        // not be the forge cheatcode address or a precompile. Upper half of the
+        // address space excludes both, matching the sibling tests below.
+        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
         vm.assume(maxSharesSupply > 0);
         vm.assume(caller != receiptVault);
         vm.assume(uint160(caller) > type(uint160).max / 2);
