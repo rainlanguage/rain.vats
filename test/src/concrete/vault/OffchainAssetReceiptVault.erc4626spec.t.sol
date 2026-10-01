@@ -89,7 +89,7 @@ contract OffchainAssetReceiptVaultERC4626SpecTest is OffchainAssetReceiptVaultTe
         // `Address.sendValue`, and is the deposit receiver, so the receipt's
         // ERC-1155 acceptance check can call it too. Keep it off the forge
         // cheatcode address and the precompiles.
-        vm.assume(uint160(alice) > type(uint160).max / 2);
+        assumeAddressIsNot(alice, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
         assets = bound(assets, 1, type(uint128).max);
 
         OffchainAssetReceiptVault vault = createVault(alice, name, symbol);
@@ -126,7 +126,7 @@ contract OffchainAssetReceiptVaultERC4626SpecTest is OffchainAssetReceiptVaultTe
         // refund `msg.sender` via `Address.sendValue`, and is the deposit
         // receiver. Keep it off the forge cheatcode address and the
         // precompiles.
-        vm.assume(uint160(alice) > type(uint160).max / 2);
+        assumeAddressIsNot(alice, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
         assets = bound(assets, 1, type(uint128).max);
 
         OffchainAssetReceiptVault vault = createVault(alice, name, symbol);
@@ -158,7 +158,7 @@ contract OffchainAssetReceiptVaultERC4626SpecTest is OffchainAssetReceiptVaultTe
         // `alice` is pranked into `deposit`, which refunds `msg.sender` via
         // `Address.sendValue`, and is the deposit receiver. Keep it off the
         // forge cheatcode address and the precompiles.
-        vm.assume(uint160(alice) > type(uint160).max / 2);
+        assumeAddressIsNot(alice, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
         assets = bound(assets, 1, type(uint128).max);
 
         OffchainAssetReceiptVault vault = createVault(alice, name, symbol);
