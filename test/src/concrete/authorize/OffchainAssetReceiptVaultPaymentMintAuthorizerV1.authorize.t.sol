@@ -18,7 +18,7 @@ import {
     WITHDRAW_ADMIN,
     WITHDRAW
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
+import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
 import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/VerifyAlwaysApproved.sol";
 import {IAccessControl} from "@openzeppelin-contracts-5.6.1/access/IAccessControl.sol";
@@ -35,7 +35,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) internal returns (OffchainAssetReceiptVaultPaymentMintAuthorizerV1) {
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 implementation =
             new OffchainAssetReceiptVaultPaymentMintAuthorizerV1();
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
         bytes memory initData = abi.encode(
             OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config({
                 receiptVault: receiptVault,

@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity ^0.8.25;
 
-import {ICloneableFactoryV3} from "rain-factory-0.1.5/src/interface/ICloneableFactoryV3.sol";
-import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
-import {Test} from "forge-std-1.16.1/src/Test.sol";
+import {ICloneableFactoryV3} from "rain-factory-0.1.30/src/interface/deprecated/ICloneableFactoryV3.sol";
+import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
+import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {Receipt as ReceiptContract} from "../../src/concrete/receipt/Receipt.sol";
 import {ERC20PriceOracleReceipt} from "../../src/concrete/receipt/ERC20PriceOracleReceipt.sol";
 import {DATA_URI_BASE64_PREFIX} from "../../src/concrete/receipt/Receipt.sol";
@@ -33,7 +33,7 @@ contract ReceiptFactoryTest is Test {
     uint256 private sCloneSalt;
 
     constructor() {
-        iFactory = new CloneFactory();
+        iFactory = new TestCloneFactory();
         iReceiptImplementation = new ReceiptContract();
         iErc20PriceOracleReceiptImplementation = new ERC20PriceOracleReceipt();
     }

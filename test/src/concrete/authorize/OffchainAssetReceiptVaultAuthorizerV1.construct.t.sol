@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test} from "forge-std-1.16.1/src/Test.sol";
+import {Test} from "forge-std-1.17.0/src/Test.sol";
 
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
@@ -19,7 +19,7 @@ import {
     WITHDRAW,
     ZeroInitialAdmin
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
+import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.6.1/proxy/utils/Initializable.sol";
 
 contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
@@ -50,7 +50,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
         vm.expectRevert(abi.encodeWithSelector(Initializable.InvalidInitialization.selector));
         authorizerImplementation.initialize(initData);
 
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
 
         OffchainAssetReceiptVaultAuthorizerV1 authorizer = OffchainAssetReceiptVaultAuthorizerV1(
             factory.cloneDeterministic(address(authorizerImplementation), initData, bytes32(0))
@@ -75,7 +75,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
 
         bytes memory initData = abi.encode(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: address(0)}));
 
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
 
         vm.expectRevert(ZeroInitialAdmin.selector);
         OffchainAssetReceiptVaultAuthorizerV1(

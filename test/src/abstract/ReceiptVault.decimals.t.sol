@@ -8,7 +8,7 @@ import {ReceiptVaultConfigV2} from "src/abstract/ReceiptVault.sol";
 import {Clones} from "@openzeppelin-contracts-5.6.1/proxy/Clones.sol";
 import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
 
-import {Test} from "forge-std-1.16.1/src/Test.sol";
+import {Test} from "forge-std-1.17.0/src/Test.sol";
 
 contract ReceiptVaultDecimalsTest is Test {
     function testDecimalsWithZeroAsset() external {

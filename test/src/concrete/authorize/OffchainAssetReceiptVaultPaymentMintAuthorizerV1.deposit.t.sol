@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainAssetReceiptVaultAuthorizerV1Test.sol";
-import {CloneFactory} from "rain-factory-0.1.5/src/concrete/CloneFactory.sol";
+import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1,
     PaymentTokenDecimalMismatch,
@@ -20,7 +20,7 @@ import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/Ver
 import {
     LibFixedPointDecimalScale,
     FLAG_ROUND_UP
-} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalScale.sol";
+} from "rain-math-fixedpoint-0.2.1/src/lib/LibFixedPointDecimalScale.sol";
 import {IERC20Errors} from "@openzeppelin-contracts-upgradeable-5.6.1/token/ERC20/ERC20Upgradeable.sol";
 
 import {TestErc20} from "test/concrete/TestErc20.sol";
@@ -32,7 +32,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1DepositTest is Offchain
     {
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 implementation =
             new OffchainAssetReceiptVaultPaymentMintAuthorizerV1();
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
         bytes memory initData = abi.encode(
             OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config({
                 receiptVault: receiptVault,

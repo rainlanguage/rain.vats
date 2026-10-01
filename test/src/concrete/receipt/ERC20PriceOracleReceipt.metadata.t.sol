@@ -5,12 +5,12 @@ pragma solidity =0.8.25;
 import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
 import {TestReceiptManager} from "test/concrete/TestReceiptManager.sol";
 import {ERC20PriceOracleReceipt} from "src/concrete/receipt/ERC20PriceOracleReceipt.sol";
-import {LibFixedPointDecimalFormat} from "rain-math-fixedpoint-0.2.0/src/lib/format/LibFixedPointDecimalFormat.sol";
+import {LibFixedPointDecimalFormat} from "rain-math-fixedpoint-0.2.1/src/lib/format/LibFixedPointDecimalFormat.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain-math-fixedpoint-0.2.0/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
-import {FIXED_POINT_ONE} from "rain-math-fixedpoint-0.2.0/src/lib/FixedPointDecimalConstants.sol";
+} from "rain-math-fixedpoint-0.2.1/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+import {FIXED_POINT_ONE} from "rain-math-fixedpoint-0.2.1/src/lib/FixedPointDecimalConstants.sol";
 import {ZeroReceiptId} from "src/error/ErrReceipt.sol";
 import {LibConformString} from "rain-string-0.2.0/src/lib/mut/LibConformString.sol";
 import {
