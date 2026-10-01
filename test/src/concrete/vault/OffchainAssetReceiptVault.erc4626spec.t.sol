@@ -85,10 +85,19 @@ contract OffchainAssetReceiptVaultERC4626SpecTest is OffchainAssetReceiptVaultTe
         uint256 assets,
         bytes memory info
     ) external {
-        vm.assume(alice != address(0));
+        // `alice` is pranked into `deposit`, which refunds `msg.sender` via
+        // `Address.sendValue`, and is the deposit receiver, so the receipt's
+        // ERC-1155 acceptance check can call it too. Keep it off the forge
+        // cheatcode address and the precompiles.
+        vm.assume(uint160(alice) > type(uint160).max / 2);
         assets = bound(assets, 1, type(uint128).max);
 
         OffchainAssetReceiptVault vault = createVault(alice, name, symbol);
+        // Checked after `createVault` so the vault, receipt, authorizer and
+        // the fixture's own deployments are all excluded: a contract that is
+        // not an ERC-1155 receiver, or has no payable fallback, rejects the
+        // mint or the refund.
+        vm.assume(alice.code.length == 0);
         address assetBefore = vault.asset();
 
         vm.startPrank(alice);
@@ -113,10 +122,19 @@ contract OffchainAssetReceiptVaultERC4626SpecTest is OffchainAssetReceiptVaultTe
         uint256 assets,
         bytes memory info
     ) external {
-        vm.assume(alice != address(0));
+        // `alice` is pranked into `previewDeposit` and `deposit`, which both
+        // refund `msg.sender` via `Address.sendValue`, and is the deposit
+        // receiver. Keep it off the forge cheatcode address and the
+        // precompiles.
+        vm.assume(uint160(alice) > type(uint160).max / 2);
         assets = bound(assets, 1, type(uint128).max);
 
         OffchainAssetReceiptVault vault = createVault(alice, name, symbol);
+        // Checked after `createVault` so the vault, receipt, authorizer and
+        // the fixture's own deployments are all excluded: a contract that is
+        // not an ERC-1155 receiver, or has no payable fallback, rejects the
+        // mint or the refund.
+        vm.assume(alice.code.length == 0);
 
         vm.startPrank(alice);
         OffchainAssetReceiptVaultAuthorizerV1(address(vault.authorizer())).grantRole(DEPOSIT, alice);
@@ -137,10 +155,18 @@ contract OffchainAssetReceiptVaultERC4626SpecTest is OffchainAssetReceiptVaultTe
         uint256 assets,
         bytes memory info
     ) external {
-        vm.assume(alice != address(0));
+        // `alice` is pranked into `deposit`, which refunds `msg.sender` via
+        // `Address.sendValue`, and is the deposit receiver. Keep it off the
+        // forge cheatcode address and the precompiles.
+        vm.assume(uint160(alice) > type(uint160).max / 2);
         assets = bound(assets, 1, type(uint128).max);
 
         OffchainAssetReceiptVault vault = createVault(alice, name, symbol);
+        // Checked after `createVault` so the vault, receipt, authorizer and
+        // the fixture's own deployments are all excluded: a contract that is
+        // not an ERC-1155 receiver, or has no payable fallback, rejects the
+        // mint or the refund.
+        vm.assume(alice.code.length == 0);
 
         vm.startPrank(alice);
         OffchainAssetReceiptVaultAuthorizerV1(address(vault.authorizer())).grantRole(DEPOSIT, alice);
