@@ -44,7 +44,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1RecipientNotOwnerTest i
     /// is taken from the owner, not the receiver.
     function testRecipientNotOwnerPaymentFromOwner(address owner, address receiver, uint256 shares) external {
         vm.assume(owner != address(0) && receiver != address(0) && owner != receiver);
-        vm.assume(uint160(owner) > type(uint160).max / 2);
+        assumeAddressIsNot(owner, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(owner.code.length == 0);
 
         address receiptVault = address(uint160(uint256(keccak256("RECEIPT_VAULT.RECIPIENT"))));
 
