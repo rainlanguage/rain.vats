@@ -54,7 +54,11 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1DepositTest is Offchain
         uint256 totalSupply,
         uint256 firstShares
     ) external {
-        vm.assume(uint160(alice) > type(uint160).max / 2 && uint160(bob) > type(uint160).max / 2 && alice != bob);
+        assumeAddressIsNot(alice, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(alice.code.length == 0);
+        assumeAddressIsNot(bob, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(bob.code.length == 0);
+        vm.assume(alice != bob);
         vm.assume(alice.code.length == 0 && bob.code.length == 0);
 
         vm.prank(bob);
@@ -121,7 +125,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1DepositTest is Offchain
         uint256 firstShares
     ) external {
         vm.assume(alice != address(0) && bob != address(0) && alice != bob);
-        vm.assume(uint160(receiptVault) > type(uint160).max / 2);
+        assumeAddressIsNot(receiptVault, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(receiptVault.code.length == 0);
 
         vm.prank(alice);
         TestErc20 paymentToken = new TestErc20();
@@ -180,8 +185,10 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1DepositTest is Offchain
     }
 
     function testZeroPaymentAmount(address receiptVault, address alice) external {
-        vm.assume(uint160(alice) > type(uint160).max / 2);
-        vm.assume(uint160(receiptVault) > type(uint160).max / 2);
+        assumeAddressIsNot(alice, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(alice.code.length == 0);
+        assumeAddressIsNot(receiptVault, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(receiptVault.code.length == 0);
 
         vm.prank(alice);
         TestErc20 paymentToken = new TestErc20();
@@ -218,7 +225,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1DepositTest is Offchain
         uint256 firstShares
     ) external {
         vm.assume(alice != address(0) && bob != address(0) && alice != bob);
-        vm.assume(uint160(receiptVault) > type(uint160).max / 2);
+        assumeAddressIsNot(receiptVault, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(receiptVault.code.length == 0);
 
         maxShares = bound(maxShares, 2e18, 1e27);
         totalSupply = bound(totalSupply, 0, 1e18);
@@ -275,7 +283,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1DepositTest is Offchain
         uint256 firstShares
     ) external {
         vm.assume(alice != address(0) && bob != address(0) && alice != bob);
-        vm.assume(uint160(receiptVault) > type(uint160).max / 2);
+        assumeAddressIsNot(receiptVault, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(receiptVault.code.length == 0);
 
         maxShares = bound(maxShares, 2e18, 1e27);
         totalSupply = bound(totalSupply, 0, 1e18);
@@ -379,7 +388,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1DepositTest is Offchain
     ) external {
         vm.assume(alice != address(0) && bob != address(0) && alice != bob);
         vm.assume(alice.code.length == 0);
-        vm.assume(uint160(alice) > type(uint160).max / 2);
+        assumeAddressIsNot(alice, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(alice.code.length == 0);
 
         OffchainAssetReceiptVault receiptVault = createVault(bob, "foo", "bar");
 

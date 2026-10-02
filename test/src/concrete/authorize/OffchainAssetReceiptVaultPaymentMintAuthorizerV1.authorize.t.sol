@@ -69,10 +69,12 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
         // `newAuthorizer` calls `decimals()` on the payment token, so it must
         // not be the forge cheatcode address or a precompile. Upper half of the
         // address space excludes both, matching the sibling tests below.
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         vm.assume(caller != receiptVault);
-        vm.assume(uint160(caller) > type(uint160).max / 2);
+        assumeAddressIsNot(caller, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(caller.code.length == 0);
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 authorizer =
             newAuthorizer(receiptVault, owner, paymentToken, paymentTokenDecimals, maxSharesSupply);
 
@@ -94,9 +96,11 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
-        vm.assume(uint160(sender) > type(uint160).max / 2);
+        assumeAddressIsNot(sender, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(sender.code.length == 0);
         // The first check in `authorize` only reverts when sender is NOT the
         // receipt vault. With sender == receiptVault the call falls into the
         // DEPOSIT / TRANSFER_* branches; an empty `data` then trips
@@ -123,7 +127,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 authorizer =
             newAuthorizer(receiptVault, owner, paymentToken, paymentTokenDecimals, maxSharesSupply);
@@ -147,7 +152,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         vm.assume(user != address(0));
         vm.assume(from != address(0));
@@ -171,7 +177,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         vm.assume(user != address(0));
         vm.assume(from != address(0));
@@ -194,7 +201,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         vm.assume(user != address(0));
         vm.assume(from != address(0));
@@ -218,7 +226,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         vm.assume(user != address(0));
         vm.assume(from != address(0));
@@ -238,7 +247,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 authorizer =
             newAuthorizer(receiptVault, owner, paymentToken, paymentTokenDecimals, maxSharesSupply);
@@ -260,7 +270,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 authorizer =
             newAuthorizer(receiptVault, owner, paymentToken, paymentTokenDecimals, maxSharesSupply);

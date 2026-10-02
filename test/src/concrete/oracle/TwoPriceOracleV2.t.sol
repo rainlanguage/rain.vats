@@ -12,7 +12,8 @@ contract TwoPriceOracleTest is Test {
         // The constructor dry-runs `QUOTE.price()` before `BASE.price()`, so
         // the quote is called: keep it off the forge cheatcode address and the
         // precompiles.
-        vm.assume(uint160(quote) > type(uint160).max / 2);
+        assumeAddressIsNot(quote, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(quote.code.length == 0);
         TwoPriceOracleConfigV2 memory config =
             TwoPriceOracleConfigV2({base: IPriceOracleV2(payable(0)), quote: IPriceOracleV2(payable(quote))});
 
@@ -43,8 +44,10 @@ contract TwoPriceOracleTest is Test {
     function testNotOracle(address base, address quote) public {
         // Both are called by the constructor's price dry run: keep them off the
         // forge cheatcode address and the precompiles.
-        vm.assume(uint160(base) > type(uint160).max / 2);
-        vm.assume(uint160(quote) > type(uint160).max / 2);
+        assumeAddressIsNot(base, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(base.code.length == 0);
+        assumeAddressIsNot(quote, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(quote.code.length == 0);
         TwoPriceOracleConfigV2 memory config =
             TwoPriceOracleConfigV2({base: IPriceOracleV2(payable(base)), quote: IPriceOracleV2(payable(quote))});
 
