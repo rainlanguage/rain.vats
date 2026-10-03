@@ -11,7 +11,7 @@ import {
 } from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {AlwaysAuthorize} from "test/concrete/AlwaysAuthorize.sol";
 import {ReentrantDepositReceiver, IReentrantDepositTarget} from "test/concrete/ReentrantDepositReceiver.sol";
-import {ReentrancyGuard} from "@openzeppelin-contracts-5.6.1/utils/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "@openzeppelin-contracts-5.7.0/utils/ReentrancyGuard.sol";
 import {ReentrantAuthorizer, IReentrantAuthorizerVault} from "test/concrete/ReentrantAuthorizer.sol";
 import {
     ReentrantShareTransferAuthorizer,
@@ -21,7 +21,7 @@ import {CertifyObserverAuthorizer, ICertifiableObserverVault} from "test/concret
 import {ReentrantConfiscator, IReentrantConfiscateVault} from "test/concrete/ReentrantConfiscator.sol";
 import {EthRefundReenterDepositor, IEthRefundReenterVault} from "test/concrete/EthRefundReenterDepositor.sol";
 import {OffchainAssetReceiptVaultAuthorizerV1} from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {IERC20Errors} from "@openzeppelin-contracts-upgradeable-5.6.1/token/ERC20/ERC20Upgradeable.sol";
+import {IERC20Errors} from "@openzeppelin-contracts-upgradeable-5.7.0/token/ERC20/ERC20Upgradeable.sol";
 
 /// @notice Regression tests for reentrancy protection in OffchainAssetReceiptVault.
 /// Covers the ERC1155 acceptance-callback surface documented in issue #316 (rows

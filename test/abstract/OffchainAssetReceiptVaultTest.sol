@@ -17,7 +17,7 @@ import {
     OffchainAssetReceiptVaultBeaconSetDeployer,
     OffchainAssetReceiptVaultBeaconSetDeployerConfig
 } from "../../src/concrete/deploy/OffchainAssetReceiptVaultBeaconSetDeployer.sol";
-import {Clones} from "@openzeppelin-contracts-5.6.1/proxy/Clones.sol";
+import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
 
 contract OffchainAssetReceiptVaultTest is Test {
     OffchainAssetReceiptVault internal immutable iImplementation;

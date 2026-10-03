@@ -9,7 +9,7 @@ import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config
 } from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
 import {DepositStateChange, DEPOSIT} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
-import {IERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/IERC20.sol";
+import {IERC20} from "@openzeppelin-contracts-5.7.0/token/ERC20/IERC20.sol";
 import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/VerifyAlwaysApproved.sol";
 import {TestErc20} from "test/concrete/TestErc20.sol";
 

@@ -6,7 +6,7 @@ import {IReceiptManagerV2, IReceiptVaultV3, ICloneableV2} from "src/abstract/Rec
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {ConcreteReceiptVault} from "test/concrete/ConcreteReceiptVault.sol";
 
-import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
+import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
 
 contract ReceiptVaultIERC165Test is Test {
     function testReceiptVaultIERC165(bytes4 badInterfaceId) external {

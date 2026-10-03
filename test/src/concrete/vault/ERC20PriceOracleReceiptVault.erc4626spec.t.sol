@@ -9,7 +9,7 @@ import {IERC20} from "forge-std-1.17.0/src/interfaces/IERC20.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain-math-fixedpoint-0.2.1/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+} from "rain-math-fixedpoint-0.2.2/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 
 /// @dev ERC-4626 spec compliance tests for ERC20PriceOracleReceiptVault.

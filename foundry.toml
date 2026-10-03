@@ -19,18 +19,18 @@ remappings = [
   # prefixes; bridge to their actual install location so transitive
   # resolution works. Tracked upstream:
   # - OpenZeppelin/openzeppelin-contracts-upgradeable#232
-  "@openzeppelin/contracts/=dependencies/@openzeppelin-contracts-5.6.1/",
+  "@openzeppelin/contracts/=dependencies/@openzeppelin-contracts-5.7.0/",
 ]
 
 [dependencies]
 forge-std = "1.17.0"
-"@openzeppelin-contracts" = "5.6.1"
-"@openzeppelin-contracts-upgradeable" = "5.6.1"
+"@openzeppelin-contracts" = "5.7.0"
+"@openzeppelin-contracts-upgradeable" = "5.7.0"
 "rain-extrospection" = "0.1.14"
 "rain-factory" = "0.1.30"
-"rain-math-fixedpoint" = "0.2.1"
-"rain-math-float" = "0.2.4"
-"rain-string" = "0.2.0"
+"rain-math-fixedpoint" = "0.2.2"
+"rain-math-float" = "0.2.5"
+"rain-string" = "0.3.9"
 "rain-verify-interface" = "0.1.0"
 "solady" = "0.1.26"
 

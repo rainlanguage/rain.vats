@@ -16,7 +16,7 @@ import {
     CONFISCATE_SHARES,
     CONFISCATE_RECEIPT
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {IAccessControl} from "@openzeppelin-contracts-5.6.1/access/IAccessControl.sol";
+import {IAccessControl} from "@openzeppelin-contracts-5.7.0/access/IAccessControl.sol";
 
 contract OffchainAssetReceiptVaultOwnerFreezeUntilTest is OwnerFreezableOwnerFreezeUntilTest {
     constructor() {

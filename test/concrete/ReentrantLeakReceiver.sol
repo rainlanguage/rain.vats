@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {IERC1155Receiver} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155Receiver.sol";
-import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
+import {IERC1155Receiver} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155Receiver.sol";
+import {IERC1155} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155.sol";
 
 /// @title ReentrantLeakReceiver
 /// @notice TEST receiver that, during the ERC1155 acceptance callback, tries to
