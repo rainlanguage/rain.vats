@@ -5,7 +5,7 @@ pragma solidity =0.8.25;
 import {PriceOracleV2} from "../../abstract/PriceOracleV2.sol";
 import {IPyth} from "../../vendor/pyth-sdk/IPyth.sol";
 import {PythStructs} from "../../vendor/pyth-sdk/PythStructs.sol";
-import {LibDecimalFloat, Float} from "rain-math-float-0.2.4/src/lib/LibDecimalFloat.sol";
+import {LibDecimalFloat, Float} from "rain-math-float-0.2.5/src/lib/LibDecimalFloat.sol";
 
 error NonPositivePrice(int256 price);
 

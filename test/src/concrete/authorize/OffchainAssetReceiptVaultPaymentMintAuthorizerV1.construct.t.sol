@@ -14,10 +14,10 @@ import {
     ZeroMaxSharesSupply
 } from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
 import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
-import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
+import {IERC20Metadata} from "@openzeppelin-contracts-5.7.0/token/ERC20/extensions/IERC20Metadata.sol";
 import {ICloneableV2} from "rain-factory-0.1.30/src/interface/ICloneableV2.sol";
 import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
-import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
+import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
 import {
     WITHDRAW,
     DEPOSIT,
@@ -33,7 +33,7 @@ import {
     CERTIFY_ADMIN
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/VerifyAlwaysApproved.sol";
-import {Initializable} from "@openzeppelin-contracts-upgradeable-5.6.1/proxy/utils/Initializable.sol";
+import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
 
 contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1ConstructTest is Test {
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1Construct() external {

@@ -7,7 +7,7 @@ import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
 import {SpyReceiptManager} from "test/concrete/SpyReceiptManager.sol";
 import {RecordingReceiver} from "test/concrete/RecordingReceiver.sol";
 import {ReentrantTransferReceiver} from "test/concrete/ReentrantTransferReceiver.sol";
-import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
+import {IERC1155} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155.sol";
 
 /// @title ReceiptOperatorIdentityTest
 /// @notice Validates the operator identity the #309 fix forwards to

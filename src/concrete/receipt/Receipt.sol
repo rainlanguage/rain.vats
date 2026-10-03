@@ -8,10 +8,10 @@ import {IReceiptManagerV2} from "../../interface/IReceiptManagerV2.sol";
 import {IReceiptV3} from "../../interface/IReceiptV3.sol";
 import {IReceiptVaultV3} from "../../interface/IReceiptVaultV3.sol";
 import {OnlyManager} from "../../error/ErrReceipt.sol";
-import {ERC1155Upgradeable} from "@openzeppelin-contracts-upgradeable-5.6.1/token/ERC1155/ERC1155Upgradeable.sol";
-import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
-import {Base64} from "@openzeppelin-contracts-5.6.1/utils/Base64.sol";
-import {Strings} from "@openzeppelin-contracts-5.6.1/utils/Strings.sol";
+import {ERC1155Upgradeable} from "@openzeppelin-contracts-upgradeable-5.7.0/token/ERC1155/ERC1155Upgradeable.sol";
+import {IERC20Metadata} from "@openzeppelin-contracts-5.7.0/token/ERC20/extensions/IERC20Metadata.sol";
+import {Base64} from "@openzeppelin-contracts-5.7.0/utils/Base64.sol";
+import {Strings} from "@openzeppelin-contracts-5.7.0/utils/Strings.sol";
 
 /// @dev String ID for the Receipt storage location v1.
 string constant RECEIPT_STORAGE_ID = "rain.storage.receipt.1";

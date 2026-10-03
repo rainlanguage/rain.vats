@@ -12,7 +12,7 @@ import {
     CertifyStateChange
 } from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {LibExtrospectERC1167Proxy} from "rain-extrospection-0.1.14/src/lib/LibExtrospectERC1167Proxy.sol";
-import {OwnableUpgradeable as Ownable} from "@openzeppelin-contracts-upgradeable-5.6.1/access/OwnableUpgradeable.sol";
+import {OwnableUpgradeable as Ownable} from "@openzeppelin-contracts-upgradeable-5.7.0/access/OwnableUpgradeable.sol";
 import {AlwaysAuthorize} from "test/concrete/AlwaysAuthorize.sol";
 
 contract OffchainAssetReceiptVaultAuthorizeTest is OffchainAssetReceiptVaultTest {

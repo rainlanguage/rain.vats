@@ -8,7 +8,7 @@ import {ERC20PriceOracleReceiptVaultTest} from "test/abstract/ERC20PriceOracleRe
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain-math-fixedpoint-0.2.1/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+} from "rain-math-fixedpoint-0.2.2/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 import {IERC20} from "forge-std-1.17.0/src/interfaces/IERC20.sol";
 import {IReceiptVaultV1} from "src/interface/IReceiptVaultV3.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";

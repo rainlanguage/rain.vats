@@ -7,13 +7,13 @@ import {ERC20PriceOracleReceiptVaultTest} from "test/abstract/ERC20PriceOracleRe
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain-math-fixedpoint-0.2.1/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+} from "rain-math-fixedpoint-0.2.2/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 import {IERC20} from "forge-std-1.17.0/src/interfaces/IERC20.sol";
 import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
 import {ZeroAssetsAmount, ZeroReceiver, ZeroOwner} from "src/abstract/ReceiptVault.sol";
 import {IReceiptVaultV1} from "src/interface/IReceiptVaultV3.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
-import {IERC20Errors} from "@openzeppelin-contracts-upgradeable-5.6.1/token/ERC20/ERC20Upgradeable.sol";
+import {IERC20Errors} from "@openzeppelin-contracts-upgradeable-5.7.0/token/ERC20/ERC20Upgradeable.sol";
 
 contract ERC20PriceOracleReceiptVaultRedeemTest is ERC20PriceOracleReceiptVaultTest {
     using LibFixedPointDecimalArithmeticOpenZeppelin for uint256;

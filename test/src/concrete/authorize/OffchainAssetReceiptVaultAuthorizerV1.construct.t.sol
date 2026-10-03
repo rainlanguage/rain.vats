@@ -20,7 +20,7 @@ import {
     ZeroInitialAdmin
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
-import {Initializable} from "@openzeppelin-contracts-upgradeable-5.6.1/proxy/utils/Initializable.sol";
+import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
 
 contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
     function testOffchainAssetReceiptVaultAuthorizerV1Construct(address initialAdmin) external {

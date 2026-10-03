@@ -6,7 +6,7 @@ import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
 import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
 import {FreezeSimReceiptManager, NotPrivileged} from "test/concrete/FreezeSimReceiptManager.sol";
 import {ReentrantLeakReceiver} from "test/concrete/ReentrantLeakReceiver.sol";
-import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
+import {IERC1155} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155.sol";
 
 /// @title ReceiptOperatorLeakTest
 /// @notice Proves the SECURITY consequence of the #309 consume-once operator,

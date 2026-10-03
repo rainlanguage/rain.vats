@@ -6,7 +6,7 @@ import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
 import {TestReceiptManager} from "test/concrete/TestReceiptManager.sol";
 import {ApprovalSpoofReceiver} from "test/concrete/ApprovalSpoofReceiver.sol";
 import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
-import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
+import {IERC1155} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155.sol";
 
 /// @title ReceiptMsgSenderSpoofTest
 /// @notice Regression test for issue #309: an ERC1155 acceptance callback must

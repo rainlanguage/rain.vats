@@ -8,9 +8,9 @@ import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
 import {AtomicDrainReceiver} from "test/concrete/AtomicDrainReceiver.sol";
 import {ReentrantDepositReceiver, IReentrantDepositTarget} from "test/concrete/ReentrantDepositReceiver.sol";
 import {IERC20} from "forge-std-1.17.0/src/interfaces/IERC20.sol";
-import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
-import {IERC1155Errors} from "@openzeppelin-contracts-5.6.1/interfaces/draft-IERC6093.sol";
-import {ReentrancyGuard} from "@openzeppelin-contracts-5.6.1/utils/ReentrancyGuard.sol";
+import {IERC1155} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155.sol";
+import {IERC1155Errors} from "@openzeppelin-contracts-5.7.0/interfaces/draft-IERC6093.sol";
+import {ReentrancyGuard} from "@openzeppelin-contracts-5.7.0/utils/ReentrancyGuard.sol";
 
 /// @title ReceiptSpoofEndToEndTest
 /// @notice End-to-end #309 regression through a REAL

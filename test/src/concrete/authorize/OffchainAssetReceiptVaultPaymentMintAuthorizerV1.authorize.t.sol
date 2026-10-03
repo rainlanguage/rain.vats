@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainAssetReceiptVaultAuthorizerV1Test.sol";
-import {Strings} from "@openzeppelin-contracts-5.6.1/utils/Strings.sol";
+import {Strings} from "@openzeppelin-contracts-5.7.0/utils/Strings.sol";
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1,
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config,
@@ -19,9 +19,9 @@ import {
     WITHDRAW
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
-import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
+import {IERC20Metadata} from "@openzeppelin-contracts-5.7.0/token/ERC20/extensions/IERC20Metadata.sol";
 import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/VerifyAlwaysApproved.sol";
-import {IAccessControl} from "@openzeppelin-contracts-5.6.1/access/IAccessControl.sol";
+import {IAccessControl} from "@openzeppelin-contracts-5.7.0/access/IAccessControl.sol";
 
 contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is OffchainAssetReceiptVaultAuthorizerV1Test {
     using Strings for address;

@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
-import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
+import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
 import {CERTIFY} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
 
 /// @dev Minimal view of the vault the observer reads back during the callback.

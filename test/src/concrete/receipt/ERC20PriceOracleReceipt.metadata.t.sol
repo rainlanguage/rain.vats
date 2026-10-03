@@ -5,20 +5,20 @@ pragma solidity =0.8.25;
 import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
 import {TestReceiptManager} from "test/concrete/TestReceiptManager.sol";
 import {ERC20PriceOracleReceipt} from "src/concrete/receipt/ERC20PriceOracleReceipt.sol";
-import {LibFixedPointDecimalFormat} from "rain-math-fixedpoint-0.2.1/src/lib/format/LibFixedPointDecimalFormat.sol";
+import {LibFixedPointDecimalFormat} from "rain-math-fixedpoint-0.2.2/src/lib/format/LibFixedPointDecimalFormat.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain-math-fixedpoint-0.2.1/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
-import {FIXED_POINT_ONE} from "rain-math-fixedpoint-0.2.1/src/lib/FixedPointDecimalConstants.sol";
+} from "rain-math-fixedpoint-0.2.2/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+import {FIXED_POINT_ONE} from "rain-math-fixedpoint-0.2.2/src/lib/FixedPointDecimalConstants.sol";
 import {ZeroReceiptId} from "src/error/ErrReceipt.sol";
-import {LibConformString} from "rain-string-0.2.0/src/lib/mut/LibConformString.sol";
+import {LibConformString} from "rain-string-0.3.9/src/lib/mut/LibConformString.sol";
 import {
     CMASK_QUOTATION_MARK,
     CMASK_PRINTABLE,
     CMASK_BACKSLASH
-} from "rain-string-0.2.0/src/lib/parse/LibParseCMask.sol";
-import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
+} from "rain-string-0.3.9/src/lib/parse/LibParseCMask.sol";
+import {IERC20Metadata} from "@openzeppelin-contracts-5.7.0/token/ERC20/extensions/IERC20Metadata.sol";
 import {MutableMetadataReceipt} from "test/concrete/MutableMetadataReceipt.sol";
 
 contract ERC20PriceOracleReceiptMetadataTest is ReceiptFactoryTest {
@@ -100,11 +100,11 @@ contract ERC20PriceOracleReceiptMetadataTest is ReceiptFactoryTest {
         {
             uint256 mask = CMASK_PRINTABLE & ~(CMASK_QUOTATION_MARK | CMASK_BACKSLASH);
 
-            LibConformString.conformStringToMask(vaultShareSymbol, mask, 0x100);
-            LibConformString.conformStringToMask(vaultAssetSymbol, mask, 0x100);
-            LibConformString.conformStringToMask(redeemUrl, mask, 0x100);
-            LibConformString.conformStringToMask(brandName, mask, 0x100);
-            LibConformString.conformStringToMask(referenceAssetSymbol, mask, 0x100);
+            LibConformString.conformStringToMask(vaultShareSymbol, mask);
+            LibConformString.conformStringToMask(vaultAssetSymbol, mask);
+            LibConformString.conformStringToMask(redeemUrl, mask);
+            LibConformString.conformStringToMask(brandName, mask);
+            LibConformString.conformStringToMask(referenceAssetSymbol, mask);
 
             receipt.setVaultShareSymbol(vaultShareSymbol);
             receipt.setVaultAssetSymbol(vaultAssetSymbol);
@@ -170,12 +170,12 @@ contract ERC20PriceOracleReceiptMetadataTest is ReceiptFactoryTest {
         {
             uint256 mask = CMASK_PRINTABLE & ~(CMASK_QUOTATION_MARK | CMASK_BACKSLASH);
 
-            LibConformString.conformStringToMask(vaultShareSymbol, mask, 0x100);
-            LibConformString.conformStringToMask(vaultAssetSymbol, mask, 0x100);
-            LibConformString.conformStringToMask(redeemUrl, mask, 0x100);
-            LibConformString.conformStringToMask(brandName, mask, 0x100);
-            LibConformString.conformStringToMask(referenceAssetSymbol, mask, 0x100);
-            LibConformString.conformStringToMask(receiptSvgUri, mask, 0x100);
+            LibConformString.conformStringToMask(vaultShareSymbol, mask);
+            LibConformString.conformStringToMask(vaultAssetSymbol, mask);
+            LibConformString.conformStringToMask(redeemUrl, mask);
+            LibConformString.conformStringToMask(brandName, mask);
+            LibConformString.conformStringToMask(referenceAssetSymbol, mask);
+            LibConformString.conformStringToMask(receiptSvgUri, mask);
 
             receipt.setVaultShareSymbol(vaultShareSymbol);
             receipt.setVaultAssetSymbol(vaultAssetSymbol);

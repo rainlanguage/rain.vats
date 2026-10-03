@@ -8,9 +8,9 @@ import {IPriceOracleV2} from "src/interface/IPriceOracleV2.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain-math-fixedpoint-0.2.1/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+} from "rain-math-fixedpoint-0.2.2/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
-import {SafeERC20, IERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/utils/SafeERC20.sol";
+import {SafeERC20, IERC20} from "@openzeppelin-contracts-5.7.0/token/ERC20/utils/SafeERC20.sol";
 
 contract ERC20PriceOracleReceiptVaultERC20StandardTest is ERC20PriceOracleReceiptVaultTest {
     using LibFixedPointDecimalArithmeticOpenZeppelin for uint256;

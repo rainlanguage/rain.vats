@@ -6,7 +6,7 @@ import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainA
 
 import {TestErc20} from "test/concrete/TestErc20.sol";
 import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
-import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
+import {IERC20Metadata} from "@openzeppelin-contracts-5.7.0/token/ERC20/extensions/IERC20Metadata.sol";
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1
 } from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";

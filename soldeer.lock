@@ -1,16 +1,16 @@
 [[dependencies]]
 name = "@openzeppelin-contracts"
-version = "5.6.1"
-url = "https://soldeer-revisions.s3.amazonaws.com/@openzeppelin-contracts/5_6_1_15-03-2026_09:19:50_contracts.zip"
-checksum = "a3b6bc661be858c7c27f60a1708cbebe8c71034b4cc1e9fe270d0a05b069352f"
-integrity = "bce03af7ada1eee21a7fff393f238bcd7cd75a022a4db55ffb6b0dbb32433d35"
+version = "5.7.0"
+url = "https://soldeer-revisions.s3.amazonaws.com/@openzeppelin-contracts/5_7_0_29-07-2026_19:34:46_contracts.zip"
+checksum = "fe08a24bc34334b2976c6ad69a0d74bdfa63de8a5c8528579060f25a11fb5cd5"
+integrity = "3e13bc4d96bdef6e35f6b1e0dc0e455843a958edc597750dff20ca50295b767d"
 
 [[dependencies]]
 name = "@openzeppelin-contracts-upgradeable"
-version = "5.6.1"
-url = "https://soldeer-revisions.s3.amazonaws.com/@openzeppelin-contracts-upgradeable/5_6_1_15-03-2026_09:19:56_contracts-upgradeable.zip"
-checksum = "f6257dbc993c2499fe08fdc93f66e12459fe3458ee62ce716b92e1d95ee0b504"
-integrity = "2f539b6241258fc3c127c97225b3cb1b5e9225e422d2c1cb233c52a6f5c29002"
+version = "5.7.0"
+url = "https://soldeer-revisions.s3.amazonaws.com/@openzeppelin-contracts-upgradeable/5_7_0_29-07-2026_19:34:58_contracts-upgradeable.zip"
+checksum = "fba3ad8586bf64281bab2aecd2cf0eb31227ccc5976f962d400e8cc5898da413"
+integrity = "1a08068b2fe262d4f6ae80e0be44965480b1a532d40722c80634d8963337743d"
 
 [[dependencies]]
 name = "forge-std"
@@ -35,24 +35,24 @@ integrity = "e782d94d46b3a1a762ff3fffaad11463e571a59b19df5549f575425ce3a0a3fd"
 
 [[dependencies]]
 name = "rain-math-fixedpoint"
-version = "0.2.1"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-math-fixedpoint/0_2_1_09-07-2026_20:43:01_rain.math.zip"
-checksum = "496d4c4788fe271f1fffde94b5c69e6a66516ff391fa86741c36cb769e6cf195"
-integrity = "cca78f0759d748201e906c7d6c713800804bb297b306d07ae04b11f8398fb62f"
+version = "0.2.2"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-math-fixedpoint/0_2_2_01-10-2026_22:26:31_rain.math.zip"
+checksum = "982b4c8d70d76ba933d65e9eefb515417537474a7c4b59e640f82d0bd5ff79b7"
+integrity = "7a311375a8aa65ca50e11f19413ae2bfe9103d9efdda27a67f08f25cd7022ff8"
 
 [[dependencies]]
 name = "rain-math-float"
-version = "0.2.4"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-math-float/0_2_4_27-09-2026_15:02:57_rain.math.zip"
-checksum = "a13f6e73e32324a38a2da2826484c2a03dd1ed1514851c557d90ec8f3323b940"
-integrity = "70b5b63f234f24b7719bf6a296caafb9120ce185d7a3dced231a660aca7adf83"
+version = "0.2.5"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-math-float/0_2_5_02-10-2026_10:34:50_rain.math.zip"
+checksum = "403c9a47d91114bbcaffbfe4d9c4240f7e760f86b896daa6d75d1ca891cc72b8"
+integrity = "b14524ac29868af6dbaabd1086f53e142b8f1170d994972eb948fa646f817768"
 
 [[dependencies]]
 name = "rain-string"
-version = "0.2.0"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-string/0_2_0_09-05-2026_21:16:31_rain.zip"
-checksum = "847b9366128c5dcc5849c6938ae7ac92561ed8185bf304f1b1eb9ef59d77954e"
-integrity = "7cb6ee638b59b840ea59e014e2610fdccc30a1593e763590e298314f00700561"
+version = "0.3.9"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-string/0_3_9_25-08-2026_10:18:31_rain.zip"
+checksum = "fbeecc1f85d4449728c600abe78667db8367df5c391591195fe3bfc6bffd868e"
+integrity = "898116147f72443a8c34315abbeb9906d8a4665fdcbb39e6ad70ddd84354db53"
 
 [[dependencies]]
 name = "rain-verify-interface"
