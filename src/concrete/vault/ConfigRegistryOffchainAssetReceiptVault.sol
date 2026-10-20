@@ -192,6 +192,8 @@ contract ConfigRegistryOffchainAssetReceiptVault is OffchainAssetReceiptVault {
 
         // `uri` reads this vault's share symbol and decimals, so it runs after
         // `_initialize`.
+        // Only whether `uri` reverts matters, not what it returns.
+        //slither-disable-next-line unused-return
         try IERC1155MetadataURI(address(newReceipt)).uri(0) returns (string memory) {}
         catch {
             revert ReceiptMetadataReverts(address(newReceipt));
