@@ -50,4 +50,26 @@ contract LibOffchainAssetReceiptVaultRbacDecodeCanonicalTest is Test {
         vm.expectRevert(abi.encodeWithSelector(NonCanonicalRbac.selector, authority, name));
         this.decodeCanonicalExternal(authority, name, value);
     }
+
+    /// A non-canonical value exactly as long as its canonical re-encoding
+    /// reverts: the array offset points at its own word, which reads as a
+    /// length of 32, and one padding word fills the length gap.
+    function testDecodeCanonicalSameLengthNonCanonical(
+        address authority,
+        bytes32 name,
+        address owner,
+        address authorizer,
+        bytes32 pad
+    ) external {
+        bytes memory value = abi.encode(uint256(0x20), owner, uint256(0x20));
+        for (uint256 i = 0; i < 32; i++) {
+            value = bytes.concat(value, abi.encode(authorizer));
+        }
+        value = bytes.concat(value, pad);
+        OffchainAssetReceiptVaultRbacV1 memory decoded = abi.decode(value, (OffchainAssetReceiptVaultRbacV1));
+        assertEq(decoded.authorizers.length, 32);
+        assertEq(abi.encode(decoded).length, value.length);
+        vm.expectRevert(abi.encodeWithSelector(NonCanonicalRbac.selector, authority, name));
+        this.decodeCanonicalExternal(authority, name, value);
+    }
 }
