@@ -27,7 +27,8 @@ forge-std = "1.17.0"
 "@openzeppelin-contracts" = "5.7.0"
 "@openzeppelin-contracts-upgradeable" = "5.7.0"
 "rain-extrospection" = "0.1.14"
-"rain-factory" = "0.1.30"
+"rain-factory" = { version = "0.1.31-pr271", git = "https://github.com/rainlanguage/rain.factory.git", rev = "c1bf3c7b1b1d2d21af216057c7413e0ea74c0ef3" }
+"rain-deploy" = { version = "0.1.19-pr322", git = "https://github.com/rainlanguage/rain.deploy.git", rev = "9da7962108e6cb0f9f2f65c996f6fb19f993ccf9" }
 "rain-math-fixedpoint" = "0.2.2"
 "rain-math-float" = "0.2.45"
 "rain-string" = "0.3.9"
