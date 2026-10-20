@@ -23,7 +23,7 @@ integrity = "fa706c8a7caf3426c90f75e6aafa3224b0a6c899b490800cf6944e4ec42f9344"
 name = "rain-deploy"
 version = "0.1.19-pr322"
 git = "https://github.com/rainlanguage/rain.deploy.git"
-rev = "9da7962108e6cb0f9f2f65c996f6fb19f993ccf9"
+rev = "a5acb488b3cd0d2031a4122f8600c1d0722f5e42"
 
 [[dependencies]]
 name = "rain-extrospection"
@@ -36,7 +36,7 @@ integrity = "4fda4ce47b006de0619aba0591a00cece86454a5867643d99412bc57790cdce0"
 name = "rain-factory"
 version = "0.1.31-pr271"
 git = "https://github.com/rainlanguage/rain.factory.git"
-rev = "4379965d8b308aee05d325b8de7ecf7b8edab72a"
+rev = "0477c05a53d546ac83de3cef9c0cc3e2423ac909"
 
 [[dependencies]]
 name = "rain-math-fixedpoint"
