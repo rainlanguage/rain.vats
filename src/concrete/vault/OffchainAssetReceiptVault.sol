@@ -301,9 +301,16 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
     /// logic.
     /// @param data All config required to initialize abi encoded.
     function initialize(bytes memory data) public virtual override initializer returns (bytes32) {
-        __OwnerFreezable_init();
+        _initialize(abi.decode(data, (OffchainAssetReceiptVaultConfigV2)));
+        return ICLONEABLE_V2_SUCCESS;
+    }
 
-        OffchainAssetReceiptVaultConfigV2 memory config = abi.decode(data, (OffchainAssetReceiptVaultConfigV2));
+    /// `initialize` without the `initializer` modifier or the decode, so an
+    /// inheriting contract that builds the config itself can be the
+    /// initializer.
+    /// @param config All config required to initialize.
+    function _initialize(OffchainAssetReceiptVaultConfigV2 memory config) internal virtual {
+        __OwnerFreezable_init();
 
         __ReceiptVault_init(config.receiptVaultConfig);
 
@@ -331,8 +338,6 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
                 initialAdmin: config.initialAdmin, receiptVaultConfig: config.receiptVaultConfig
             })
         );
-
-        return ICLONEABLE_V2_SUCCESS;
     }
 
     /// Returns the current highwater id.
