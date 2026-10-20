@@ -30,13 +30,7 @@ import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/uti
 import {LibConfigRegistry} from "rain-deploy-0.1.19-pr322/src/lib/LibConfigRegistry.sol";
 import {LibConfigRegistryDeploy} from "rain-deploy-0.1.19-pr322/src/lib/LibConfigRegistryDeploy.sol";
 import {IConfigRegistryV1} from "rain-deploy-0.1.19-pr322/src/interface/IConfigRegistryV1.sol";
-
-/// A receipt whose `initialize` answers anything but success.
-contract FailingInitializeReceipt {
-    function initialize(bytes memory) external pure returns (bytes32) {
-        return bytes32(0);
-    }
-}
+import {FailingInitializeReceipt} from "../../../concrete/FailingInitializeReceipt.sol";
 
 contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistryOffchainAssetReceiptVaultTest {
     function bindAged(IAuthorizeV1[] memory authorizers) internal {
