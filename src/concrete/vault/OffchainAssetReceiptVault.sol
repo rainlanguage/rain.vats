@@ -295,10 +295,7 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
         }
     }
 
-    /// Initializes the initial admin and the underlying `ReceiptVault`.
-    /// The admin provided will be admin of all roles and can reassign and revoke
-    /// this as appropriate according to standard Open Zeppelin access control
-    /// logic.
+    /// Decodes `OffchainAssetReceiptVaultConfigV2` and runs `_initialize`.
     /// @param data All config required to initialize abi encoded.
     function initialize(bytes memory data) public virtual override initializer returns (bytes32) {
         _initialize(abi.decode(data, (OffchainAssetReceiptVaultConfigV2)));
@@ -307,9 +304,10 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
 
     /// `initialize` without the `initializer` modifier or the decode, so an
     /// inheriting contract that builds the config itself can be the
-    /// initializer.
+    /// initializer. Makes `initialAdmin` the owner and the vault its own
+    /// authorizer.
     /// @param config All config required to initialize.
-    function _initialize(OffchainAssetReceiptVaultConfigV2 memory config) internal virtual {
+    function _initialize(OffchainAssetReceiptVaultConfigV2 memory config) internal virtual onlyInitializing {
         __OwnerFreezable_init();
 
         __ReceiptVault_init(config.receiptVaultConfig);

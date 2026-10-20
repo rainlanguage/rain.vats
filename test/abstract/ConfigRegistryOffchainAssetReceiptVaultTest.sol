@@ -1,19 +1,20 @@
 // SPDX-License-Identifier: LicenseRef-DCL-1.0
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
-pragma solidity =0.8.25;
+pragma solidity ^0.8.25;
 
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {
     ConfigRegistryOffchainAssetReceiptVault,
     ConfigRegistryOffchainAssetReceiptVaultConfigV1,
-    OffchainAssetReceiptVaultRbacV1
-} from "src/concrete/vault/ConfigRegistryOffchainAssetReceiptVault.sol";
-import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
+    CONFIG_REGISTRY_RBAC_MIN_AGE
+} from "../../src/concrete/vault/ConfigRegistryOffchainAssetReceiptVault.sol";
+import {OffchainAssetReceiptVaultRbacV1} from "../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
+import {Receipt as ReceiptContract} from "../../src/concrete/receipt/Receipt.sol";
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
     OffchainAssetReceiptVaultAuthorizerV1Config
-} from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
+} from "../../src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
+import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
@@ -75,6 +76,17 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
         bindValue(authority, name, abi.encode(rbac));
     }
 
+    /// Binds `value` and warps past `CONFIG_REGISTRY_RBAC_MIN_AGE`.
+    function bindAged(address authority, bytes32 name, bytes memory value) internal {
+        bindValue(authority, name, value);
+        vm.warp(block.timestamp + CONFIG_REGISTRY_RBAC_MIN_AGE + 1);
+    }
+
+    /// Binds `rbac` and warps past `CONFIG_REGISTRY_RBAC_MIN_AGE`.
+    function bindAged(address authority, bytes32 name, OffchainAssetReceiptVaultRbacV1 memory rbac) internal {
+        bindAged(authority, name, abi.encode(rbac));
+    }
+
     function config(uint256 authorizerIndex)
         internal
         pure
@@ -90,12 +102,12 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
         });
     }
 
-    function deploy(ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory c, bytes32 salt)
+    function deploy(ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig, bytes32 salt)
         internal
         returns (ConfigRegistryOffchainAssetReceiptVault)
     {
         return ConfigRegistryOffchainAssetReceiptVault(
-            payable(iFactory.beaconProxyDeterministicOpenSalt(address(iVaultBeacon), abi.encode(c), salt))
+            payable(iFactory.beaconProxyDeterministicOpenSalt(address(iVaultBeacon), abi.encode(vaultConfig), salt))
         );
     }
 }

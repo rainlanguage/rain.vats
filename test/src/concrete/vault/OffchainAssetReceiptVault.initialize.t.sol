@@ -13,6 +13,7 @@ import {CorruptedEnvironmentBlockTimestampZero} from "src/abstract/OwnerFreezabl
 import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
 import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
+import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
 
 contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTest {
     /// Inclusive timestamp comparisons in `OwnerFreezable` treat the
@@ -198,8 +199,11 @@ contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTes
         external
     {
         address alice = LibUniqueAddressesGenerator.generateUniqueAddresses(vm, aliceSeed);
+        // The deployer creates the receipt, then the vault.
+        address predictedVault = vm.computeCreateAddress(address(iDeployer), vm.getNonce(address(iDeployer)) + 1);
 
-        vm.recordLogs();
+        vm.expectEmit(predictedVault);
+        emit IAuthorizeV1.AuthorizerSet(address(iDeployer), IAuthorizeV1(predictedVault));
         OffchainAssetReceiptVault vault = iDeployer.newOffchainAssetReceiptVault(
             OffchainAssetReceiptVaultConfigV2({
                 initialAdmin: alice,
@@ -208,19 +212,8 @@ contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTes
                 })
             })
         );
-        Vm.Log[] memory logs = vm.getRecordedLogs();
 
+        assertEq(address(vault), predictedVault);
         assertEq(address(vault.authorizer()), address(vault));
-
-        bool found = false;
-        for (uint256 i = 0; i < logs.length; i++) {
-            if (logs[i].emitter == address(vault) && logs[i].topics[0] == keccak256("AuthorizerSet(address,address)")) {
-                (address sender, address authorizer) = abi.decode(logs[i].data, (address, address));
-                assertEq(sender, address(iDeployer));
-                assertEq(authorizer, address(vault));
-                found = true;
-            }
-        }
-        assertTrue(found, "AuthorizerSet event log not found");
     }
 }

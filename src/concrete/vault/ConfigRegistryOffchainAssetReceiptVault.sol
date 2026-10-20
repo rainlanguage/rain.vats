@@ -14,6 +14,10 @@ import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";
 import {LibConfigRegistry} from "rain-deploy-0.1.19-pr322/src/lib/LibConfigRegistry.sol";
 import {InitializeReceiptFailed} from "../../error/ErrDeployer.sol";
+import {
+    LibOffchainAssetReceiptVaultRbac,
+    OffchainAssetReceiptVaultRbacV1
+} from "../../lib/LibOffchainAssetReceiptVaultRbac.sol";
 
 /// @dev How long an RBAC binding must have stood in the `ConfigRegistry`
 /// before `initialize` accepts it. The window in which a rebind is public
@@ -23,25 +27,11 @@ uint256 constant CONFIG_REGISTRY_RBAC_MIN_AGE = 48 hours;
 /// Thrown when constructing with a zero receipt beacon.
 error ZeroReceiptBeacon();
 
-/// Thrown when the RBAC binding is not the canonical ABI encoding of
-/// `OffchainAssetReceiptVaultRbacV1`.
-/// @param authority The authority the binding was resolved under.
-/// @param name The name the binding was resolved from.
-error NonCanonicalRbac(address authority, bytes32 name);
-
 /// Thrown when the config selects an authorizer the RBAC binding does not
 /// list.
 /// @param authorizerIndex The index the config selected.
-/// @param authorizers The number of authorizers the binding lists.
-error AuthorizerIndexOutOfRange(uint256 authorizerIndex, uint256 authorizers);
-
-/// The value a `ConfigRegistry` authority binds an RBAC name to, ABI encoded.
-/// @param owner The owner of every vault initialized from the binding.
-/// @param authorizers The authorizers a vault may select from by index.
-struct OffchainAssetReceiptVaultRbacV1 {
-    address owner;
-    IAuthorizeV1[] authorizers;
-}
+/// @param authorizersLength The number of authorizers the binding lists.
+error AuthorizerIndexOutOfRange(uint256 authorizerIndex, uint256 authorizersLength);
 
 /// All data `ConfigRegistryOffchainAssetReceiptVault.initialize` takes, ABI
 /// encoded. Deployed through an open-salt factory, all of it is part of the
@@ -67,14 +57,29 @@ struct ConfigRegistryOffchainAssetReceiptVaultConfigV1 {
 /// @notice An `OffchainAssetReceiptVault` whose `initialize` takes no roles
 /// from its caller. It resolves them from the `ConfigRegistry` binding the
 /// config names, and deploys its own receipt, so it can be initialized by
-/// anyone through an open-salt beacon-proxy factory, and the same config is
-/// the same vault, at the same address, on every chain.
+/// anyone through an open-salt beacon-proxy factory. The vault's address is
+/// a function of the factory, the beacon, the salt and the config, so the
+/// same four give the same address on every chain where the factory and
+/// beacon share their addresses. The chain must support Cancun, as
+/// `BeaconProxy` uses `MCOPY`. The owner and authorizer are resolved on each
+/// chain at that chain's first deploy, so the same address on two chains has
+/// the same roles only if the binding was the same on both when each was
+/// deployed.
 ///
 /// The authority comes from the config rather than from this implementation.
 /// An open-salt factory hashes the config into the address, so whoever pins
-/// the address pins the authority, and a config with a different authority is
-/// a different address nothing pins. The implementation stays the same for
-/// every authority.
+/// the address pins the authority and the RBAC name, and a config with a
+/// different authority is a different address nothing pins. The address
+/// commits to the authority and name, not to what they resolve to: a pinned
+/// address not yet deployed takes whatever binding has stood for
+/// `CONFIG_REGISTRY_RBAC_MIN_AGE` when anyone first deploys it. The
+/// implementation stays the same for every authority.
+///
+/// Anyone can deploy a look-alike vault under the same authority and RBAC
+/// name with another token name, symbol, salt or metadata, and it resolves
+/// the same owner and authorizer. The owner, the authorizer and the fields of
+/// the initialization event are therefore not evidence a vault is genuine.
+/// Only the pinned address is.
 ///
 /// The authority is trusted for the initial owner and authorizer. A binding is
 /// read once, here, and only if it has stood for longer than
@@ -91,10 +96,15 @@ contract ConfigRegistryOffchainAssetReceiptVault is OffchainAssetReceiptVault {
         address sender, ConfigRegistryOffchainAssetReceiptVaultConfigV1 config, address owner, IAuthorizeV1 authorizer
     );
 
-    /// The beacon every vault's receipt is a proxy of.
+    /// The beacon every vault's receipt is a proxy of. Its owner can upgrade
+    /// every receipt, so it is trusted for the receipt as the vault beacon's
+    /// owner is for the vault, and the two MUST be the same principal.
     IBeacon public immutable iReceiptBeacon;
 
-    /// @param receiptBeacon The beacon every vault's receipt is a proxy of.
+    /// @param receiptBeacon The beacon every vault's receipt is a proxy of. Its
+    /// owner MUST be the vault beacon's owner. Its implementation MUST override
+    /// the asset-symbol metadata, as the generic `Receipt` metadata reverts for
+    /// a vault whose asset is `address(0)` (see `_initialize`).
     constructor(IBeacon receiptBeacon) {
         if (address(receiptBeacon) == address(0)) {
             revert ZeroReceiptBeacon();
@@ -109,13 +119,11 @@ contract ConfigRegistryOffchainAssetReceiptVault is OffchainAssetReceiptVault {
         ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory config =
             abi.decode(data, (ConfigRegistryOffchainAssetReceiptVaultConfigV1));
 
-        bytes memory value =
-            LibConfigRegistry.resolveSafe(config.authority, config.rbacName, CONFIG_REGISTRY_RBAC_MIN_AGE);
-        OffchainAssetReceiptVaultRbacV1 memory rbac = abi.decode(value, (OffchainAssetReceiptVaultRbacV1));
-        // `abi.decode` ignores trailing bytes and non-canonical offsets.
-        if (keccak256(abi.encode(rbac)) != keccak256(value)) {
-            revert NonCanonicalRbac(config.authority, config.rbacName);
-        }
+        OffchainAssetReceiptVaultRbacV1 memory rbac = LibOffchainAssetReceiptVaultRbac.decodeCanonical(
+            config.authority,
+            config.rbacName,
+            LibConfigRegistry.resolveSafe(config.authority, config.rbacName, CONFIG_REGISTRY_RBAC_MIN_AGE)
+        );
         if (config.authorizerIndex >= rbac.authorizers.length) {
             revert AuthorizerIndexOutOfRange(config.authorizerIndex, rbac.authorizers.length);
         }
