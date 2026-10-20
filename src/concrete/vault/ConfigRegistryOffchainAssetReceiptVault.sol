@@ -128,6 +128,11 @@ contract ConfigRegistryOffchainAssetReceiptVault is OffchainAssetReceiptVault {
     /// the two beacons' `owner` must be equal and the new receipt's `uri` must
     /// not revert. Neither holds after initialization if either beacon changes
     /// owner or the receipt beacon is upgraded; nothing on chain prevents that.
+    /// Both beacons MUST expose `Ownable.owner`, or `initialize` reverts
+    /// without data. `owner` is reported by each beacon itself, so the check
+    /// catches a misconfigured pairing, not a beacon built to pass it; the
+    /// vault beacon is part of the vault's address, so only the pinned beacon
+    /// matters.
     constructor(IBeacon receiptBeacon) {
         if (address(receiptBeacon) == address(0)) {
             revert ZeroReceiptBeacon();
