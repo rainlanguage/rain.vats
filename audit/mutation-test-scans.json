@@ -1,0 +1,24 @@
+[
+  {
+    "timestamp": "2026-10-20T21:50:28Z",
+    "commit": "818dbb29f2d079e9fdef6e9520ae29545a7ee8d0",
+    "testsAfterCommit": "087e561d8d99621857f58fd4ca226186b78a0490",
+    "publishedTag": "sol-v0.2.5",
+    "commitsAheadOfTag": 9,
+    "scope": "pr:345 changed src: ConfigRegistryOffchainAssetReceiptVault, LibOffchainAssetReceiptVaultRbac, OffchainAssetReceiptVault initialize/_initialize",
+    "tool": "adversarial-mutation-test",
+    "skillVersion": "0.35.0",
+    "summary": {
+      "behaviours": 38,
+      "mutants": 38,
+      "killedFirstPass": 37,
+      "survivorsKilled": ["_initialize onlyInitializing dropped: testInternalInitializeOutsideInitializer"],
+      "candidates": 0,
+      "confirmed": 0,
+      "testsBefore": 431,
+      "testsAfter": 432,
+      "testsCountExcludes": "test/prod/*",
+      "filed": []
+    }
+  }
+]
