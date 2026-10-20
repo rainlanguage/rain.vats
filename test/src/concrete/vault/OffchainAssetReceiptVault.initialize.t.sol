@@ -192,4 +192,35 @@ contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTes
         assertEq(address(vaultTwo.receipt().manager()), address(vaultTwo));
         assertEq(vaultTwo.owner(), bob);
     }
+
+    /// Initialization makes the vault its own authorizer.
+    function testInitializeSelfAuthorizer(uint256 aliceSeed, string memory shareName, string memory shareSymbol)
+        external
+    {
+        address alice = LibUniqueAddressesGenerator.generateUniqueAddresses(vm, aliceSeed);
+
+        vm.recordLogs();
+        OffchainAssetReceiptVault vault = iDeployer.newOffchainAssetReceiptVault(
+            OffchainAssetReceiptVaultConfigV2({
+                initialAdmin: alice,
+                receiptVaultConfig: ReceiptVaultConfigV2({
+                    asset: address(0), name: shareName, symbol: shareSymbol, receipt: address(0)
+                })
+            })
+        );
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+
+        assertEq(address(vault.authorizer()), address(vault));
+
+        bool found = false;
+        for (uint256 i = 0; i < logs.length; i++) {
+            if (logs[i].emitter == address(vault) && logs[i].topics[0] == keccak256("AuthorizerSet(address,address)")) {
+                (address sender, address authorizer) = abi.decode(logs[i].data, (address, address));
+                assertEq(sender, address(iDeployer));
+                assertEq(authorizer, address(vault));
+                found = true;
+            }
+        }
+        assertTrue(found, "AuthorizerSet event log not found");
+    }
 }

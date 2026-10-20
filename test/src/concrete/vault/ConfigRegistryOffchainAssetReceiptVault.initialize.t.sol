@@ -13,7 +13,13 @@ import {
     AuthorizerIndexOutOfRange,
     CONFIG_REGISTRY_RBAC_MIN_AGE
 } from "src/concrete/vault/ConfigRegistryOffchainAssetReceiptVault.sol";
-import {IncompatibleAuthorizer} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {
+    IncompatibleAuthorizer,
+    OffchainAssetReceiptVault,
+    OffchainAssetReceiptVaultConfigV2
+} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {ReceiptVaultConfigV2} from "src/abstract/ReceiptVault.sol";
+import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";
 import {ZeroInitialAdmin} from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {InitializeReceiptFailed} from "src/error/ErrDeployer.sol";
 import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
@@ -66,6 +72,31 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
         ConfigRegistryOffchainAssetReceiptVault vault = deploy(config(0), 0);
         vm.expectRevert(abi.encodeWithSelector(Initializable.InvalidInitialization.selector));
         vault.initialize(abi.encode(config(0)));
+    }
+
+    /// A proxy already initialized as a plain vault cannot be initialized
+    /// again after its beacon moves to this implementation.
+    function testInitializeAfterUpgradeFromPlainVault() external {
+        UpgradeableBeacon vaultBeacon = new UpgradeableBeacon(address(new OffchainAssetReceiptVault()), address(this));
+        OffchainAssetReceiptVault proxy =
+            OffchainAssetReceiptVault(payable(address(new BeaconProxy(address(vaultBeacon), ""))));
+        ReceiptContract receipt = ReceiptContract(address(new BeaconProxy(address(iReceiptBeacon), "")));
+        receipt.initialize(abi.encode(proxy));
+        proxy.initialize(
+            abi.encode(
+                OffchainAssetReceiptVaultConfigV2({
+                    initialAdmin: OWNER,
+                    receiptVaultConfig: ReceiptVaultConfigV2({
+                        asset: address(0), name: "a", symbol: "b", receipt: address(receipt)
+                    })
+                })
+            )
+        );
+
+        vaultBeacon.upgradeTo(address(iImplementation));
+        bindAged(twoAuthorizers());
+        vm.expectRevert(abi.encodeWithSelector(Initializable.InvalidInitialization.selector));
+        proxy.initialize(abi.encode(config(0)));
     }
 
     function testInitializeBindingTooFresh(uint256 age) external {

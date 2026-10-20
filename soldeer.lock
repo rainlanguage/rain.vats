@@ -36,7 +36,7 @@ integrity = "4fda4ce47b006de0619aba0591a00cece86454a5867643d99412bc57790cdce0"
 name = "rain-factory"
 version = "0.1.31-pr271"
 git = "https://github.com/rainlanguage/rain.factory.git"
-rev = "c1bf3c7b1b1d2d21af216057c7413e0ea74c0ef3"
+rev = "4379965d8b308aee05d325b8de7ecf7b8edab72a"
 
 [[dependencies]]
 name = "rain-math-fixedpoint"

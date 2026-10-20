@@ -119,12 +119,12 @@ contract ConfigRegistryOffchainAssetReceiptVault is OffchainAssetReceiptVault {
         if (config.authorizerIndex >= rbac.authorizers.length) {
             revert AuthorizerIndexOutOfRange(config.authorizerIndex, rbac.authorizers.length);
         }
-        IAuthorizeV1 authorizer = rbac.authorizers[config.authorizerIndex];
+        IAuthorizeV1 selectedAuthorizer = rbac.authorizers[config.authorizerIndex];
 
         // The receipt's address is `CREATE` from this proxy at its first
         // nonce, so it is as deterministic as this proxy's address.
-        ICloneableV2 receipt = ICloneableV2(address(new BeaconProxy(address(iReceiptBeacon), "")));
-        if (receipt.initialize(abi.encode(address(this))) != ICLONEABLE_V2_SUCCESS) {
+        ICloneableV2 newReceipt = ICloneableV2(address(new BeaconProxy(address(iReceiptBeacon), "")));
+        if (newReceipt.initialize(abi.encode(address(this))) != ICLONEABLE_V2_SUCCESS) {
             revert InitializeReceiptFailed();
         }
 
@@ -132,13 +132,13 @@ contract ConfigRegistryOffchainAssetReceiptVault is OffchainAssetReceiptVault {
             OffchainAssetReceiptVaultConfigV2({
                 initialAdmin: rbac.owner,
                 receiptVaultConfig: ReceiptVaultConfigV2({
-                    asset: address(0), name: config.name, symbol: config.symbol, receipt: address(receipt)
+                    asset: address(0), name: config.name, symbol: config.symbol, receipt: address(newReceipt)
                 })
             })
         );
-        _setAuthorizer(authorizer);
+        _setAuthorizer(selectedAuthorizer);
 
-        emit ConfigRegistryOffchainAssetReceiptVaultInitializedV1(_msgSender(), config, rbac.owner, authorizer);
+        emit ConfigRegistryOffchainAssetReceiptVaultInitializedV1(_msgSender(), config, rbac.owner, selectedAuthorizer);
 
         return ICLONEABLE_V2_SUCCESS;
     }
