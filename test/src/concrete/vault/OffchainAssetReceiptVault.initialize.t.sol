@@ -14,6 +14,10 @@ import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
 import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
+import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
+import {
+    ExposedInitializeOffchainAssetReceiptVault
+} from "../../../concrete/ExposedInitializeOffchainAssetReceiptVault.sol";
 
 contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTest {
     /// Inclusive timestamp comparisons in `OwnerFreezable` treat the
@@ -215,5 +219,21 @@ contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTes
 
         assertEq(address(vault), predictedVault);
         assertEq(address(vault.authorizer()), address(vault));
+    }
+
+    /// `_initialize` refuses to run outside an initializer before it checks
+    /// anything else, so even a zero timestamp reverts `NotInitializing`.
+    function testInternalInitializeOutsideInitializer(address initialAdmin) external {
+        ExposedInitializeOffchainAssetReceiptVault vault = new ExposedInitializeOffchainAssetReceiptVault();
+        vm.warp(0);
+        vm.expectRevert(abi.encodeWithSelector(Initializable.NotInitializing.selector));
+        vault.exposedInitialize(
+            OffchainAssetReceiptVaultConfigV2({
+                initialAdmin: initialAdmin,
+                receiptVaultConfig: ReceiptVaultConfigV2({
+                    asset: address(0), name: "a", symbol: "b", receipt: address(0)
+                })
+            })
+        );
     }
 }
