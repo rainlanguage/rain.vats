@@ -9,7 +9,7 @@ import {
     CONFIG_REGISTRY_RBAC_MIN_AGE
 } from "../../src/concrete/vault/ConfigRegistryOffchainAssetReceiptVault.sol";
 import {OffchainAssetReceiptVaultRbacV1} from "../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
-import {Receipt as ReceiptContract} from "../../src/concrete/receipt/Receipt.sol";
+import {TestOffchainAssetReceipt} from "../concrete/TestOffchainAssetReceipt.sol";
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
     OffchainAssetReceiptVaultAuthorizerV1Config
@@ -33,7 +33,7 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
     address internal constant AUTHORITY = address(uint160(uint256(keccak256("authority"))));
     address internal constant OWNER = address(uint160(uint256(keccak256("owner"))));
 
-    ReceiptContract internal immutable iReceiptImplementation;
+    TestOffchainAssetReceipt internal immutable iReceiptImplementation;
     UpgradeableBeacon internal immutable iReceiptBeacon;
     ConfigRegistryOffchainAssetReceiptVault internal immutable iImplementation;
     UpgradeableBeacon internal immutable iVaultBeacon;
@@ -41,7 +41,7 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
     OffchainAssetReceiptVaultAuthorizerV1 internal immutable iAuthorizerImplementation;
 
     constructor() {
-        iReceiptImplementation = new ReceiptContract();
+        iReceiptImplementation = new TestOffchainAssetReceipt();
         iReceiptBeacon = new UpgradeableBeacon(address(iReceiptImplementation), address(this));
         iImplementation = new ConfigRegistryOffchainAssetReceiptVault(IBeacon(address(iReceiptBeacon)));
         iVaultBeacon = new UpgradeableBeacon(address(iImplementation), address(this));

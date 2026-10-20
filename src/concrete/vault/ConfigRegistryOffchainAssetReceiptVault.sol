@@ -12,6 +12,9 @@ import {IAuthorizeV1} from "../../interface/IAuthorizeV1.sol";
 import {ICloneableV2} from "rain-factory-0.1.31-pr271/src/interface/ICloneableV2.sol";
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";
+import {ERC1967Utils} from "@openzeppelin-contracts-5.7.0/proxy/ERC1967/ERC1967Utils.sol";
+import {Ownable} from "@openzeppelin-contracts-5.7.0/access/Ownable.sol";
+import {IERC1155MetadataURI} from "@openzeppelin-contracts-5.7.0/token/ERC1155/extensions/IERC1155MetadataURI.sol";
 import {LibConfigRegistry} from "rain-deploy-0.1.19-pr322/src/lib/LibConfigRegistry.sol";
 import {InitializeReceiptFailed} from "../../error/ErrDeployer.sol";
 import {
@@ -32,6 +35,22 @@ error ZeroReceiptBeacon();
 /// @param authorizerIndex The index the config selected.
 /// @param authorizersLength The number of authorizers the binding lists.
 error AuthorizerIndexOutOfRange(uint256 authorizerIndex, uint256 authorizersLength);
+
+/// Thrown when `initialize` data is not the canonical ABI encoding of
+/// `ConfigRegistryOffchainAssetReceiptVaultConfigV1`.
+error NonCanonicalConfig();
+
+/// Thrown when initializing outside a beacon proxy.
+error VaultNotBeaconProxy();
+
+/// Thrown when the receipt beacon's owner is not the vault beacon's owner.
+/// @param vaultBeaconOwner The owner of the beacon this vault proxies.
+/// @param receiptBeaconOwner The owner of the receipt beacon.
+error ReceiptBeaconOwnerMismatch(address vaultBeaconOwner, address receiptBeaconOwner);
+
+/// Thrown when the new receipt's `uri` reverts.
+/// @param receipt The new receipt.
+error ReceiptMetadataReverts(address receipt);
 
 /// All data `ConfigRegistryOffchainAssetReceiptVault.initialize` takes, ABI
 /// encoded. Deployed through an open-salt factory, all of it is part of the
@@ -104,7 +123,11 @@ contract ConfigRegistryOffchainAssetReceiptVault is OffchainAssetReceiptVault {
     /// @param receiptBeacon The beacon every vault's receipt is a proxy of. Its
     /// owner MUST be the vault beacon's owner. Its implementation MUST override
     /// the asset-symbol metadata, as the generic `Receipt` metadata reverts for
-    /// a vault whose asset is `address(0)` (see `_initialize`).
+    /// a vault whose asset is `address(0)` (see `_initialize`). The
+    /// implementation cannot see the vault beacon, so `initialize` checks both:
+    /// the two beacons' `owner` must be equal and the new receipt's `uri` must
+    /// not revert. Neither holds after initialization if either beacon changes
+    /// owner or the receipt beacon is upgraded; nothing on chain prevents that.
     constructor(IBeacon receiptBeacon) {
         if (address(receiptBeacon) == address(0)) {
             revert ZeroReceiptBeacon();
@@ -118,6 +141,22 @@ contract ConfigRegistryOffchainAssetReceiptVault is OffchainAssetReceiptVault {
     function initialize(bytes memory data) public virtual override initializer returns (bytes32) {
         ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory config =
             abi.decode(data, (ConfigRegistryOffchainAssetReceiptVaultConfigV1));
+        // `abi.decode` ignores trailing bytes and accepts non-canonical
+        // offsets, and the factory hashes the raw `data` into the address, so
+        // without this one config has many addresses.
+        if (keccak256(abi.encode(config)) != keccak256(data)) {
+            revert NonCanonicalConfig();
+        }
+
+        address vaultBeacon = ERC1967Utils.getBeacon();
+        if (vaultBeacon == address(0)) {
+            revert VaultNotBeaconProxy();
+        }
+        address vaultBeaconOwner = Ownable(vaultBeacon).owner();
+        address receiptBeaconOwner = Ownable(address(iReceiptBeacon)).owner();
+        if (vaultBeaconOwner != receiptBeaconOwner) {
+            revert ReceiptBeaconOwnerMismatch(vaultBeaconOwner, receiptBeaconOwner);
+        }
 
         OffchainAssetReceiptVaultRbacV1 memory rbac = LibOffchainAssetReceiptVaultRbac.decodeCanonical(
             config.authority,
@@ -145,6 +184,13 @@ contract ConfigRegistryOffchainAssetReceiptVault is OffchainAssetReceiptVault {
             })
         );
         _setAuthorizer(selectedAuthorizer);
+
+        // `uri` reads this vault's share symbol and decimals, so it runs after
+        // `_initialize`.
+        try IERC1155MetadataURI(address(newReceipt)).uri(0) returns (string memory) {}
+        catch {
+            revert ReceiptMetadataReverts(address(newReceipt));
+        }
 
         emit ConfigRegistryOffchainAssetReceiptVaultInitializedV1(_msgSender(), config, rbac.owner, selectedAuthorizer);
 

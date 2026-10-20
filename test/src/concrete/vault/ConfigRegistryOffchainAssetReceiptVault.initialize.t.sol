@@ -9,6 +9,10 @@ import {
     ConfigRegistryOffchainAssetReceiptVault,
     ConfigRegistryOffchainAssetReceiptVaultConfigV1,
     AuthorizerIndexOutOfRange,
+    NonCanonicalConfig,
+    VaultNotBeaconProxy,
+    ReceiptBeaconOwnerMismatch,
+    ReceiptMetadataReverts,
     CONFIG_REGISTRY_RBAC_MIN_AGE
 } from "../../../../src/concrete/vault/ConfigRegistryOffchainAssetReceiptVault.sol";
 import {
@@ -34,6 +38,7 @@ import {LibConfigRegistryDeploy} from "rain-deploy-0.1.19-pr322/src/lib/LibConfi
 import {IConfigRegistryV1} from "rain-deploy-0.1.19-pr322/src/interface/IConfigRegistryV1.sol";
 import {FailingInitializeReceipt} from "../../../concrete/FailingInitializeReceipt.sol";
 import {Vm} from "forge-std-1.17.0/src/Vm.sol";
+import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
 
 contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistryOffchainAssetReceiptVaultTest {
     function testInitializeWiresRolesFromRegistry(uint8 index) external {
@@ -279,5 +284,85 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
             seen++;
         }
         assertEq(seen, 4);
+    }
+
+    /// Trailing bytes after the canonical config revert, so the same config
+    /// and salt cannot land at a second address.
+    function testInitializeTrailingConfigBytes(bytes memory trailing) external {
+        vm.assume(trailing.length > 0);
+        bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
+        bytes memory data = bytes.concat(abi.encode(config(0)), trailing);
+        vm.expectRevert(abi.encodeWithSelector(NonCanonicalConfig.selector));
+        iFactory.beaconProxyDeterministicOpenSalt(address(iVaultBeacon), data, 0);
+    }
+
+    /// A non-canonical config exactly as long as its canonical re-encoding
+    /// reverts: a dirty padding byte after the token name.
+    function testInitializeSameLengthNonCanonicalConfig(uint8 dirt) external {
+        vm.assume(dirt != 0);
+        bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
+        bytes memory data = abi.encode(config(0));
+        // Word 0 is the tuple offset, words 1-6 the head, word 7 the name
+        // length and word 8 the name, whose 14 bytes leave its last byte as
+        // padding.
+        assertEq(bytes(config(0).name).length, 14);
+        data[9 * 32 - 1] = bytes1(dirt);
+        ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory decoded =
+            abi.decode(data, (ConfigRegistryOffchainAssetReceiptVaultConfigV1));
+        assertEq(abi.encode(decoded), abi.encode(config(0)));
+        assertEq(abi.encode(decoded).length, data.length);
+        vm.expectRevert(abi.encodeWithSelector(NonCanonicalConfig.selector));
+        iFactory.beaconProxyDeterministicOpenSalt(address(iVaultBeacon), data, 0);
+    }
+
+    /// A clone of the implementation has no beacon to check the receipt
+    /// beacon's owner against, so it cannot initialize.
+    function testInitializeNotBeaconProxy() external {
+        bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
+        ConfigRegistryOffchainAssetReceiptVault vault =
+            ConfigRegistryOffchainAssetReceiptVault(payable(Clones.clone(address(iImplementation))));
+        vm.expectRevert(abi.encodeWithSelector(VaultNotBeaconProxy.selector));
+        vault.initialize(abi.encode(config(0)));
+    }
+
+    /// A receipt beacon owned by anyone but the vault beacon's owner reverts,
+    /// whichever of the two moved.
+    function testInitializeReceiptBeaconOwnerMismatch(address other, bool moveVaultBeacon) external {
+        vm.assume(other != address(this) && other != address(0));
+        bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
+        UpgradeableBeacon receiptBeacon =
+            new UpgradeableBeacon(address(iReceiptImplementation), moveVaultBeacon ? address(this) : other);
+        UpgradeableBeacon vaultBeacon = new UpgradeableBeacon(
+            address(new ConfigRegistryOffchainAssetReceiptVault(IBeacon(address(receiptBeacon)))),
+            moveVaultBeacon ? other : address(this)
+        );
+        (address vaultBeaconOwner, address receiptBeaconOwner) =
+            moveVaultBeacon ? (other, address(this)) : (address(this), other);
+        vm.expectRevert(
+            abi.encodeWithSelector(ReceiptBeaconOwnerMismatch.selector, vaultBeaconOwner, receiptBeaconOwner)
+        );
+        iFactory.beaconProxyDeterministicOpenSalt(address(vaultBeacon), abi.encode(config(0)), 0);
+    }
+
+    /// The generic `Receipt`, whose `uri` reads the vault's `address(0)`
+    /// asset, reverts.
+    function testInitializeGenericReceiptMetadataReverts() external {
+        bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
+        UpgradeableBeacon receiptBeacon = new UpgradeableBeacon(address(new ReceiptContract()), address(this));
+        UpgradeableBeacon vaultBeacon = new UpgradeableBeacon(
+            address(new ConfigRegistryOffchainAssetReceiptVault(IBeacon(address(receiptBeacon)))), address(this)
+        );
+        address vault = iFactory.predictBeaconProxyAddressOpenSalt(address(vaultBeacon), abi.encode(config(0)), 0);
+        vm.expectRevert(abi.encodeWithSelector(ReceiptMetadataReverts.selector, vm.computeCreateAddress(vault, 1)));
+        iFactory.beaconProxyDeterministicOpenSalt(address(vaultBeacon), abi.encode(config(0)), 0);
+    }
+
+    /// The fixture's receipt metadata resolves once initialized.
+    function testInitializeReceiptMetadata() external {
+        bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
+        ConfigRegistryOffchainAssetReceiptVault vault = deploy(config(0), 0);
+        ReceiptContract receipt = ReceiptContract(address(vault.receipt()));
+        assertEq(receipt.name(), "tTSLA Receipt");
+        assertGt(bytes(receipt.uri(0)).length, 0);
     }
 }
