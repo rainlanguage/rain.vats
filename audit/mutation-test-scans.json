@@ -45,5 +45,28 @@
       "testsCountExcludes": "test/prod/*",
       "filed": []
     }
+  },
+  {
+    "timestamp": "2026-10-20T23:24:35Z",
+    "commit": "3a71cfd91f596e401637d1cde873317aa4f62697",
+    "testsAfterCommit": "3a71cfd91f596e401637d1cde873317aa4f62697",
+    "publishedTag": "sol-v0.2.5",
+    "commitsAheadOfTag": 18,
+    "scope": "pr:345 Marvin review 5592932211 follow-up: OffchainAssetReceiptVault.initialize initializer version (reported survivor initializer -> reinitializer(2)); ConfigRegistryOffchainAssetReceiptVault.initialize vault beacon and receipt beacon owner() calls mutated to fall through to address(0) when owner() is missing",
+    "tool": "adversarial-mutation-test",
+    "skillVersion": "0.35.0",
+    "summary": {
+      "behaviours": 3,
+      "mutants": 3,
+      "killedFirstPass": 3,
+      "survivorsKilled": [],
+      "note": "testPlainInitializeAfterUpgradeFromConfigRegistryVault and testInitialize{Vault,Receipt}BeaconWithoutOwner were committed (3a71cfd) before this probe to answer the review, so first-pass kills credit those tests. src unchanged by this round: the event/config move to IConfigRegistryOffchainAssetReceiptVaultV1 leaves creation and runtime bytecode identical. Adversarial pass: expected behaviour from the constructor NatSpec (both beacons MUST expose Ownable.owner or initialize reverts without data) and OZ Initializable version semantics; no candidates.",
+      "candidates": 0,
+      "confirmed": 0,
+      "testsBefore": 442,
+      "testsAfter": 442,
+      "testsCountExcludes": "test/prod/*",
+      "filed": []
+    }
   }
 ]
