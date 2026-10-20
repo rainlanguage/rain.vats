@@ -94,7 +94,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultDeterministicTest is ConfigRegis
         c.authority = address(1);
         assertTrue(expectedAddress(c, 0) != baseAddress);
         c = config(0);
-        c.rbacName = bytes32("x");
+        c.rbacName = "x";
         assertTrue(expectedAddress(c, 0) != baseAddress);
         c = config(1);
         assertTrue(expectedAddress(c, 0) != baseAddress);

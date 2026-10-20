@@ -28,7 +28,7 @@ import {TestCloneFactory} from "../concrete/TestCloneFactory.sol";
 /// address, a vault beacon and a receipt beacon, a V5 factory, and two
 /// authorizers.
 abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
-    bytes32 internal constant RBAC_NAME = bytes32("st0x.rbac.v1");
+    bytes32 internal constant RBAC_NAME = "st0x.rbac.v1";
     address internal constant AUTHORITY = address(uint160(uint256(keccak256("authority"))));
     address internal constant OWNER = address(uint160(uint256(keccak256("owner"))));
 
