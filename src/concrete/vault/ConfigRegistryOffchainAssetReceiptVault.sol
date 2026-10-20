@@ -9,6 +9,10 @@ import {
     ICLONEABLE_V2_SUCCESS
 } from "./OffchainAssetReceiptVault.sol";
 import {IAuthorizeV1} from "../../interface/IAuthorizeV1.sol";
+import {
+    IConfigRegistryOffchainAssetReceiptVaultV1,
+    ConfigRegistryOffchainAssetReceiptVaultConfigV1
+} from "../../interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
 import {ICloneableV2} from "rain-factory-0.1.31-pr271/src/interface/ICloneableV2.sol";
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";
@@ -52,26 +56,6 @@ error ReceiptBeaconOwnerMismatch(address vaultBeaconOwner, address receiptBeacon
 /// @param receipt The new receipt.
 error ReceiptMetadataReverts(address receipt);
 
-/// All data `ConfigRegistryOffchainAssetReceiptVault.initialize` takes, ABI
-/// encoded. Deployed through an open-salt factory, all of it is part of the
-/// vault's address.
-/// @param name As per ERC20.
-/// @param symbol As per ERC20.
-/// @param authority The `ConfigRegistry` authority whose binding of `rbacName`
-/// is trusted for the vault's roles.
-/// @param rbacName The name the RBAC binding is resolved from.
-/// @param authorizerIndex Which of the binding's authorizers the vault uses.
-/// @param metadata Opaque to this contract. Committed to by the address and
-/// emitted, never decoded.
-struct ConfigRegistryOffchainAssetReceiptVaultConfigV1 {
-    string name;
-    string symbol;
-    address authority;
-    bytes32 rbacName;
-    uint256 authorizerIndex;
-    bytes metadata;
-}
-
 /// @title ConfigRegistryOffchainAssetReceiptVault
 /// @notice An `OffchainAssetReceiptVault` whose `initialize` takes no roles
 /// from its caller. It resolves them from the `ConfigRegistry` binding the
@@ -105,16 +89,10 @@ struct ConfigRegistryOffchainAssetReceiptVaultConfigV1 {
 /// `CONFIG_REGISTRY_RBAC_MIN_AGE`, so a rebind is public for that long before
 /// any vault snapshots it. After initialization the vault never reads the
 /// registry again.
-contract ConfigRegistryOffchainAssetReceiptVault is OffchainAssetReceiptVault {
-    /// Contract has initialized from the registry.
-    /// @param sender The msg sender initializing the contract.
-    /// @param config The config it was initialized with.
-    /// @param owner The owner the binding resolved to.
-    /// @param authorizer The authorizer the config selected from the binding.
-    event ConfigRegistryOffchainAssetReceiptVaultInitializedV1(
-        address sender, ConfigRegistryOffchainAssetReceiptVaultConfigV1 config, address owner, IAuthorizeV1 authorizer
-    );
-
+contract ConfigRegistryOffchainAssetReceiptVault is
+    OffchainAssetReceiptVault,
+    IConfigRegistryOffchainAssetReceiptVaultV1
+{
     /// The beacon every vault's receipt is a proxy of. Its owner can upgrade
     /// every receipt, so it is trusted for the receipt as the vault beacon's
     /// owner is for the vault, and the two MUST be the same principal.

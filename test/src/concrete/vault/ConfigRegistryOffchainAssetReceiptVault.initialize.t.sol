@@ -37,6 +37,10 @@ import {LibConfigRegistry} from "rain-deploy-0.1.19-pr322/src/lib/LibConfigRegis
 import {LibConfigRegistryDeploy} from "rain-deploy-0.1.19-pr322/src/lib/LibConfigRegistryDeploy.sol";
 import {IConfigRegistryV1} from "rain-deploy-0.1.19-pr322/src/interface/IConfigRegistryV1.sol";
 import {FailingInitializeReceipt} from "../../../concrete/FailingInitializeReceipt.sol";
+import {OwnerlessBeacon} from "../../../concrete/OwnerlessBeacon.sol";
+import {
+    IConfigRegistryOffchainAssetReceiptVaultV1
+} from "../../../../src/interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
 import {Vm} from "forge-std-1.17.0/src/Vm.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
 
@@ -50,7 +54,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
         address predicted =
             iFactory.predictBeaconProxyAddressOpenSalt(address(iVaultBeacon), abi.encode(vaultConfig), 0);
         vm.expectEmit(predicted);
-        emit ConfigRegistryOffchainAssetReceiptVault.ConfigRegistryOffchainAssetReceiptVaultInitializedV1(
+        emit IConfigRegistryOffchainAssetReceiptVaultV1.ConfigRegistryOffchainAssetReceiptVaultInitializedV1(
             address(iFactory), vaultConfig, OWNER, authorizers[authorizerIndex]
         );
         ConfigRegistryOffchainAssetReceiptVault vault = deploy(vaultConfig, 0);
@@ -95,6 +99,31 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
         bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
         vm.expectRevert(abi.encodeWithSelector(Initializable.InvalidInitialization.selector));
         proxy.initialize(abi.encode(config(0)));
+    }
+
+    /// A proxy already initialized as this vault cannot be initialized again
+    /// as a plain vault after its beacon moves to the plain implementation.
+    function testPlainInitializeAfterUpgradeFromConfigRegistryVault() external {
+        bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
+        UpgradeableBeacon vaultBeacon = new UpgradeableBeacon(address(iImplementation), address(this));
+        OffchainAssetReceiptVault proxy = OffchainAssetReceiptVault(
+            payable(iFactory.beaconProxyDeterministicOpenSalt(address(vaultBeacon), abi.encode(config(0)), 0))
+        );
+
+        vaultBeacon.upgradeTo(address(new OffchainAssetReceiptVault()));
+        ReceiptContract receipt = ReceiptContract(address(new BeaconProxy(address(iReceiptBeacon), "")));
+        receipt.initialize(abi.encode(proxy));
+        vm.expectRevert(abi.encodeWithSelector(Initializable.InvalidInitialization.selector));
+        proxy.initialize(
+            abi.encode(
+                OffchainAssetReceiptVaultConfigV2({
+                    initialAdmin: OWNER,
+                    receiptVaultConfig: ReceiptVaultConfigV2({
+                        asset: address(0), name: "a", symbol: "b", receipt: address(receipt)
+                    })
+                })
+            )
+        );
     }
 
     function testInitializeBindingTooFresh(uint256 age) external {
@@ -252,7 +281,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
             IAuthorizeV1.AuthorizerSet.selector,
             OffchainAssetReceiptVault.OffchainAssetReceiptVaultInitializedV2.selector,
             IAuthorizeV1.AuthorizerSet.selector,
-            ConfigRegistryOffchainAssetReceiptVault.ConfigRegistryOffchainAssetReceiptVaultInitializedV1.selector
+            IConfigRegistryOffchainAssetReceiptVaultV1.ConfigRegistryOffchainAssetReceiptVaultInitializedV1.selector
         ];
         bytes[4] memory data = [
             abi.encode(caller, vault),
@@ -342,6 +371,29 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
             abi.encodeWithSelector(ReceiptBeaconOwnerMismatch.selector, vaultBeaconOwner, receiptBeaconOwner)
         );
         iFactory.beaconProxyDeterministicOpenSalt(address(vaultBeacon), abi.encode(config(0)), 0);
+    }
+
+    /// A vault beacon without `owner` reverts without data.
+    function testInitializeVaultBeaconWithoutOwner() external {
+        bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
+        OwnerlessBeacon vaultBeacon = new OwnerlessBeacon(address(iImplementation));
+        ConfigRegistryOffchainAssetReceiptVault vault =
+            ConfigRegistryOffchainAssetReceiptVault(payable(address(new BeaconProxy(address(vaultBeacon), ""))));
+        vm.expectRevert(bytes(""));
+        vault.initialize(abi.encode(config(0)));
+    }
+
+    /// A receipt beacon without `owner` reverts without data.
+    function testInitializeReceiptBeaconWithoutOwner() external {
+        bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
+        OwnerlessBeacon receiptBeacon = new OwnerlessBeacon(address(iReceiptImplementation));
+        UpgradeableBeacon vaultBeacon = new UpgradeableBeacon(
+            address(new ConfigRegistryOffchainAssetReceiptVault(IBeacon(address(receiptBeacon)))), address(this)
+        );
+        ConfigRegistryOffchainAssetReceiptVault vault =
+            ConfigRegistryOffchainAssetReceiptVault(payable(address(new BeaconProxy(address(vaultBeacon), ""))));
+        vm.expectRevert(bytes(""));
+        vault.initialize(abi.encode(config(0)));
     }
 
     /// The generic `Receipt`, whose `uri` reads the vault's `address(0)`
