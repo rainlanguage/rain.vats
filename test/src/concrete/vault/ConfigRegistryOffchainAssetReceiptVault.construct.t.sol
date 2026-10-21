@@ -14,8 +14,8 @@ import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
 
 contract ConfigRegistryOffchainAssetReceiptVaultConstructTest is ConfigRegistryOffchainAssetReceiptVaultTest {
-    function testMinAgeIs48Hours() external pure {
-        assertEq(CONFIG_REGISTRY_RBAC_MIN_AGE, 172800);
+    function testMinAgeIsOneHour() external pure {
+        assertEq(CONFIG_REGISTRY_RBAC_MIN_AGE, 3600);
     }
 
     function testConstructZeroReceiptBeacon() external {

@@ -30,7 +30,7 @@ import {
 /// @dev How long an RBAC binding must have stood in the `ConfigRegistry`
 /// before `initialize` accepts it. The window in which a rebind is public
 /// before any token snapshots it.
-uint256 constant CONFIG_REGISTRY_RBAC_MIN_AGE = 48 hours;
+uint256 constant CONFIG_REGISTRY_RBAC_MIN_AGE = 1 hours;
 
 /// Thrown when constructing with a zero receipt beacon.
 error ZeroReceiptBeacon();
