@@ -28,10 +28,10 @@ integrity = "4fda4ce47b006de0619aba0591a00cece86454a5867643d99412bc57790cdce0"
 
 [[dependencies]]
 name = "rain-factory"
-version = "0.1.30"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory/0_1_30_21-09-2026_12:10:56_rain.zip"
-checksum = "fb058ca8cc5153090a49d4885f76031b2291a87310d06417d631a2a78a105049"
-integrity = "e782d94d46b3a1a762ff3fffaad11463e571a59b19df5549f575425ce3a0a3fd"
+version = "0.2.0"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory/0_2_0_21-10-2026_08:14:11_rain.zip"
+checksum = "5755463cd1c5692be9ffcc9f8de3d6f69aaffb6f78613136e46957b6bc96c409"
+integrity = "ab9429b63f5203f1dfd90a94b2cc807082d3c0c6ce2211dead343b9d95a76f2f"
 
 [[dependencies]]
 name = "rain-math-fixedpoint"
@@ -42,10 +42,10 @@ integrity = "7a311375a8aa65ca50e11f19413ae2bfe9103d9efdda27a67f08f25cd7022ff8"
 
 [[dependencies]]
 name = "rain-math-float"
-version = "0.2.45"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-math-float/0_2_45_11-10-2026_17:52:20_rain.math.zip"
-checksum = "a80ef5827834b68580c40570f14ec87c76525805c307bf5c15fd8f6d631e7128"
-integrity = "fb4ec397ac7c9d15d376766d19969912609ab3d49e49c2012e7b39b6b8f3ac1b"
+version = "0.3.10"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-math-float/0_3_10_16-10-2026_16:22:13_rain.math.zip"
+checksum = "81e6c67cc0e2c573784f1c03e70db1ea9537e8161065ded0aaf90bc11b6b6150"
+integrity = "f1509e5fa3a4182b625f4650fb368fe605f76ffcaeaa6fbbf1159346b69f2809"
 
 [[dependencies]]
 name = "rain-string"

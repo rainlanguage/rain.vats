@@ -15,7 +15,7 @@ import {
 } from "rain-math-fixedpoint-0.2.2/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
 // Export ICLONEABLE_V2_SUCCESS for concrete implementations.
 // forge-lint: disable-next-line(unused-import)
-import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.1.30/src/interface/ICloneableV2.sol";
+import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.2.0/src/interface/ICloneableV2.sol";
 import {Address} from "@openzeppelin-contracts-5.7.0/utils/Address.sol";
 import {
     InvalidId,
