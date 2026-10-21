@@ -5,10 +5,10 @@ pragma solidity =0.8.25;
 // `ICloneableFactoryV3` and `ICloneableFactoryV4` are imported for the
 // `@inheritdoc` references on the functions they declare; `ICloneableFactoryV5`
 // inherits rather than redeclares them.
-import {ICloneableFactoryV3} from "rain-factory-0.2.0/src/interface/deprecated/ICloneableFactoryV3.sol";
-import {ICloneableFactoryV4} from "rain-factory-0.2.0/src/interface/deprecated/ICloneableFactoryV4.sol";
-import {ICloneableFactoryV5} from "rain-factory-0.2.0/src/interface/ICloneableFactoryV5.sol";
-import {LibICloneableFactoryV5} from "rain-factory-0.2.0/src/lib/LibICloneableFactoryV5.sol";
+import {ICloneableFactoryV3} from "rain-factory-0.2.4/src/interface/deprecated/ICloneableFactoryV3.sol";
+import {ICloneableFactoryV4} from "rain-factory-0.2.4/src/interface/deprecated/ICloneableFactoryV4.sol";
+import {ICloneableFactoryV5} from "rain-factory-0.2.4/src/interface/ICloneableFactoryV5.sol";
+import {LibICloneableFactoryV5} from "rain-factory-0.2.4/src/lib/LibICloneableFactoryV5.sol";
 
 /// @title TestCloneFactory
 /// @notice A concrete `ICloneableFactoryV5` for the test suite: every function

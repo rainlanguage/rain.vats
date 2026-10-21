@@ -15,7 +15,7 @@ import {
 } from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
 import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts-5.7.0/token/ERC20/extensions/IERC20Metadata.sol";
-import {ICloneableV2} from "rain-factory-0.2.0/src/interface/ICloneableV2.sol";
+import {ICloneableV2} from "rain-factory-0.2.4/src/interface/ICloneableV2.sol";
 import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
 import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
 import {
