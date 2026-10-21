@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity ^0.8.25;
 
-import {ICloneableFactoryV3} from "rain-factory-0.1.31-pr271/src/interface/deprecated/ICloneableFactoryV3.sol";
+import {ICloneableFactoryV3} from "rain-factory-0.2.4/src/interface/deprecated/ICloneableFactoryV3.sol";
 import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {Receipt as ReceiptContract} from "../../src/concrete/receipt/Receipt.sol";

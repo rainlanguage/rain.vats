@@ -13,8 +13,8 @@ import {OffchainAssetReceiptVaultRbacV1} from "../../../../src/lib/LibOffchainAs
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
 import {
     ICLONEABLE_FACTORY_V5_BEACON_PROXY_OPEN_SALT_DOMAIN
-} from "rain-factory-0.1.31-pr271/src/interface/ICloneableFactoryV5.sol";
-import {BEACON_PROXY_CREATION_CODE} from "rain-factory-0.1.31-pr271/src/generated/BeaconProxy.sol";
+} from "rain-factory-0.2.4/src/interface/ICloneableFactoryV5.sol";
+import {BEACON_PROXY_CREATION_CODE} from "rain-factory-0.2.4/src/generated/BeaconProxy.sol";
 
 contract ConfigRegistryOffchainAssetReceiptVaultDeterministicTest is ConfigRegistryOffchainAssetReceiptVaultTest {
     function expectedAddress(ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig, bytes32 salt)

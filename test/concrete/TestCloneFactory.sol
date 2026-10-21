@@ -6,15 +6,15 @@ pragma solidity =0.8.25;
 // `@inheritdoc` references on the functions they declare; `ICloneableFactoryV5`
 // inherits rather than redeclares them, so the tags must name them and they
 // must be in scope here.
-import {ICloneableFactoryV3} from "rain-factory-0.1.31-pr271/src/interface/deprecated/ICloneableFactoryV3.sol";
-import {ICloneableFactoryV4} from "rain-factory-0.1.31-pr271/src/interface/deprecated/ICloneableFactoryV4.sol";
-import {ICloneableFactoryV5} from "rain-factory-0.1.31-pr271/src/interface/ICloneableFactoryV5.sol";
-import {LibICloneableFactoryV4} from "rain-factory-0.1.31-pr271/src/lib/LibICloneableFactoryV4.sol";
-import {LibICloneableFactoryV5} from "rain-factory-0.1.31-pr271/src/lib/LibICloneableFactoryV5.sol";
+import {ICloneableFactoryV3} from "rain-factory-0.2.4/src/interface/deprecated/ICloneableFactoryV3.sol";
+import {ICloneableFactoryV4} from "rain-factory-0.2.4/src/interface/deprecated/ICloneableFactoryV4.sol";
+import {ICloneableFactoryV5} from "rain-factory-0.2.4/src/interface/ICloneableFactoryV5.sol";
+import {LibICloneableFactoryV5} from "rain-factory-0.2.4/src/lib/LibICloneableFactoryV5.sol";
+import {LibICloneableFactoryV5} from "rain-factory-0.2.4/src/lib/LibICloneableFactoryV5.sol";
 
 /// @title TestCloneFactory
 /// @notice A concrete `ICloneableFactoryV5` for the test suite: every function
-/// is a single delegation into `LibICloneableFactoryV4` or
+/// is a single delegation into `LibICloneableFactoryV5` or
 /// `LibICloneableFactoryV5` and nothing else, which is the shape `rain-factory`
 /// documents for a concrete factory.
 ///
@@ -26,7 +26,7 @@ import {LibICloneableFactoryV5} from "rain-factory-0.1.31-pr271/src/lib/LibIClon
 contract TestCloneFactory is ICloneableFactoryV5 {
     /// @inheritdoc ICloneableFactoryV3
     function cloneDeterministic(address implementation, bytes calldata data, bytes32 salt) external returns (address) {
-        return LibICloneableFactoryV4.cloneDeterministic(implementation, data, salt);
+        return LibICloneableFactoryV5.cloneDeterministic(implementation, data, salt);
     }
 
     /// @inheritdoc ICloneableFactoryV3
@@ -35,7 +35,7 @@ contract TestCloneFactory is ICloneableFactoryV5 {
         view
         returns (address)
     {
-        return LibICloneableFactoryV4.predictDeterministicAddress(implementation, salt, deployer);
+        return LibICloneableFactoryV5.predictDeterministicAddress(implementation, salt, deployer);
     }
 
     /// @inheritdoc ICloneableFactoryV4
@@ -43,7 +43,7 @@ contract TestCloneFactory is ICloneableFactoryV5 {
         external
         returns (address)
     {
-        return LibICloneableFactoryV4.cloneDeterministicOpenSalt(implementation, data, salt);
+        return LibICloneableFactoryV5.cloneDeterministicOpenSalt(implementation, data, salt);
     }
 
     /// @inheritdoc ICloneableFactoryV4
@@ -52,7 +52,7 @@ contract TestCloneFactory is ICloneableFactoryV5 {
         view
         returns (address)
     {
-        return LibICloneableFactoryV4.predictDeterministicAddressOpenSalt(implementation, data, salt);
+        return LibICloneableFactoryV5.predictDeterministicAddressOpenSalt(implementation, data, salt);
     }
 
     /// @inheritdoc ICloneableFactoryV5

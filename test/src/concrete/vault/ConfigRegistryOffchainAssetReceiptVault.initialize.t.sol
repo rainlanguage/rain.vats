@@ -37,9 +37,9 @@ import {Receipt as ReceiptContract} from "../../../../src/concrete/receipt/Recei
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
-import {LibConfigRegistry} from "rain-deploy-0.1.19-pr322/src/lib/LibConfigRegistry.sol";
-import {LibConfigRegistryDeploy} from "rain-deploy-0.1.19-pr322/src/lib/LibConfigRegistryDeploy.sol";
-import {IConfigRegistryV1} from "rain-deploy-0.1.19-pr322/src/interface/IConfigRegistryV1.sol";
+import {LibConfigRegistry} from "rain-deploy-0.1.19-main/src/lib/LibConfigRegistry.sol";
+import {LibConfigRegistryDeploy} from "rain-deploy-0.1.19-main/src/lib/LibConfigRegistryDeploy.sol";
+import {IConfigRegistryV2} from "rain-deploy-0.1.19-main/src/interface/IConfigRegistryV2.sol";
 import {FailingInitializeReceipt} from "../../../concrete/FailingInitializeReceipt.sol";
 import {OwnerlessBeacon} from "../../../concrete/OwnerlessBeacon.sol";
 import {
@@ -147,7 +147,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
         bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
         ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig = config(0);
         vaultConfig.rbacName = name;
-        vm.expectRevert(abi.encodeWithSelector(IConfigRegistryV1.NameNotRegistered.selector, AUTHORITY, name));
+        vm.expectRevert(abi.encodeWithSelector(IConfigRegistryV2.NameNotRegistered.selector, AUTHORITY, name));
         deploy(vaultConfig, 0);
     }
 
@@ -156,7 +156,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
         bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizers: twoAuthorizers()}));
         ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig = config(0);
         vaultConfig.authority = authority;
-        vm.expectRevert(abi.encodeWithSelector(IConfigRegistryV1.NameNotRegistered.selector, authority, RBAC_NAME));
+        vm.expectRevert(abi.encodeWithSelector(IConfigRegistryV2.NameNotRegistered.selector, authority, RBAC_NAME));
         deploy(vaultConfig, 0);
     }
 
