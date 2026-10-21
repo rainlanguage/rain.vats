@@ -11,7 +11,8 @@ import {
 import {IAuthorizeV1} from "../../interface/IAuthorizeV1.sol";
 import {
     IConfigRegistryOffchainAssetReceiptVaultV1,
-    ConfigRegistryOffchainAssetReceiptVaultConfigV1
+    ConfigRegistryOffchainAssetReceiptVaultConfigV1,
+    CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG
 } from "../../interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
 import {ICloneableV2} from "rain-factory-0.1.31-pr271/src/interface/ICloneableV2.sol";
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
@@ -40,9 +41,14 @@ error ZeroReceiptBeacon();
 /// @param authorizersLength The number of authorizers the binding lists.
 error AuthorizerIndexOutOfRange(uint256 authorizerIndex, uint256 authorizersLength);
 
-/// Thrown when `initialize` data is not the canonical ABI encoding of
-/// `ConfigRegistryOffchainAssetReceiptVaultConfigV1`.
+/// Thrown when `initialize` data is not the canonical ABI encoding of the
+/// version tag and `ConfigRegistryOffchainAssetReceiptVaultConfigV1`.
 error NonCanonicalConfig();
+
+/// Thrown when `initialize` data does not lead with
+/// `CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG`.
+/// @param version The leading word, or zero for data shorter than a word.
+error UnknownConfigVersion(bytes32 version);
 
 /// Thrown when initializing outside a beacon proxy.
 error VaultNotBeaconProxy();
@@ -118,16 +124,22 @@ contract ConfigRegistryOffchainAssetReceiptVault is
         iReceiptBeacon = receiptBeacon;
     }
 
-    /// @param data `ConfigRegistryOffchainAssetReceiptVaultConfigV1`, ABI
-    /// encoded.
+    /// @param data `abi.encode(CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG, config)`.
     /// @inheritdoc ICloneableV2
     function initialize(bytes memory data) public virtual override initializer returns (bytes32) {
-        ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory config =
-            abi.decode(data, (ConfigRegistryOffchainAssetReceiptVaultConfigV1));
+        if (data.length < 0x20) {
+            revert UnknownConfigVersion(bytes32(0));
+        }
+        bytes32 version = abi.decode(data, (bytes32));
+        if (version != CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG) {
+            revert UnknownConfigVersion(version);
+        }
+        (, ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory config) =
+            abi.decode(data, (bytes32, ConfigRegistryOffchainAssetReceiptVaultConfigV1));
         // `abi.decode` ignores trailing bytes and accepts non-canonical
         // offsets, and the factory hashes the raw `data` into the address, so
         // without this one config has many addresses.
-        if (keccak256(abi.encode(config)) != keccak256(data)) {
+        if (keccak256(abi.encode(version, config)) != keccak256(data)) {
             revert NonCanonicalConfig();
         }
 

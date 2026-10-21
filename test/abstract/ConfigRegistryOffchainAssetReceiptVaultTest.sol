@@ -8,6 +8,9 @@ import {
     ConfigRegistryOffchainAssetReceiptVaultConfigV1,
     CONFIG_REGISTRY_RBAC_MIN_AGE
 } from "../../src/concrete/vault/ConfigRegistryOffchainAssetReceiptVault.sol";
+import {
+    CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG
+} from "../../src/interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
 import {OffchainAssetReceiptVaultRbacV1} from "../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {TestOffchainAssetReceipt} from "../concrete/TestOffchainAssetReceipt.sol";
 import {
@@ -102,12 +105,21 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
         });
     }
 
+    /// The `initialize` data for `vaultConfig`: the V1 tag, then the config.
+    function encodeConfig(ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig)
+        internal
+        pure
+        returns (bytes memory)
+    {
+        return abi.encode(CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG, vaultConfig);
+    }
+
     function deploy(ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig, bytes32 salt)
         internal
         returns (ConfigRegistryOffchainAssetReceiptVault)
     {
         return ConfigRegistryOffchainAssetReceiptVault(
-            payable(iFactory.beaconProxyDeterministicOpenSalt(address(iVaultBeacon), abi.encode(vaultConfig), salt))
+            payable(iFactory.beaconProxyDeterministicOpenSalt(address(iVaultBeacon), encodeConfig(vaultConfig), salt))
         );
     }
 }

@@ -23,7 +23,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultDeterministicTest is ConfigRegis
         returns (address)
     {
         bytes32 derivedSalt = keccak256(
-            abi.encode(ICLONEABLE_FACTORY_V5_BEACON_PROXY_OPEN_SALT_DOMAIN, salt, keccak256(abi.encode(vaultConfig)))
+            abi.encode(ICLONEABLE_FACTORY_V5_BEACON_PROXY_OPEN_SALT_DOMAIN, salt, keccak256(encodeConfig(vaultConfig)))
         );
         bytes memory creationCode =
             abi.encodePacked(BEACON_PROXY_CREATION_CODE, abi.encode(address(iVaultBeacon), bytes("")));
@@ -80,7 +80,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultDeterministicTest is ConfigRegis
     function testEveryConfigFieldMovesAddress() external view {
         ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory base = config(0);
         address baseAddress = expectedAddress(base, 0);
-        assertEq(iFactory.predictBeaconProxyAddressOpenSalt(address(iVaultBeacon), abi.encode(base), 0), baseAddress);
+        assertEq(iFactory.predictBeaconProxyAddressOpenSalt(address(iVaultBeacon), encodeConfig(base), 0), baseAddress);
 
         ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig = config(0);
         vaultConfig.name = "x";

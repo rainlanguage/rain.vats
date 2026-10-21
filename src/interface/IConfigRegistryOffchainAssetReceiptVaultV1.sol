@@ -4,9 +4,16 @@ pragma solidity ^0.8.0;
 
 import {IAuthorizeV1} from "./IAuthorizeV1.sol";
 
-/// All data `ConfigRegistryOffchainAssetReceiptVault.initialize` takes, ABI
-/// encoded. Deployed through an open-salt factory, all of it is part of the
-/// vault's address.
+/// @dev The version tag leading `ConfigRegistryOffchainAssetReceiptVault`
+/// `initialize` data: `abi.encode(TAG, config)`. An implementation rejects a
+/// tag it does not know, so data written for a later implementation reverts on
+/// an earlier one instead of being misread.
+bytes32 constant CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG =
+    keccak256("ConfigRegistryOffchainAssetReceiptVaultConfigV1");
+
+/// The config `ConfigRegistryOffchainAssetReceiptVault.initialize` takes after
+/// its version tag. Deployed through an open-salt factory, the tag and config
+/// are all part of the vault's address.
 /// @param name As per ERC20.
 /// @param symbol As per ERC20.
 /// @param authority The `ConfigRegistry` authority whose binding of `rbacName`

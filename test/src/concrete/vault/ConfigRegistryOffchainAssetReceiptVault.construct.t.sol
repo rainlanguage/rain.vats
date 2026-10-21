@@ -32,6 +32,6 @@ contract ConfigRegistryOffchainAssetReceiptVaultConstructTest is ConfigRegistryO
 
     function testImplementationInitializeDisabled() external {
         vm.expectRevert(abi.encodeWithSelector(Initializable.InvalidInitialization.selector));
-        iImplementation.initialize(abi.encode(config(0)));
+        iImplementation.initialize(encodeConfig(config(0)));
     }
 }
