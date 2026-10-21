@@ -16,12 +16,12 @@ import {
 } from "../../interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
 import {ICloneableV2} from "rain-factory-0.2.4/src/interface/ICloneableV2.sol";
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
-import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";
+import {ICloneableFactoryV5} from "rain-factory-0.2.4/src/interface/ICloneableFactoryV5.sol";
+import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.1/src/lib/LibCloneFactoryDeploy.sol";
 import {ERC1967Utils} from "@openzeppelin-contracts-5.7.0/proxy/ERC1967/ERC1967Utils.sol";
 import {Ownable} from "@openzeppelin-contracts-5.7.0/access/Ownable.sol";
 import {IERC1155MetadataURI} from "@openzeppelin-contracts-5.7.0/token/ERC1155/extensions/IERC1155MetadataURI.sol";
-import {LibConfigRegistry} from "rain-deploy-0.1.19-main/src/lib/LibConfigRegistry.sol";
-import {InitializeReceiptFailed} from "../../error/ErrDeployer.sol";
+import {LibConfigRegistry} from "rain-deploy-0.1.20/src/lib/LibConfigRegistry.sol";
 import {
     LibOffchainAssetReceiptVaultRbac,
     OffchainAssetReceiptVaultRbacV1
@@ -52,6 +52,10 @@ error UnknownConfigVersion(bytes32 version);
 
 /// Thrown when initializing outside a beacon proxy.
 error VaultNotBeaconProxy();
+
+/// Thrown when the pinned clone factory's code is not the pinned code.
+/// @param actual The code hash found at the pinned address.
+error UnexpectedCloneFactoryCodeHash(bytes32 actual);
 
 /// Thrown when the receipt beacon's owner is not the vault beacon's owner.
 /// @param vaultBeaconOwner The owner of the beacon this vault proxies.
@@ -163,18 +167,23 @@ contract ConfigRegistryOffchainAssetReceiptVault is
         }
         IAuthorizeV1 selectedAuthorizer = rbac.authorizers[config.authorizerIndex];
 
-        // The receipt's address is `CREATE` from this proxy at its first
-        // nonce, so it is as deterministic as this proxy's address.
-        ICloneableV2 newReceipt = ICloneableV2(address(new BeaconProxy(address(iReceiptBeacon), "")));
-        if (newReceipt.initialize(abi.encode(address(this))) != ICLONEABLE_V2_SUCCESS) {
-            revert InitializeReceiptFailed();
+        // The receipt is a beacon proxy from the pinned factory, which
+        // initializes it with this vault as manager and checks the answer. Its
+        // address commits to this vault's, so it is as deterministic.
+        if (
+            LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS.codehash
+                != LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_CODEHASH
+        ) {
+            revert UnexpectedCloneFactoryCodeHash(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS.codehash);
         }
+        address newReceipt = ICloneableFactoryV5(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS)
+            .beaconProxyDeterministicOpenSalt(address(iReceiptBeacon), abi.encode(address(this)), bytes32(0));
 
         _initialize(
             OffchainAssetReceiptVaultConfigV2({
                 initialAdmin: rbac.owner,
                 receiptVaultConfig: ReceiptVaultConfigV2({
-                    asset: address(0), name: config.name, symbol: config.symbol, receipt: address(newReceipt)
+                    asset: address(0), name: config.name, symbol: config.symbol, receipt: newReceipt
                 })
             })
         );
@@ -184,9 +193,9 @@ contract ConfigRegistryOffchainAssetReceiptVault is
         // `_initialize`.
         // Only whether `uri` reverts matters, not what it returns.
         //slither-disable-next-line unused-return
-        try IERC1155MetadataURI(address(newReceipt)).uri(0) returns (string memory) {}
+        try IERC1155MetadataURI(newReceipt).uri(0) returns (string memory) {}
         catch {
-            revert ReceiptMetadataReverts(address(newReceipt));
+            revert ReceiptMetadataReverts(newReceipt);
         }
 
         emit ConfigRegistryOffchainAssetReceiptVaultInitializedV1(_msgSender(), config, rbac.owner, selectedAuthorizer);

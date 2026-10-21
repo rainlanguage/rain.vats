@@ -2,6 +2,11 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity ^0.8.25;
 
+import {ICloneableFactoryV5} from "rain-factory-0.2.4/src/interface/ICloneableFactoryV5.sol";
+import {
+    DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
+    RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
+} from "rain-factory-deploy-0.2.1/src/generated/candidate/CloneFactory.sol";
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {
     ConfigRegistryOffchainAssetReceiptVault,
@@ -21,11 +26,11 @@ import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {IConfigRegistryV2} from "rain-deploy-0.1.19-main/src/interface/IConfigRegistryV2.sol";
+import {IConfigRegistryV2} from "rain-deploy-0.1.20/src/interface/IConfigRegistryV2.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
-} from "rain-deploy-0.1.19-main/src/generated/candidate/ConfigRegistry.sol";
+} from "rain-deploy-0.1.20/src/generated/candidate/ConfigRegistry.sol";
 import {TestCloneFactory} from "../concrete/TestCloneFactory.sol";
 
 /// Shared fixture: the pinned `ConfigRegistry` runtime code at its pinned
@@ -54,6 +59,7 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
 
     function setUp() public virtual {
         vm.etch(CONFIG_REGISTRY_ADDRESS, CONFIG_REGISTRY_RUNTIME_CODE);
+        vm.etch(CLONE_FACTORY_ADDRESS, CLONE_FACTORY_RUNTIME_CODE);
         vm.warp(1_000_000_000);
     }
 
@@ -68,6 +74,13 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
         authorizers = new IAuthorizeV1[](2);
         authorizers[0] = newAuthorizer(OWNER);
         authorizers[1] = newAuthorizer(OWNER);
+    }
+
+    /// The receipt the pinned factory deploys for `vault` over `receiptBeacon`,
+    /// as the factory itself predicts it.
+    function receiptOf(address vault, address receiptBeacon) internal view returns (address) {
+        return ICloneableFactoryV5(CLONE_FACTORY_ADDRESS)
+            .predictBeaconProxyAddressOpenSalt(receiptBeacon, abi.encode(vault), bytes32(0));
     }
 
     function bindValue(address authority, bytes32 name, bytes memory value) internal {
