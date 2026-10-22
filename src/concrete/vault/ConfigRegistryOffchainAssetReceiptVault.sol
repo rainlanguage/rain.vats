@@ -32,7 +32,7 @@ import {
 /// before any token snapshots it.
 uint256 constant CONFIG_REGISTRY_RBAC_MIN_AGE = 1 hours;
 
-/// Thrown when constructing with a zero receipt beacon.
+/// Thrown when the RBAC binding names no receipt beacon.
 error ZeroReceiptBeacon();
 
 /// Thrown when the config selects an authorizer the RBAC binding does not
@@ -103,13 +103,10 @@ contract ConfigRegistryOffchainAssetReceiptVault is
     OffchainAssetReceiptVault,
     IConfigRegistryOffchainAssetReceiptVaultV1
 {
-    /// The beacon every vault's receipt is a proxy of. Its owner can upgrade
-    /// every receipt, so it is trusted for the receipt as the vault beacon's
-    /// owner is for the vault, and the two MUST be the same principal.
-    IBeacon public immutable iReceiptBeacon;
-
-    /// @param receiptBeacon The beacon every vault's receipt is a proxy of. Its
-    /// owner MUST be the vault beacon's owner. Its implementation MUST override
+    /// The receipt beacon is the RBAC binding's `receiptBeacon`. Its owner can
+    /// upgrade every receipt made from it, so it is trusted for the receipt as
+    /// the vault beacon's owner is for the vault, and the two MUST be the same
+    /// principal. Its implementation MUST override
     /// the asset-symbol metadata, as the generic `Receipt` metadata reverts for
     /// a vault whose asset is `address(0)` (see `_initialize`). The
     /// implementation cannot see the vault beacon, so `initialize` checks both:
@@ -121,13 +118,7 @@ contract ConfigRegistryOffchainAssetReceiptVault is
     /// catches a misconfigured pairing, not a beacon built to pass it; the
     /// vault beacon is part of the vault's address, so only the pinned beacon
     /// matters.
-    constructor(IBeacon receiptBeacon) {
-        if (address(receiptBeacon) == address(0)) {
-            revert ZeroReceiptBeacon();
-        }
-        iReceiptBeacon = receiptBeacon;
-    }
-
+    ///
     /// @param data `abi.encode(CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG, config)`.
     /// @inheritdoc ICloneableV2
     function initialize(bytes memory data) public virtual override initializer returns (bytes32) {
@@ -147,21 +138,24 @@ contract ConfigRegistryOffchainAssetReceiptVault is
             revert NonCanonicalConfig();
         }
 
-        address vaultBeacon = ERC1967Utils.getBeacon();
-        if (vaultBeacon == address(0)) {
-            revert VaultNotBeaconProxy();
-        }
-        address vaultBeaconOwner = Ownable(vaultBeacon).owner();
-        address receiptBeaconOwner = Ownable(address(iReceiptBeacon)).owner();
-        if (vaultBeaconOwner != receiptBeaconOwner) {
-            revert ReceiptBeaconOwnerMismatch(vaultBeaconOwner, receiptBeaconOwner);
-        }
-
         OffchainAssetReceiptVaultRbacV1 memory rbac = LibOffchainAssetReceiptVaultRbac.decodeCanonical(
             config.authority,
             config.rbacName,
             LibConfigRegistry.resolveSafe(config.authority, config.rbacName, CONFIG_REGISTRY_RBAC_MIN_AGE)
         );
+        if (address(rbac.receiptBeacon) == address(0)) {
+            revert ZeroReceiptBeacon();
+        }
+        address vaultBeacon = ERC1967Utils.getBeacon();
+        if (vaultBeacon == address(0)) {
+            revert VaultNotBeaconProxy();
+        }
+        address vaultBeaconOwner = Ownable(vaultBeacon).owner();
+        address receiptBeaconOwner = Ownable(address(rbac.receiptBeacon)).owner();
+        if (vaultBeaconOwner != receiptBeaconOwner) {
+            revert ReceiptBeaconOwnerMismatch(vaultBeaconOwner, receiptBeaconOwner);
+        }
+
         if (config.authorizerIndex >= rbac.authorizers.length) {
             revert AuthorizerIndexOutOfRange(config.authorizerIndex, rbac.authorizers.length);
         }
@@ -177,7 +171,7 @@ contract ConfigRegistryOffchainAssetReceiptVault is
             revert UnexpectedCloneFactoryCodeHash(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS.codehash);
         }
         address newReceipt = ICloneableFactoryV5(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS)
-            .beaconProxyDeterministicOpenSalt(address(iReceiptBeacon), abi.encode(address(this)), bytes32(0));
+            .beaconProxyDeterministicOpenSalt(address(rbac.receiptBeacon), abi.encode(address(this)), bytes32(0));
 
         _initialize(
             OffchainAssetReceiptVaultConfigV2({

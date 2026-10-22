@@ -42,10 +42,13 @@ contract LibOffchainAssetReceiptVaultRbacDecodeCanonicalTest is Test {
 
     /// A non-canonical array offset reverts: the array is moved one word
     /// further from the head than `abi.encode` places it.
-    function testDecodeCanonicalNonCanonicalOffset(address authority, bytes32 name, address owner) external {
-        bytes memory value = abi.encode(uint256(0x20), owner, uint256(0x60), uint256(0), uint256(0));
+    function testDecodeCanonicalNonCanonicalOffset(address authority, bytes32 name, address owner, address beacon)
+        external
+    {
+        bytes memory value = abi.encode(uint256(0x20), owner, beacon, uint256(0x80), uint256(0), uint256(0));
         OffchainAssetReceiptVaultRbacV1 memory decoded = abi.decode(value, (OffchainAssetReceiptVaultRbacV1));
         assertEq(decoded.owner, owner);
+        assertEq(address(decoded.receiptBeacon), beacon);
         assertEq(decoded.authorizers.length, 0);
         vm.expectRevert(abi.encodeWithSelector(NonCanonicalRbac.selector, authority, name));
         this.decodeCanonicalExternal(authority, name, value);
@@ -53,21 +56,22 @@ contract LibOffchainAssetReceiptVaultRbacDecodeCanonicalTest is Test {
 
     /// A non-canonical value exactly as long as its canonical re-encoding
     /// reverts: the array offset points at its own word, which reads as a
-    /// length of 32, and one padding word fills the length gap.
+    /// length of 64, and one padding word fills the length gap.
     function testDecodeCanonicalSameLengthNonCanonical(
         address authority,
         bytes32 name,
         address owner,
+        address beacon,
         address authorizer,
         bytes32 pad
     ) external {
-        bytes memory value = abi.encode(uint256(0x20), owner, uint256(0x20));
-        for (uint256 i = 0; i < 32; i++) {
+        bytes memory value = abi.encode(uint256(0x20), owner, beacon, uint256(0x40));
+        for (uint256 i = 0; i < 64; i++) {
             value = bytes.concat(value, abi.encode(authorizer));
         }
         value = bytes.concat(value, pad);
         OffchainAssetReceiptVaultRbacV1 memory decoded = abi.decode(value, (OffchainAssetReceiptVaultRbacV1));
-        assertEq(decoded.authorizers.length, 32);
+        assertEq(decoded.authorizers.length, 64);
         assertEq(abi.encode(decoded).length, value.length);
         vm.expectRevert(abi.encodeWithSelector(NonCanonicalRbac.selector, authority, name));
         this.decodeCanonicalExternal(authority, name, value);

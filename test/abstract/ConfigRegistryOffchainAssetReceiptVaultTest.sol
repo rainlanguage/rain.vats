@@ -51,7 +51,7 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
     constructor() {
         iReceiptImplementation = new TestOffchainAssetReceipt();
         iReceiptBeacon = new UpgradeableBeacon(address(iReceiptImplementation), address(this));
-        iImplementation = new ConfigRegistryOffchainAssetReceiptVault(IBeacon(address(iReceiptBeacon)));
+        iImplementation = new ConfigRegistryOffchainAssetReceiptVault();
         iVaultBeacon = new UpgradeableBeacon(address(iImplementation), address(this));
         iFactory = new TestCloneFactory();
         iAuthorizerImplementation = new OffchainAssetReceiptVaultAuthorizerV1();

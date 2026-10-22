@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
+import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {
     ConfigRegistryOffchainAssetReceiptVaultTest
 } from "../../../abstract/ConfigRegistryOffchainAssetReceiptVaultTest.sol";
@@ -36,7 +37,13 @@ contract ConfigRegistryOffchainAssetReceiptVaultDeterministicTest is ConfigRegis
     {
         vm.chainId(chainId);
         IAuthorizeV1[] memory authorizers = twoAuthorizers();
-        bindAged(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: owner, authorizers: authorizers}));
+        bindAged(
+            AUTHORITY,
+            RBAC_NAME,
+            OffchainAssetReceiptVaultRbacV1({
+                owner: owner, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizers: authorizers
+            })
+        );
         vm.prank(caller);
         vault = deploy(config(authorizerIndex), salt);
         authorizer = authorizers[authorizerIndex];
