@@ -17,11 +17,12 @@ error NonCanonicalRbac(address authority, bytes32 name);
 /// @param receiptBeacon The beacon every vault initialized from the binding
 /// makes its receipt a proxy of, bound per chain because a chain's beacons
 /// are its own. Its owner MUST be the vault beacon's owner.
-/// @param authorizers The authorizers a vault may select from by index.
+/// @param authorizer The authorizer of every vault initialized from the
+/// binding.
 struct OffchainAssetReceiptVaultRbacV1 {
     address owner;
     IBeacon receiptBeacon;
-    IAuthorizeV1[] authorizers;
+    IAuthorizeV1 authorizer;
 }
 
 /// @title LibOffchainAssetReceiptVaultRbac

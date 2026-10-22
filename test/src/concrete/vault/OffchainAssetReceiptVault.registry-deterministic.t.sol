@@ -29,22 +29,21 @@ contract OffchainAssetReceiptVaultRegistryDeterministicTest is OffchainAssetRece
         return vm.computeCreate2Address(derivedSalt, keccak256(creationCode), address(iFactory));
     }
 
-    function deployOnChain(uint256 chainId, address owner, address caller, uint256 authorizerIndex, bytes32 salt)
+    function deployOnChain(uint256 chainId, address owner, address caller, bytes32 salt)
         internal
         returns (OffchainAssetReceiptVault vault, IAuthorizeV1 authorizer)
     {
         vm.chainId(chainId);
-        IAuthorizeV1[] memory authorizers = twoAuthorizers();
+        authorizer = newAuthorizer(OWNER);
         bindAged(
             AUTHORITY,
             RBAC_NAME,
             OffchainAssetReceiptVaultRbacV1({
-                owner: owner, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizers: authorizers
+                owner: owner, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizer: authorizer
             })
         );
         vm.prank(caller);
-        vault = deploy(config(authorizerIndex), salt);
-        authorizer = authorizers[authorizerIndex];
+        vault = deploy(config(), salt);
     }
 
     /// The same config is the same vault address on every chain, whoever
@@ -56,23 +55,19 @@ contract OffchainAssetReceiptVaultRegistryDeterministicTest is OffchainAssetRece
         address ownerB,
         address callerA,
         address callerB,
-        bool secondAuthorizer,
         bytes32 salt
     ) external {
         vm.assume(chainA != chainB);
         vm.assume(ownerA != address(0) && ownerB != address(0) && ownerA != ownerB);
-        uint256 authorizerIndex = secondAuthorizer ? 1 : 0;
-        address expected = expectedAddress(config(authorizerIndex), salt);
+        address expected = expectedAddress(config(), salt);
 
         uint256 snapshot = vm.snapshotState();
-        (OffchainAssetReceiptVault vaultA, IAuthorizeV1 authorizerA) =
-            deployOnChain(chainA, ownerA, callerA, authorizerIndex, salt);
+        (OffchainAssetReceiptVault vaultA, IAuthorizeV1 authorizerA) = deployOnChain(chainA, ownerA, callerA, salt);
         address receiptA = address(vaultA.receipt());
         assertEq(vaultA.owner(), ownerA);
         assertEq(address(vaultA.authorizer()), address(authorizerA));
         vm.revertToState(snapshot);
-        (OffchainAssetReceiptVault vaultB, IAuthorizeV1 authorizerB) =
-            deployOnChain(chainB, ownerB, callerB, authorizerIndex, salt);
+        (OffchainAssetReceiptVault vaultB, IAuthorizeV1 authorizerB) = deployOnChain(chainB, ownerB, callerB, salt);
 
         assertEq(address(vaultA), expected);
         assertEq(address(vaultB), expected);
@@ -83,25 +78,25 @@ contract OffchainAssetReceiptVaultRegistryDeterministicTest is OffchainAssetRece
 
     /// Every config field moves the address.
     function testEveryConfigFieldMovesAddress() external view {
-        OffchainAssetReceiptVaultConfigV3 memory base = config(0);
+        OffchainAssetReceiptVaultConfigV3 memory base = config();
         address baseAddress = expectedAddress(base, 0);
         assertEq(iFactory.predictBeaconProxyAddressOpenSalt(address(iVaultBeacon), encodeConfig(base), 0), baseAddress);
 
-        OffchainAssetReceiptVaultConfigV3 memory vaultConfig = config(0);
+        OffchainAssetReceiptVaultConfigV3 memory vaultConfig = config();
         vaultConfig.name = "x";
         assertTrue(expectedAddress(vaultConfig, 0) != baseAddress);
-        vaultConfig = config(0);
+        vaultConfig = config();
         vaultConfig.symbol = "x";
         assertTrue(expectedAddress(vaultConfig, 0) != baseAddress);
-        vaultConfig = config(0);
+        vaultConfig = config();
         vaultConfig.authority = address(1);
         assertTrue(expectedAddress(vaultConfig, 0) != baseAddress);
-        vaultConfig = config(0);
+        vaultConfig = config();
         vaultConfig.rbacName = "x";
         assertTrue(expectedAddress(vaultConfig, 0) != baseAddress);
-        vaultConfig = config(1);
+        vaultConfig = config();
         assertTrue(expectedAddress(vaultConfig, 0) != baseAddress);
-        vaultConfig = config(0);
+        vaultConfig = config();
         vaultConfig.metadata = "x";
         assertTrue(expectedAddress(vaultConfig, 0) != baseAddress);
     }

@@ -49,12 +49,6 @@ uint256 constant CONFIG_REGISTRY_RBAC_MIN_AGE = 1 hours;
 /// Thrown when the RBAC binding names no receipt beacon.
 error ZeroReceiptBeacon();
 
-/// Thrown when the config selects an authorizer the RBAC binding does not
-/// list.
-/// @param authorizerIndex The index the config selected.
-/// @param authorizersLength The number of authorizers the binding lists.
-error AuthorizerIndexOutOfRange(uint256 authorizerIndex, uint256 authorizersLength);
-
 /// Thrown when `initialize` data is not the canonical ABI encoding of the
 /// version tag and `OffchainAssetReceiptVaultConfigV3`.
 error NonCanonicalConfig();
@@ -439,10 +433,7 @@ abstract contract OffchainAssetReceiptVault is
             revert ReceiptBeaconOwnerMismatch(vaultBeaconOwner, receiptBeaconOwner);
         }
 
-        if (config.authorizerIndex >= rbac.authorizers.length) {
-            revert AuthorizerIndexOutOfRange(config.authorizerIndex, rbac.authorizers.length);
-        }
-        IAuthorizeV1 selectedAuthorizer = rbac.authorizers[config.authorizerIndex];
+        IAuthorizeV1 selectedAuthorizer = rbac.authorizer;
 
         // The receipt is a beacon proxy from the pinned factory, which
         // initializes it with this vault as manager and checks the answer. Its

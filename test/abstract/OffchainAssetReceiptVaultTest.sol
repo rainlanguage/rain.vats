@@ -70,8 +70,6 @@ contract OffchainAssetReceiptVaultTest is Test {
         OffchainAssetReceiptVaultAuthorizerV1 authorizer =
             OffchainAssetReceiptVaultAuthorizerV1(Clones.clone(address(iAuthorizerImplementation)));
         authorizer.initialize(abi.encode(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: admin})));
-        IAuthorizeV1[] memory authorizers = new IAuthorizeV1[](1);
-        authorizers[0] = authorizer;
         bytes32 rbacName = keccak256(abi.encode("vault-rbac", sVaultCount++));
 
         uint256 timestamp = block.timestamp;
@@ -82,7 +80,7 @@ contract OffchainAssetReceiptVaultTest is Test {
                 rbacName,
                 abi.encode(
                     OffchainAssetReceiptVaultRbacV1({
-                    owner: admin, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizers: authorizers
+                    owner: admin, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizer: authorizer
                 })
                 )
             );
@@ -98,7 +96,6 @@ contract OffchainAssetReceiptVaultTest is Test {
                             symbol: shareSymbol,
                             authority: VAULT_AUTHORITY,
                             rbacName: rbacName,
-                            authorizerIndex: 0,
                             metadata: ""
                         })
                         ),

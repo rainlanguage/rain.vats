@@ -69,12 +69,6 @@ abstract contract OffchainAssetReceiptVaultRegistryTest is Test {
         return authorizer;
     }
 
-    function twoAuthorizers() internal returns (IAuthorizeV1[] memory authorizers) {
-        authorizers = new IAuthorizeV1[](2);
-        authorizers[0] = newAuthorizer(OWNER);
-        authorizers[1] = newAuthorizer(OWNER);
-    }
-
     /// The receipt the pinned factory deploys for `vault` over `receiptBeacon`,
     /// as the factory itself predicts it.
     function receiptOf(address vault, address receiptBeacon) internal view returns (address) {
@@ -102,13 +96,12 @@ abstract contract OffchainAssetReceiptVaultRegistryTest is Test {
         bindAged(authority, name, abi.encode(rbac));
     }
 
-    function config(uint256 authorizerIndex) internal pure returns (OffchainAssetReceiptVaultConfigV3 memory) {
+    function config() internal pure returns (OffchainAssetReceiptVaultConfigV3 memory) {
         return OffchainAssetReceiptVaultConfigV3({
             name: "Tesla Inc ST0x",
             symbol: "tTSLA",
             authority: AUTHORITY,
             rbacName: RBAC_NAME,
-            authorizerIndex: authorizerIndex,
             metadata: abi.encode("TSLA", "Tesla Inc")
         });
     }
