@@ -40,40 +40,29 @@ contract LibOffchainAssetReceiptVaultRbacDecodeCanonicalTest is Test {
         this.decodeCanonicalExternal(authority, name, bytes.concat(abi.encode(rbac), trailing));
     }
 
-    /// A non-canonical array offset reverts: the array is moved one word
-    /// further from the head than `abi.encode` places it.
-    function testDecodeCanonicalNonCanonicalOffset(address authority, bytes32 name, address owner, address beacon)
-        external
-    {
-        bytes memory value = abi.encode(uint256(0x20), owner, beacon, uint256(0x80), uint256(0), uint256(0));
-        OffchainAssetReceiptVaultRbacV1 memory decoded = abi.decode(value, (OffchainAssetReceiptVaultRbacV1));
-        assertEq(decoded.owner, owner);
-        assertEq(address(decoded.receiptBeacon), beacon);
-        assertEq(decoded.authorizers.length, 0);
-        vm.expectRevert(abi.encodeWithSelector(NonCanonicalRbac.selector, authority, name));
+    /// Dirty bits above either address revert in the decode.
+    function testDecodeCanonicalDirtyAddressBits(
+        address authority,
+        bytes32 name,
+        OffchainAssetReceiptVaultRbacV1 memory rbac,
+        uint96 dirt,
+        bool dirtyOwner
+    ) external {
+        vm.assume(dirt != 0);
+        bytes memory value = abi.encode(rbac);
+        uint256 offset = dirtyOwner ? 0x20 : 0x40;
+        assembly ("memory-safe") {
+            let p := add(value, offset)
+            mstore(p, or(mload(p), shl(160, dirt)))
+        }
+        vm.expectRevert(bytes(""));
         this.decodeCanonicalExternal(authority, name, value);
     }
 
-    /// A non-canonical value exactly as long as its canonical re-encoding
-    /// reverts: the array offset points at its own word, which reads as a
-    /// length of 64, and one padding word fills the length gap.
-    function testDecodeCanonicalSameLengthNonCanonical(
-        address authority,
-        bytes32 name,
-        address owner,
-        address beacon,
-        address authorizer,
-        bytes32 pad
-    ) external {
-        bytes memory value = abi.encode(uint256(0x20), owner, beacon, uint256(0x40));
-        for (uint256 i = 0; i < 64; i++) {
-            value = bytes.concat(value, abi.encode(authorizer));
-        }
-        value = bytes.concat(value, pad);
-        OffchainAssetReceiptVaultRbacV1 memory decoded = abi.decode(value, (OffchainAssetReceiptVaultRbacV1));
-        assertEq(decoded.authorizers.length, 64);
-        assertEq(abi.encode(decoded).length, value.length);
-        vm.expectRevert(abi.encodeWithSelector(NonCanonicalRbac.selector, authority, name));
+    /// A value shorter than the two-word encoding reverts in the decode.
+    function testDecodeCanonicalShort(address authority, bytes32 name, bytes memory value) external {
+        vm.assume(value.length < 0x40);
+        vm.expectRevert(bytes(""));
         this.decodeCanonicalExternal(authority, name, value);
     }
 }

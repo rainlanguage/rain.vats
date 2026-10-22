@@ -18,6 +18,9 @@ bytes32 constant OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG = keccak256("Offchai
 /// @param authority The `ConfigRegistry` authority whose binding of `rbacName`
 /// is trusted for the vault's roles.
 /// @param rbacName The name the RBAC binding is resolved from.
+/// @param receiptBeaconName The name `authority` binds the receipt beacon to.
+/// The receipt is a registry beacon proxy of it, so its address is the same
+/// on every chain while each chain binds its own beacon.
 /// @param metadata Opaque to the vault. Committed to by the address and
 /// emitted, never decoded.
 struct OffchainAssetReceiptVaultConfigV3 {
@@ -25,6 +28,7 @@ struct OffchainAssetReceiptVaultConfigV3 {
     string symbol;
     address authority;
     bytes32 rbacName;
+    bytes32 receiptBeaconName;
     bytes metadata;
 }
 

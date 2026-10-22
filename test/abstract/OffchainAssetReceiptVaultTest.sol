@@ -8,8 +8,7 @@ import {
     OffchainAssetReceiptVaultConfigV2,
     OffchainAssetReceiptVault,
     ReceiptVaultConfigV2,
-    OffchainAssetReceiptVaultConfigV3,
-    CONFIG_REGISTRY_RBAC_MIN_AGE
+    OffchainAssetReceiptVaultConfigV3
 } from "src/abstract/OffchainAssetReceiptVault.sol";
 import {OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG} from "../../src/interface/IOffchainAssetReceiptVaultV1.sol";
 import {OffchainAssetReceiptVaultRbacV1} from "../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
@@ -21,24 +20,25 @@ import {
 } from "../../src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
-import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {ICloneableFactoryV5} from "rain-factory-0.2.4/src/interface/ICloneableFactoryV5.sol";
+import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFactoryV6.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
-} from "rain-factory-deploy-0.2.1/src/generated/0_2_1/CloneFactory.sol";
-import {IConfigRegistryV3} from "rain-deploy-0.1.21/src/interface/IConfigRegistryV3.sol";
+} from "rain-factory-deploy-0.2.2/src/generated/0_2_2/CloneFactory.sol";
+import {IConfigRegistryV3} from "rain-deploy-0.1.22/src/interface/IConfigRegistryV3.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
-} from "rain-deploy-0.1.21/src/generated/0_1_21/ConfigRegistry.sol";
+} from "rain-deploy-0.1.22/src/generated/0_1_21/ConfigRegistry.sol";
 
-/// Vaults as production makes them: a factory beacon proxy over the vault
+/// Vaults as production makes them: a registry beacon proxy over the vault
 /// beacon, initialized from an RBAC binding in the pinned `ConfigRegistry`
-/// that names one fresh authorizer.
+/// that names one fresh authorizer, with a registry beacon proxy receipt.
 contract OffchainAssetReceiptVaultTest is Test {
     address internal constant VAULT_AUTHORITY = address(uint160(uint256(keccak256("vault-authority"))));
+    bytes32 internal constant VAULT_BEACON_NAME = keccak256("vault-beacon");
+    bytes32 internal constant RECEIPT_BEACON_NAME = keccak256("receipt-beacon");
 
     OffchainAssetReceiptVault internal immutable iImplementation;
     OffchainAssetReceiptVaultAuthorizerV1 internal immutable iAuthorizerImplementation;
@@ -59,10 +59,15 @@ contract OffchainAssetReceiptVaultTest is Test {
         // address that excludes contracts excludes these.
         vm.etch(CONFIG_REGISTRY_ADDRESS, CONFIG_REGISTRY_RUNTIME_CODE);
         vm.etch(CLONE_FACTORY_ADDRESS, CLONE_FACTORY_RUNTIME_CODE);
+        vm.startPrank(VAULT_AUTHORITY);
+        IConfigRegistryV3(CONFIG_REGISTRY_ADDRESS)
+            .registerV3(VAULT_AUTHORITY, VAULT_BEACON_NAME, abi.encode(address(iVaultBeacon)));
+        IConfigRegistryV3(CONFIG_REGISTRY_ADDRESS)
+            .registerV3(VAULT_AUTHORITY, RECEIPT_BEACON_NAME, abi.encode(address(iReceiptBeacon)));
+        vm.stopPrank();
     }
 
     /// A vault owned by `admin`, with a fresh authorizer administered by it.
-    /// The clock is restored after the binding's minimum age is waited out.
     function createVault(address admin, string memory shareName, string memory shareSymbol)
         internal
         returns (OffchainAssetReceiptVault)
@@ -72,23 +77,19 @@ contract OffchainAssetReceiptVaultTest is Test {
         authorizer.initialize(abi.encode(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: admin})));
         bytes32 rbacName = keccak256(abi.encode("vault-rbac", sVaultCount++));
 
-        uint256 timestamp = block.timestamp;
         vm.prank(VAULT_AUTHORITY);
         IConfigRegistryV3(CONFIG_REGISTRY_ADDRESS)
             .registerV3(
                 VAULT_AUTHORITY,
                 rbacName,
-                abi.encode(
-                    OffchainAssetReceiptVaultRbacV1({
-                    owner: admin, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizer: authorizer
-                })
-                )
+                abi.encode(OffchainAssetReceiptVaultRbacV1({owner: admin, authorizer: authorizer}))
             );
-        vm.warp(timestamp + CONFIG_REGISTRY_RBAC_MIN_AGE + 1);
         OffchainAssetReceiptVault vault = OffchainAssetReceiptVault(
-            payable(ICloneableFactoryV5(CLONE_FACTORY_ADDRESS)
-                    .beaconProxyDeterministicOpenSalt(
-                        address(iVaultBeacon),
+            payable(ICloneableFactoryV6(CLONE_FACTORY_ADDRESS)
+                    .registryBeaconProxy(
+                        CONFIG_REGISTRY_ADDRESS,
+                        VAULT_AUTHORITY,
+                        VAULT_BEACON_NAME,
                         abi.encode(
                             OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG,
                             OffchainAssetReceiptVaultConfigV3({
@@ -96,13 +97,13 @@ contract OffchainAssetReceiptVaultTest is Test {
                             symbol: shareSymbol,
                             authority: VAULT_AUTHORITY,
                             rbacName: rbacName,
+                            receiptBeaconName: RECEIPT_BEACON_NAME,
                             metadata: ""
                         })
                         ),
                         bytes32(0)
                     ))
         );
-        vm.warp(timestamp);
         return vault;
     }
 

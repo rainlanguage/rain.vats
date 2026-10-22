@@ -26,6 +26,7 @@ contract OffchainAssetReceiptVaultCanonicalGasTest is Test {
                 symbol: "tTSLA",
                 authority: address(0x0b300013CD54a8F1aC40981f80FaaA18b8Cc1E4c),
                 rbacName: keccak256("st0x.rbac.us.v1"),
+                receiptBeaconName: keccak256("st0x.receipt-beacon.v1"),
                 metadata: ""
             })
         );

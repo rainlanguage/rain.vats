@@ -16,14 +16,15 @@ import {
     OffchainAssetReceiptVaultConfigV3,
     OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG
 } from "../interface/IOffchainAssetReceiptVaultV1.sol";
-import {ICloneableV2} from "rain-factory-0.2.4/src/interface/ICloneableV2.sol";
-import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
-import {ICloneableFactoryV5} from "rain-factory-0.2.4/src/interface/ICloneableFactoryV5.sol";
-import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.1/src/lib/LibCloneFactoryDeploy.sol";
+import {ICloneableV2} from "rain-factory-0.2.5/src/interface/ICloneableV2.sol";
+import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFactoryV6.sol";
+import {LibICloneableFactoryV6} from "rain-factory-0.2.5/src/lib/LibICloneableFactoryV6.sol";
+import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.2/src/lib/LibCloneFactoryDeploy.sol";
 import {ERC1967Utils} from "@openzeppelin-contracts-5.7.0/proxy/ERC1967/ERC1967Utils.sol";
 import {Ownable} from "@openzeppelin-contracts-5.7.0/access/Ownable.sol";
 import {IERC1155MetadataURI} from "@openzeppelin-contracts-5.7.0/token/ERC1155/extensions/IERC1155MetadataURI.sol";
-import {LibConfigRegistry} from "rain-deploy-0.1.21/src/lib/LibConfigRegistry.sol";
+import {LibConfigRegistry} from "rain-deploy-0.1.22/src/lib/LibConfigRegistry.sol";
+import {LibConfigRegistryDeploy} from "rain-deploy-0.1.22/src/lib/LibConfigRegistryDeploy.sol";
 import {
     LibOffchainAssetReceiptVaultRbac,
     OffchainAssetReceiptVaultRbacV1
@@ -41,12 +42,7 @@ error ZeroConfiscateAmount();
 /// Thrown when the authorizer is incompatible according to `IERC165` when set.
 error IncompatibleAuthorizer();
 
-/// @dev How long an RBAC binding must have stood in the `ConfigRegistry`
-/// before `initialize` accepts it. The window in which a rebind is public
-/// before any token snapshots it.
-uint256 constant CONFIG_REGISTRY_RBAC_MIN_AGE = 1 hours;
-
-/// Thrown when the RBAC binding names no receipt beacon.
+/// Thrown when `receiptBeaconName` resolves to address zero.
 error ZeroReceiptBeacon();
 
 /// Thrown when `initialize` data is not the canonical ABI encoding of the
@@ -292,10 +288,9 @@ bytes32 constant WITHDRAW = keccak256("WITHDRAW");
 /// An open-salt factory hashes the config into the address, so whoever pins
 /// the address pins the authority and the RBAC name, and a config with a
 /// different authority is a different address nothing pins. The address
-/// commits to the authority and name, not to what they resolve to: a pinned
-/// address not yet deployed takes whatever binding has stood for
-/// `CONFIG_REGISTRY_RBAC_MIN_AGE` when anyone first deploys it. The
-/// implementation stays the same for every authority.
+/// commits to the authority and names, not to what they resolve to: a pinned
+/// address not yet deployed takes whatever is bound when anyone first deploys
+/// it. The implementation stays the same for every authority.
 ///
 /// Anyone can deploy a look-alike vault under the same authority and RBAC
 /// name with another token name, symbol, salt or metadata, and it resolves
@@ -303,11 +298,9 @@ bytes32 constant WITHDRAW = keccak256("WITHDRAW");
 /// the initialization event are therefore not evidence a vault is genuine.
 /// Only the pinned address is.
 ///
-/// The authority is trusted for the initial owner and authorizer. A binding is
-/// read once, here, and only if it has stood for longer than
-/// `CONFIG_REGISTRY_RBAC_MIN_AGE`, so a rebind is public for that long before
-/// any vault snapshots it. After initialization the vault never reads the
-/// registry again.
+/// The authority is trusted for the initial owner, the authorizer and the
+/// receipt beacon. Its bindings are read once, here. After initialization the
+/// vault never reads the registry again.
 
 abstract contract OffchainAssetReceiptVault is
     IAuthorizableV1,
@@ -415,12 +408,15 @@ abstract contract OffchainAssetReceiptVault is
             revert NonCanonicalConfig();
         }
 
-        OffchainAssetReceiptVaultRbacV1 memory rbac = LibOffchainAssetReceiptVaultRbac.decodeCanonical(
-            config.authority,
-            config.rbacName,
-            LibConfigRegistry.resolveSafe(config.authority, config.rbacName, CONFIG_REGISTRY_RBAC_MIN_AGE)
+        // When the binding was written does not matter here.
+        //slither-disable-next-line unused-return
+        (bytes memory rbacValue,) = LibConfigRegistry.resolve(config.authority, config.rbacName);
+        OffchainAssetReceiptVaultRbacV1 memory rbac =
+            LibOffchainAssetReceiptVaultRbac.decodeCanonical(config.authority, config.rbacName, rbacValue);
+        address receiptBeacon = LibICloneableFactoryV6.resolveBeacon(
+            LibConfigRegistryDeploy.CONFIG_REGISTRY_DEPLOYED_ADDRESS, config.authority, config.receiptBeaconName
         );
-        if (address(rbac.receiptBeacon) == address(0)) {
+        if (receiptBeacon == address(0)) {
             revert ZeroReceiptBeacon();
         }
         address vaultBeacon = ERC1967Utils.getBeacon();
@@ -428,24 +424,31 @@ abstract contract OffchainAssetReceiptVault is
             revert VaultNotBeaconProxy();
         }
         address vaultBeaconOwner = Ownable(vaultBeacon).owner();
-        address receiptBeaconOwner = Ownable(address(rbac.receiptBeacon)).owner();
+        address receiptBeaconOwner = Ownable(receiptBeacon).owner();
         if (vaultBeaconOwner != receiptBeaconOwner) {
             revert ReceiptBeaconOwnerMismatch(vaultBeaconOwner, receiptBeaconOwner);
         }
 
         IAuthorizeV1 selectedAuthorizer = rbac.authorizer;
 
-        // The receipt is a beacon proxy from the pinned factory, which
+        // The receipt is a registry beacon proxy from the pinned factory, which
         // initializes it with this vault as manager and checks the answer. Its
-        // address commits to this vault's, so it is as deterministic.
+        // address commits to this vault's and to the binding, not the beacon,
+        // so it is the same on every chain.
         if (
             LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS.codehash
                 != LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_CODEHASH
         ) {
             revert UnexpectedCloneFactoryCodeHash(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS.codehash);
         }
-        address newReceipt = ICloneableFactoryV5(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS)
-            .beaconProxyDeterministicOpenSalt(address(rbac.receiptBeacon), abi.encode(address(this)), bytes32(0));
+        address newReceipt = ICloneableFactoryV6(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS)
+            .registryBeaconProxy(
+                LibConfigRegistryDeploy.CONFIG_REGISTRY_DEPLOYED_ADDRESS,
+                config.authority,
+                config.receiptBeaconName,
+                abi.encode(address(this)),
+                bytes32(0)
+            );
 
         _initialize(
             OffchainAssetReceiptVaultConfigV2({

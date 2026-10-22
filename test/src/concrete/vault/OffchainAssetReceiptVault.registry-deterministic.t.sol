@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
+import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
+import {ERC1967Utils} from "@openzeppelin-contracts-5.7.0/proxy/ERC1967/ERC1967Utils.sol";
 import {OffchainAssetReceiptVaultRegistryTest} from "../../../abstract/OffchainAssetReceiptVaultRegistryTest.sol";
 import {
     OffchainAssetReceiptVault,
@@ -10,44 +11,57 @@ import {
 } from "../../../../src/abstract/OffchainAssetReceiptVault.sol";
 import {OffchainAssetReceiptVaultRbacV1} from "../../../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
-import {
-    ICLONEABLE_FACTORY_V5_BEACON_PROXY_OPEN_SALT_DOMAIN
-} from "rain-factory-0.2.4/src/interface/ICloneableFactoryV5.sol";
-import {BEACON_PROXY_CREATION_CODE} from "rain-factory-0.2.4/src/generated/BeaconProxy.sol";
+import {REGISTRY_BEACON_PROXY_CREATION_CODE} from "rain-factory-0.2.5/src/generated/RegistryBeaconProxy.sol";
+import {DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS} from "rain-deploy-0.1.22/src/generated/0_1_21/ConfigRegistry.sol";
+
+/// What one chain deployed.
+struct ChainDeployment {
+    OffchainAssetReceiptVault vault;
+    IAuthorizeV1 authorizer;
+    address vaultBeacon;
+    address receiptBeacon;
+}
 
 contract OffchainAssetReceiptVaultRegistryDeterministicTest is OffchainAssetReceiptVaultRegistryTest {
+    /// The vault address from first principles: CREATE2 over the registry
+    /// beacon proxy's creation code and arguments, behind the V6 domain.
     function expectedAddress(OffchainAssetReceiptVaultConfigV3 memory vaultConfig, bytes32 salt)
         internal
         view
         returns (address)
     {
         bytes32 derivedSalt = keccak256(
-            abi.encode(ICLONEABLE_FACTORY_V5_BEACON_PROXY_OPEN_SALT_DOMAIN, salt, keccak256(encodeConfig(vaultConfig)))
+            abi.encode(keccak256("rain.factory.registrybeaconproxy"), salt, keccak256(encodeConfig(vaultConfig)))
         );
-        bytes memory creationCode =
-            abi.encodePacked(BEACON_PROXY_CREATION_CODE, abi.encode(address(iVaultBeacon), bytes("")));
+        bytes memory creationCode = abi.encodePacked(
+            REGISTRY_BEACON_PROXY_CREATION_CODE, abi.encode(CONFIG_REGISTRY_ADDRESS, AUTHORITY, VAULT_BEACON_NAME)
+        );
         return vm.computeCreate2Address(derivedSalt, keccak256(creationCode), address(iFactory));
     }
 
-    function deployOnChain(uint256 chainId, address owner, address caller, bytes32 salt)
-        internal
-        returns (OffchainAssetReceiptVault vault, IAuthorizeV1 authorizer)
-    {
-        vm.chainId(chainId);
-        authorizer = newAuthorizer(OWNER);
-        bindAged(
-            AUTHORITY,
-            RBAC_NAME,
-            OffchainAssetReceiptVaultRbacV1({
-                owner: owner, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizer: authorizer
-            })
-        );
-        vm.prank(caller);
-        vault = deploy(config(), salt);
+    function beaconOf(address proxy) internal view returns (address) {
+        return address(uint160(uint256(vm.load(proxy, ERC1967Utils.BEACON_SLOT))));
     }
 
-    /// The same config is the same vault address on every chain, whoever
-    /// deploys it, with each chain's own binding.
+    /// One chain: its own vault and receipt beacons and its own RBAC binding,
+    /// then the vault.
+    function deployOnChain(uint256 chainId, address owner, address caller, bytes32 salt)
+        internal
+        returns (ChainDeployment memory d)
+    {
+        vm.chainId(chainId);
+        d.vaultBeacon = address(new UpgradeableBeacon(address(iImplementation), address(this)));
+        d.receiptBeacon = address(new UpgradeableBeacon(address(iReceiptImplementation), address(this)));
+        bindValue(AUTHORITY, VAULT_BEACON_NAME, abi.encode(d.vaultBeacon));
+        bindValue(AUTHORITY, RECEIPT_BEACON_NAME, abi.encode(d.receiptBeacon));
+        d.authorizer = newAuthorizer(OWNER);
+        bind(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: owner, authorizer: d.authorizer}));
+        vm.prank(caller);
+        d.vault = deploy(config(), salt);
+    }
+
+    /// The same config is the same vault and receipt address on every chain,
+    /// whoever deploys it, though each chain binds its own beacons and RBAC.
     function testSameConfigSameAddressAcrossChains(
         uint64 chainA,
         uint64 chainB,
@@ -62,25 +76,38 @@ contract OffchainAssetReceiptVaultRegistryDeterministicTest is OffchainAssetRece
         address expected = expectedAddress(config(), salt);
 
         uint256 snapshot = vm.snapshotState();
-        (OffchainAssetReceiptVault vaultA, IAuthorizeV1 authorizerA) = deployOnChain(chainA, ownerA, callerA, salt);
-        address receiptA = address(vaultA.receipt());
-        assertEq(vaultA.owner(), ownerA);
-        assertEq(address(vaultA.authorizer()), address(authorizerA));
+        ChainDeployment memory a = deployOnChain(chainA, ownerA, callerA, salt);
+        address receiptA = address(a.vault.receipt());
+        assertEq(a.vault.owner(), ownerA);
+        assertEq(address(a.vault.authorizer()), address(a.authorizer));
+        assertEq(beaconOf(address(a.vault)), a.vaultBeacon);
+        assertEq(beaconOf(receiptA), a.receiptBeacon);
         vm.revertToState(snapshot);
-        (OffchainAssetReceiptVault vaultB, IAuthorizeV1 authorizerB) = deployOnChain(chainB, ownerB, callerB, salt);
+        // Moves this contract's nonce, so chain B's beacons land elsewhere.
+        new UpgradeableBeacon(address(iImplementation), address(this));
+        ChainDeployment memory b = deployOnChain(chainB, ownerB, callerB, salt);
 
-        assertEq(address(vaultA), expected);
-        assertEq(address(vaultB), expected);
-        assertEq(address(vaultB.receipt()), receiptA);
-        assertEq(vaultB.owner(), ownerB);
-        assertEq(address(vaultB.authorizer()), address(authorizerB));
+        assertTrue(a.vaultBeacon != b.vaultBeacon);
+        assertTrue(a.receiptBeacon != b.receiptBeacon);
+        assertEq(address(a.vault), expected);
+        assertEq(address(b.vault), expected);
+        assertEq(address(b.vault.receipt()), receiptA);
+        assertEq(beaconOf(address(b.vault)), b.vaultBeacon);
+        assertEq(beaconOf(receiptA), b.receiptBeacon);
+        assertEq(b.vault.owner(), ownerB);
+        assertEq(address(b.vault.authorizer()), address(b.authorizer));
     }
 
     /// Every config field moves the address.
     function testEveryConfigFieldMovesAddress() external view {
         OffchainAssetReceiptVaultConfigV3 memory base = config();
         address baseAddress = expectedAddress(base, 0);
-        assertEq(iFactory.predictBeaconProxyAddressOpenSalt(address(iVaultBeacon), encodeConfig(base), 0), baseAddress);
+        assertEq(
+            iFactory.predictRegistryBeaconProxyAddress(
+                CONFIG_REGISTRY_ADDRESS, AUTHORITY, VAULT_BEACON_NAME, encodeConfig(base), 0
+            ),
+            baseAddress
+        );
 
         OffchainAssetReceiptVaultConfigV3 memory vaultConfig = config();
         vaultConfig.name = "x";
@@ -95,6 +122,7 @@ contract OffchainAssetReceiptVaultRegistryDeterministicTest is OffchainAssetRece
         vaultConfig.rbacName = "x";
         assertTrue(expectedAddress(vaultConfig, 0) != baseAddress);
         vaultConfig = config();
+        vaultConfig.receiptBeaconName = "x";
         assertTrue(expectedAddress(vaultConfig, 0) != baseAddress);
         vaultConfig = config();
         vaultConfig.metadata = "x";
