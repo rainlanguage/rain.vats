@@ -15,6 +15,7 @@ import {
     ReceiptBeaconOwnerMismatch,
     ZeroReceiptBeacon,
     ReceiptMetadataReverts,
+    UnexpectedCloneFactoryCodeHash,
     CONFIG_REGISTRY_RBAC_MIN_AGE
 } from "../../../../src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {
@@ -48,6 +49,7 @@ import {
 } from "../../../../src/interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
 import {Vm} from "forge-std-1.17.0/src/Vm.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
+import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.1/src/lib/LibCloneFactoryDeploy.sol";
 
 contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistryOffchainAssetReceiptVaultTest {
     function testInitializeWiresRolesFromRegistry(uint8 index) external {
@@ -90,6 +92,23 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
         );
         OffchainAssetReceiptVault vault = deploy(config(0), 0);
         vm.expectRevert(abi.encodeWithSelector(Initializable.InvalidInitialization.selector));
+        vault.initialize(encodeConfig(config(0)));
+    }
+
+    /// Anything but the pinned clone factory at its address is refused before
+    /// the receipt is made through it.
+    function testInitializeUnexpectedCloneFactoryCodeHash() external {
+        bindAged(
+            AUTHORITY,
+            RBAC_NAME,
+            OffchainAssetReceiptVaultRbacV1({
+                owner: OWNER, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizers: twoAuthorizers()
+            })
+        );
+        OffchainAssetReceiptVault vault =
+            OffchainAssetReceiptVault(payable(address(new BeaconProxy(address(iVaultBeacon), ""))));
+        vm.etch(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS, hex"00");
+        vm.expectRevert(abi.encodeWithSelector(UnexpectedCloneFactoryCodeHash.selector, keccak256(hex"00")));
         vault.initialize(encodeConfig(config(0)));
     }
 
