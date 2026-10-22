@@ -31,7 +31,7 @@ import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
 } from "rain-deploy-0.1.20/src/generated/candidate/ConfigRegistry.sol";
-import {TestCloneFactory} from "../concrete/TestCloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.4/src/test/TestCloneFactory.sol";
 
 /// Shared fixture: the pinned `ConfigRegistry` runtime code at its pinned
 /// address, a vault beacon and a receipt beacon, a V5 factory, and two

@@ -3,7 +3,7 @@
 pragma solidity ^0.8.25;
 
 import {ICloneableFactoryV3} from "rain-factory-0.2.4/src/interface/deprecated/ICloneableFactoryV3.sol";
-import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.4/src/test/TestCloneFactory.sol";
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {Receipt as ReceiptContract} from "../../src/concrete/receipt/Receipt.sol";
 import {ERC20PriceOracleReceipt} from "../../src/concrete/receipt/ERC20PriceOracleReceipt.sol";

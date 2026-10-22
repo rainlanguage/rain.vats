@@ -19,7 +19,7 @@ import {
     WITHDRAW,
     ZeroInitialAdmin
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {TestCloneFactory} from "test/concrete/TestCloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.4/src/test/TestCloneFactory.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
 
 contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
