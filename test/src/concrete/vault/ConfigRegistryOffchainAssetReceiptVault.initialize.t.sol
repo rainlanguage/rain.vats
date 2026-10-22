@@ -38,9 +38,9 @@ import {Receipt as ReceiptContract} from "../../../../src/concrete/receipt/Recei
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
-import {LibConfigRegistry} from "rain-deploy-0.1.20/src/lib/LibConfigRegistry.sol";
-import {LibConfigRegistryDeploy} from "rain-deploy-0.1.20/src/lib/LibConfigRegistryDeploy.sol";
-import {IConfigRegistryV2} from "rain-deploy-0.1.20/src/interface/IConfigRegistryV2.sol";
+import {LibConfigRegistry} from "rain-deploy-0.1.21/src/lib/LibConfigRegistry.sol";
+import {LibConfigRegistryDeploy} from "rain-deploy-0.1.21/src/lib/LibConfigRegistryDeploy.sol";
+import {IConfigRegistryV3} from "rain-deploy-0.1.21/src/interface/IConfigRegistryV3.sol";
 import {FailingInitializeReceipt} from "../../../concrete/FailingInitializeReceipt.sol";
 import {OwnerlessBeacon} from "../../../concrete/OwnerlessBeacon.sol";
 import {
@@ -184,7 +184,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
         );
         ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig = config(0);
         vaultConfig.rbacName = name;
-        vm.expectRevert(abi.encodeWithSelector(IConfigRegistryV2.NameNotRegistered.selector, AUTHORITY, name));
+        vm.expectRevert(abi.encodeWithSelector(IConfigRegistryV3.NameNotRegistered.selector, AUTHORITY, name));
         deploy(vaultConfig, 0);
     }
 
@@ -199,7 +199,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
         );
         ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig = config(0);
         vaultConfig.authority = authority;
-        vm.expectRevert(abi.encodeWithSelector(IConfigRegistryV2.NameNotRegistered.selector, authority, RBAC_NAME));
+        vm.expectRevert(abi.encodeWithSelector(IConfigRegistryV3.NameNotRegistered.selector, authority, RBAC_NAME));
         deploy(vaultConfig, 0);
     }
 

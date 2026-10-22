@@ -26,11 +26,11 @@ import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {IConfigRegistryV2} from "rain-deploy-0.1.20/src/interface/IConfigRegistryV2.sol";
+import {IConfigRegistryV3} from "rain-deploy-0.1.21/src/interface/IConfigRegistryV3.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
-} from "rain-deploy-0.1.20/src/generated/candidate/ConfigRegistry.sol";
+} from "rain-deploy-0.1.21/src/generated/0_1_21/ConfigRegistry.sol";
 import {TestCloneFactory} from "rain-factory-0.2.4/src/test/TestCloneFactory.sol";
 
 /// Shared fixture: the pinned `ConfigRegistry` runtime code at its pinned
@@ -85,7 +85,7 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
 
     function bindValue(address authority, bytes32 name, bytes memory value) internal {
         vm.prank(authority);
-        IConfigRegistryV2(CONFIG_REGISTRY_ADDRESS).registerV2(authority, name, value);
+        IConfigRegistryV3(CONFIG_REGISTRY_ADDRESS).registerV3(authority, name, value);
     }
 
     function bind(address authority, bytes32 name, OffchainAssetReceiptVaultRbacV1 memory rbac) internal {
