@@ -478,15 +478,15 @@ abstract contract OffchainAssetReceiptVault is
     function receiptFor(address authority, bytes32 receiptBeaconName) internal returns (address) {
         ICloneableFactoryV6 factory = ICloneableFactoryV6(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS);
         bytes memory receiptData = abi.encode(address(this));
-        address receipt = factory.predictRegistryBeaconProxyAddress(
+        address deployed = factory.predictRegistryBeaconProxyAddress(
             LibConfigRegistryDeploy.CONFIG_REGISTRY_DEPLOYED_ADDRESS,
             authority,
             receiptBeaconName,
             receiptData,
             bytes32(0)
         );
-        if (receipt.code.length == 0) {
-            receipt = factory.registryBeaconProxy(
+        if (deployed.code.length == 0) {
+            deployed = factory.registryBeaconProxy(
                 LibConfigRegistryDeploy.CONFIG_REGISTRY_DEPLOYED_ADDRESS,
                 authority,
                 receiptBeaconName,
@@ -494,7 +494,7 @@ abstract contract OffchainAssetReceiptVault is
                 bytes32(0)
             );
         }
-        return receipt;
+        return deployed;
     }
 
     /// `initialize` without the `initializer` modifier or the decode, so an
