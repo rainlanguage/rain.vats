@@ -441,14 +441,7 @@ abstract contract OffchainAssetReceiptVault is
         ) {
             revert UnexpectedCloneFactoryCodeHash(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS.codehash);
         }
-        address newReceipt = ICloneableFactoryV6(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS)
-            .registryBeaconProxy(
-                LibConfigRegistryDeploy.CONFIG_REGISTRY_DEPLOYED_ADDRESS,
-                config.authority,
-                config.receiptBeaconName,
-                abi.encode(address(this)),
-                bytes32(0)
-            );
+        address newReceipt = receiptFor(config.authority, config.receiptBeaconName);
 
         _initialize(
             OffchainAssetReceiptVaultConfigV2({
@@ -472,6 +465,36 @@ abstract contract OffchainAssetReceiptVault is
         emit OffchainAssetReceiptVaultInitializedV3(_msgSender(), config, rbac.owner, selectedAuthorizer);
 
         return ICLONEABLE_V2_SUCCESS;
+    }
+
+    /// This vault's receipt from the pinned factory, deployed or, if anyone
+    /// made it first, adopted. Anyone can, since the factory is open and the
+    /// address is known before the vault exists. The address commits to the
+    /// registry, authority, name and `abi.encode(this)`, so code there is this
+    /// vault's receipt.
+    /// @param authority The authority binding the receipt beacon.
+    /// @param receiptBeaconName The name the receipt beacon is bound to.
+    /// @return The receipt.
+    function receiptFor(address authority, bytes32 receiptBeaconName) internal returns (address) {
+        ICloneableFactoryV6 factory = ICloneableFactoryV6(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS);
+        bytes memory receiptData = abi.encode(address(this));
+        address receipt = factory.predictRegistryBeaconProxyAddress(
+            LibConfigRegistryDeploy.CONFIG_REGISTRY_DEPLOYED_ADDRESS,
+            authority,
+            receiptBeaconName,
+            receiptData,
+            bytes32(0)
+        );
+        if (receipt.code.length == 0) {
+            receipt = factory.registryBeaconProxy(
+                LibConfigRegistryDeploy.CONFIG_REGISTRY_DEPLOYED_ADDRESS,
+                authority,
+                receiptBeaconName,
+                receiptData,
+                bytes32(0)
+            );
+        }
+        return receipt;
     }
 
     /// `initialize` without the `initializer` modifier or the decode, so an

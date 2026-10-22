@@ -43,6 +43,11 @@ import {IOffchainAssetReceiptVaultV1} from "../../../../src/interface/IOffchainA
 import {Vm} from "forge-std-1.17.0/src/Vm.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
 import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.2/src/lib/LibCloneFactoryDeploy.sol";
+import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFactoryV6.sol";
+import {
+    DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS
+} from "rain-factory-deploy-0.2.2/src/generated/0_2_2/CloneFactory.sol";
+import {DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS} from "rain-deploy-0.1.22/src/generated/0_1_21/ConfigRegistry.sol";
 
 contract OffchainAssetReceiptVaultRegistryInitializeTest is OffchainAssetReceiptVaultRegistryTest {
     function testInitializeWiresRolesFromRegistry() external {
@@ -374,5 +379,26 @@ contract OffchainAssetReceiptVaultRegistryInitializeTest is OffchainAssetReceipt
         ReceiptContract receipt = ReceiptContract(address(vault.receipt()));
         assertEq(receipt.name(), "tTSLA Receipt");
         assertGt(bytes(receipt.uri(0)).length, 0);
+    }
+
+    /// A receipt someone made first at this vault's receipt address is
+    /// adopted, so front-running the receipt cannot block the vault.
+    function testInitializeAdoptsFrontRunReceipt(address frontRunner) external {
+        vm.assume(frontRunner != address(0));
+        IAuthorizeV1 authorizer = newAuthorizer(OWNER);
+        bind(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizer: authorizer}));
+        address vaultAddress = vaultOf(config(), 0);
+        vm.prank(frontRunner);
+        address frontRun = ICloneableFactoryV6(CLONE_FACTORY_ADDRESS)
+            .registryBeaconProxy(CONFIG_REGISTRY_ADDRESS, AUTHORITY, RECEIPT_BEACON_NAME, abi.encode(vaultAddress), 0);
+        assertEq(frontRun, receiptOf(vaultAddress));
+
+        OffchainAssetReceiptVault vault = deploy(config(), 0);
+
+        assertEq(address(vault), vaultAddress);
+        assertEq(address(vault.receipt()), frontRun);
+        assertEq(ReceiptContract(frontRun).manager(), address(vault));
+        assertEq(vault.owner(), OWNER);
+        assertEq(address(vault.authorizer()), address(authorizer));
     }
 }
