@@ -2,26 +2,20 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {
-    ReceiptVaultConfigV2,
-    ReceiptVault,
-    ShareAction,
-    InvalidId,
-    ICLONEABLE_V2_SUCCESS
-} from "../../abstract/ReceiptVault.sol";
+import {ReceiptVaultConfigV2, ReceiptVault, ShareAction, InvalidId, ICLONEABLE_V2_SUCCESS} from "./ReceiptVault.sol";
 import {Math} from "@openzeppelin-contracts-5.7.0/utils/math/Math.sol";
-import {IAuthorizeV1, Unauthorized} from "../../interface/IAuthorizeV1.sol";
-import {IAuthorizableV1} from "../../interface/IAuthorizableV1.sol";
-import {ICertifiableV1} from "../../interface/ICertifiableV1.sol";
+import {IAuthorizeV1, Unauthorized} from "../interface/IAuthorizeV1.sol";
+import {IAuthorizableV1} from "../interface/IAuthorizableV1.sol";
+import {ICertifiableV1} from "../interface/ICertifiableV1.sol";
 import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
 
-import {ZeroInitialAdmin} from "../authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {OwnerFreezable} from "../../abstract/OwnerFreezable.sol";
+import {ZeroInitialAdmin} from "../concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
+import {OwnerFreezable} from "./OwnerFreezable.sol";
 import {
     IConfigRegistryOffchainAssetReceiptVaultV1,
     ConfigRegistryOffchainAssetReceiptVaultConfigV1,
     CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG
-} from "../../interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
+} from "../interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
 import {ICloneableV2} from "rain-factory-0.2.4/src/interface/ICloneableV2.sol";
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {ICloneableFactoryV5} from "rain-factory-0.2.4/src/interface/ICloneableFactoryV5.sol";
@@ -33,7 +27,7 @@ import {LibConfigRegistry} from "rain-deploy-0.1.21/src/lib/LibConfigRegistry.so
 import {
     LibOffchainAssetReceiptVaultRbac,
     OffchainAssetReceiptVaultRbacV1
-} from "../../lib/LibOffchainAssetReceiptVaultRbac.sol";
+} from "../lib/LibOffchainAssetReceiptVaultRbac.sol";
 
 /// Thrown when the asset is NOT address zero.
 error NonZeroAsset();
@@ -321,7 +315,7 @@ bytes32 constant WITHDRAW = keccak256("WITHDRAW");
 /// any vault snapshots it. After initialization the vault never reads the
 /// registry again.
 
-contract OffchainAssetReceiptVault is
+abstract contract OffchainAssetReceiptVault is
     IAuthorizableV1,
     ICertifiableV1,
     IAuthorizeV1,

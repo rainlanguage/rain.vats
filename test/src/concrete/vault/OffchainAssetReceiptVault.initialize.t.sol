@@ -8,7 +8,7 @@ import {
     OffchainAssetReceiptVaultConfigV2,
     ZeroInitialAdmin,
     NonZeroAsset
-} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+} from "src/abstract/OffchainAssetReceiptVault.sol";
 import {CorruptedEnvironmentBlockTimestampZero} from "src/abstract/OwnerFreezable.sol";
 import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
 import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";

@@ -7,7 +7,7 @@ import {
     OwnerFreezableOwnerFreezeUntilTest,
     IOwnerFreezableV1
 } from "test/abstract/OwnerFreezableOwnerFreezeUntilTest.t.sol";
-import {OffchainAssetReceiptVault} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {OffchainAssetReceiptVault} from "src/abstract/OffchainAssetReceiptVault.sol";
 import {IReceiptV3} from "src/concrete/receipt/Receipt.sol";
 import {
     CERTIFY,

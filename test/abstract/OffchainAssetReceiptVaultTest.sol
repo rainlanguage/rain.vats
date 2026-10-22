@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
+import {TestOffchainAssetReceiptVault} from "../concrete/TestOffchainAssetReceiptVault.sol";
 import {Test, Vm} from "forge-std-1.17.0/src/Test.sol";
 import {
     OffchainAssetReceiptVaultConfigV2,
@@ -9,7 +10,7 @@ import {
     ReceiptVaultConfigV2,
     ConfigRegistryOffchainAssetReceiptVaultConfigV1,
     CONFIG_REGISTRY_RBAC_MIN_AGE
-} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+} from "src/abstract/OffchainAssetReceiptVault.sol";
 import {
     CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG
 } from "../../src/interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
@@ -52,7 +53,7 @@ contract OffchainAssetReceiptVaultTest is Test {
 
     constructor() {
         iReceiptImplementation = ReceiptContract(address(new TestOffchainAssetReceipt()));
-        iImplementation = new OffchainAssetReceiptVault();
+        iImplementation = new TestOffchainAssetReceiptVault();
         iAuthorizerImplementation = new OffchainAssetReceiptVaultAuthorizerV1();
         iVaultBeacon = new UpgradeableBeacon(address(iImplementation), address(this));
         iReceiptBeacon = new UpgradeableBeacon(address(iReceiptImplementation), address(this));

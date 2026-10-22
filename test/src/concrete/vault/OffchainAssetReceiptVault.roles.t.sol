@@ -12,7 +12,7 @@ import {
     DepositStateChange,
     ConfiscateSharesStateChange,
     ConfiscateReceiptStateChange
-} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+} from "src/abstract/OffchainAssetReceiptVault.sol";
 import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
 import {
     OffchainAssetReceiptVaultAuthorizerV1,

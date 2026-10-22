@@ -24,7 +24,7 @@ import {
     CONFISCATE_RECEIPT,
     CONFISCATE_SHARES,
     CERTIFY
-} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+} from "src/abstract/OffchainAssetReceiptVault.sol";
 import {
     WITHDRAW_ADMIN,
     DEPOSIT_ADMIN,

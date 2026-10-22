@@ -6,7 +6,7 @@ import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {
     OffchainAssetReceiptVault,
     OffchainAssetReceiptVaultConfigV2
-} from "../../concrete/vault/OffchainAssetReceiptVault.sol";
+} from "../../abstract/OffchainAssetReceiptVault.sol";
 
 /// @title IOffchainAssetReceiptVaultBeaconSetDeployerV2
 /// @notice V2 interface for the OffchainAssetReceiptVaultBeaconSetDeployer.

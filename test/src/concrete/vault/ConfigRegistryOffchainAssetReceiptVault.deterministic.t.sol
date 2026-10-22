@@ -9,7 +9,7 @@ import {
 import {
     OffchainAssetReceiptVault,
     ConfigRegistryOffchainAssetReceiptVaultConfigV1
-} from "../../../../src/concrete/vault/OffchainAssetReceiptVault.sol";
+} from "../../../../src/abstract/OffchainAssetReceiptVault.sol";
 import {OffchainAssetReceiptVaultRbacV1} from "../../../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
 import {

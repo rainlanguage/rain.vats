@@ -4,7 +4,7 @@ pragma solidity =0.8.25;
 
 import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
 import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
-import {TRANSFER_SHARES} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {TRANSFER_SHARES} from "src/abstract/OffchainAssetReceiptVault.sol";
 
 /// @dev Minimal view of the share `transferFrom` the authorizer re-enters.
 interface IReentrantShareVault {

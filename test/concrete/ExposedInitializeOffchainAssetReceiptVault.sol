@@ -5,7 +5,7 @@ pragma solidity =0.8.25;
 import {
     OffchainAssetReceiptVault,
     OffchainAssetReceiptVaultConfigV2
-} from "../../src/concrete/vault/OffchainAssetReceiptVault.sol";
+} from "../../src/abstract/OffchainAssetReceiptVault.sol";
 
 /// Calls `_initialize` outside any initializer.
 contract ExposedInitializeOffchainAssetReceiptVault is OffchainAssetReceiptVault {

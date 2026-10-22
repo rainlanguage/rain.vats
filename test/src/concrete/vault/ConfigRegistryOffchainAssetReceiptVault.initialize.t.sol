@@ -17,7 +17,7 @@ import {
     ReceiptMetadataReverts,
     UnexpectedCloneFactoryCodeHash,
     CONFIG_REGISTRY_RBAC_MIN_AGE
-} from "../../../../src/concrete/vault/OffchainAssetReceiptVault.sol";
+} from "../../../../src/abstract/OffchainAssetReceiptVault.sol";
 import {
     OffchainAssetReceiptVaultRbacV1,
     NonCanonicalRbac
@@ -26,7 +26,7 @@ import {
     IncompatibleAuthorizer,
     OffchainAssetReceiptVault,
     OffchainAssetReceiptVaultConfigV2
-} from "../../../../src/concrete/vault/OffchainAssetReceiptVault.sol";
+} from "../../../../src/abstract/OffchainAssetReceiptVault.sol";
 import {
     CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG
 } from "../../../../src/interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";

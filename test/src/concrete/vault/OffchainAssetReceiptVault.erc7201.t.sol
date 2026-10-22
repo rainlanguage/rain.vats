@@ -7,7 +7,7 @@ import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {
     OFFCHAIN_ASSET_RECEIPT_VAULT_STORAGE_LOCATION,
     OFFCHAIN_ASSET_RECEIPT_VAULT_STORAGE_ID
-} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+} from "src/abstract/OffchainAssetReceiptVault.sol";
 
 contract OffchainAssetReceiptVault7201Test is Test {
     function testOffchainAssetReceiptVault7201StorageLocation() external pure {
