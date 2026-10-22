@@ -7,9 +7,9 @@ import {
     ConfigRegistryOffchainAssetReceiptVaultTest
 } from "../../../abstract/ConfigRegistryOffchainAssetReceiptVaultTest.sol";
 import {
-    ConfigRegistryOffchainAssetReceiptVault,
+    OffchainAssetReceiptVault,
     ConfigRegistryOffchainAssetReceiptVaultConfigV1
-} from "../../../../src/concrete/vault/ConfigRegistryOffchainAssetReceiptVault.sol";
+} from "../../../../src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {OffchainAssetReceiptVaultRbacV1} from "../../../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
 import {
@@ -33,7 +33,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultDeterministicTest is ConfigRegis
 
     function deployOnChain(uint256 chainId, address owner, address caller, uint256 authorizerIndex, bytes32 salt)
         internal
-        returns (ConfigRegistryOffchainAssetReceiptVault vault, IAuthorizeV1 authorizer)
+        returns (OffchainAssetReceiptVault vault, IAuthorizeV1 authorizer)
     {
         vm.chainId(chainId);
         IAuthorizeV1[] memory authorizers = twoAuthorizers();
@@ -67,13 +67,13 @@ contract ConfigRegistryOffchainAssetReceiptVaultDeterministicTest is ConfigRegis
         address expected = expectedAddress(config(authorizerIndex), salt);
 
         uint256 snapshot = vm.snapshotState();
-        (ConfigRegistryOffchainAssetReceiptVault vaultA, IAuthorizeV1 authorizerA) =
+        (OffchainAssetReceiptVault vaultA, IAuthorizeV1 authorizerA) =
             deployOnChain(chainA, ownerA, callerA, authorizerIndex, salt);
         address receiptA = address(vaultA.receipt());
         assertEq(vaultA.owner(), ownerA);
         assertEq(address(vaultA.authorizer()), address(authorizerA));
         vm.revertToState(snapshot);
-        (ConfigRegistryOffchainAssetReceiptVault vaultB, IAuthorizeV1 authorizerB) =
+        (OffchainAssetReceiptVault vaultB, IAuthorizeV1 authorizerB) =
             deployOnChain(chainB, ownerB, callerB, authorizerIndex, salt);
 
         assertEq(address(vaultA), expected);

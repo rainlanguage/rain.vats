@@ -6,9 +6,9 @@ import {
     ConfigRegistryOffchainAssetReceiptVaultTest
 } from "../../../abstract/ConfigRegistryOffchainAssetReceiptVaultTest.sol";
 import {
-    ConfigRegistryOffchainAssetReceiptVault,
+    OffchainAssetReceiptVault,
     CONFIG_REGISTRY_RBAC_MIN_AGE
-} from "../../../../src/concrete/vault/ConfigRegistryOffchainAssetReceiptVault.sol";
+} from "../../../../src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
 
 contract ConfigRegistryOffchainAssetReceiptVaultConstructTest is ConfigRegistryOffchainAssetReceiptVaultTest {

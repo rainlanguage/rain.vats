@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {OffchainAssetReceiptVaultTest, ReceiptVaultConfigV2, Vm} from "test/abstract/OffchainAssetReceiptVaultTest.sol";
+import {Test} from "forge-std-1.17.0/src/Test.sol";
+import {ReceiptVaultConfigV2} from "src/abstract/ReceiptVault.sol";
 import {
-    OffchainAssetReceiptVault,
     OffchainAssetReceiptVaultConfigV2,
     ZeroInitialAdmin,
     NonZeroAsset
@@ -12,213 +12,80 @@ import {
 import {CorruptedEnvironmentBlockTimestampZero} from "src/abstract/OwnerFreezable.sol";
 import {Receipt as ReceiptContract} from "src/concrete/receipt/Receipt.sol";
 import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";
-import {LibUniqueAddressesGenerator} from "../../../lib/LibUniqueAddressesGenerator.sol";
+import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
 import {
     ExposedInitializeOffchainAssetReceiptVault
 } from "../../../concrete/ExposedInitializeOffchainAssetReceiptVault.sol";
 
-contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTest {
-    /// Inclusive timestamp comparisons in `OwnerFreezable` treat the
-    /// stored 0 sentinel as an active deadline at `block.timestamp == 0`.
-    /// Production timestamps are never 0 (genesis is decades past) so
-    /// the ambiguous state is unreachable in real execution. The
-    /// `__OwnerFreezable_init` guard pins this contractually:
-    /// `initialize` reverts with `CorruptedEnvironmentBlockTimestampZero` if
-    /// somehow called at `block.timestamp == 0`, so no inheritor lands
-    /// in the ambiguous state even under contrived test setups.
-    function testInitAtGenesisTimestampReverts(string memory shareName, string memory shareSymbol) external {
-        ReceiptContract receipt = ReceiptContract(address(new BeaconProxy(address(iDeployer.iReceiptBeacon()), "")));
-        OffchainAssetReceiptVault offchainAssetReceiptVault = OffchainAssetReceiptVault(
-            payable(address(new BeaconProxy(address(iDeployer.iOffchainAssetReceiptVaultBeacon()), "")))
-        );
-        receipt.initialize(abi.encode(offchainAssetReceiptVault));
+/// @title OffChainAssetReceiptVaultInitializeTest
+/// `_initialize`, the vault setup `initialize` runs once it has resolved the
+/// registry, driven directly through a proxy of an exposing harness.
+contract OffChainAssetReceiptVaultInitializeTest is Test {
+    UpgradeableBeacon internal immutable iVaultBeacon;
+    UpgradeableBeacon internal immutable iReceiptBeacon;
 
+    constructor() {
+        iVaultBeacon = new UpgradeableBeacon(address(new ExposedInitializeOffchainAssetReceiptVault()), address(this));
+        iReceiptBeacon = new UpgradeableBeacon(address(new ReceiptContract()), address(this));
+    }
+
+    /// A vault proxy and a receipt proxy managed by it.
+    function pair() internal returns (ExposedInitializeOffchainAssetReceiptVault, address) {
+        ExposedInitializeOffchainAssetReceiptVault vault =
+            ExposedInitializeOffchainAssetReceiptVault(payable(address(new BeaconProxy(address(iVaultBeacon), ""))));
+        ReceiptContract receipt = ReceiptContract(address(new BeaconProxy(address(iReceiptBeacon), "")));
+        receipt.initialize(abi.encode(vault));
+        return (vault, address(receipt));
+    }
+
+    function config(address initialAdmin, address asset, address receipt)
+        internal
+        pure
+        returns (OffchainAssetReceiptVaultConfigV2 memory)
+    {
+        return OffchainAssetReceiptVaultConfigV2({
+            initialAdmin: initialAdmin,
+            receiptVaultConfig: ReceiptVaultConfigV2({asset: asset, name: "a", symbol: "b", receipt: receipt})
+        });
+    }
+
+    /// Inclusive timestamp comparisons in `OwnerFreezable` treat the stored 0
+    /// sentinel as an active deadline at `block.timestamp == 0`, so
+    /// `_initialize` reverts there rather than land in that state.
+    function testInitAtGenesisTimestampReverts() external {
+        (ExposedInitializeOffchainAssetReceiptVault vault, address receipt) = pair();
         vm.warp(0);
         vm.expectRevert(CorruptedEnvironmentBlockTimestampZero.selector);
-        offchainAssetReceiptVault.initialize(
-            abi.encode(
-                OffchainAssetReceiptVaultConfigV2({
-                    initialAdmin: address(1),
-                    receiptVaultConfig: ReceiptVaultConfigV2({
-                        asset: address(0), name: shareName, symbol: shareSymbol, receipt: address(receipt)
-                    })
-                })
-            )
-        );
+        vault.exposedInitializeAsInitializer(config(address(1), address(0), receipt));
     }
 
-    /// Test that admin is not address zero
-    function testZeroInitialAdmin(string memory shareName, string memory shareSymbol) external {
-        ReceiptContract receipt = ReceiptContract(address(new BeaconProxy(address(iDeployer.iReceiptBeacon()), "")));
-        OffchainAssetReceiptVault offchainAssetReceiptVault = OffchainAssetReceiptVault(
-            payable(address(new BeaconProxy(address(iDeployer.iOffchainAssetReceiptVaultBeacon()), "")))
-        );
-        receipt.initialize(abi.encode(offchainAssetReceiptVault));
-
+    /// The owner must not be the zero address.
+    function testZeroInitialAdmin() external {
+        (ExposedInitializeOffchainAssetReceiptVault vault, address receipt) = pair();
         vm.expectRevert(abi.encodeWithSelector(ZeroInitialAdmin.selector));
-        offchainAssetReceiptVault.initialize(
-            abi.encode(
-                OffchainAssetReceiptVaultConfigV2({
-                    initialAdmin: address(0),
-                    receiptVaultConfig: ReceiptVaultConfigV2({
-                        asset: address(0), name: shareName, symbol: shareSymbol, receipt: address(receipt)
-                    })
-                })
-            )
-        );
+        vault.exposedInitializeAsInitializer(config(address(0), address(0), receipt));
     }
 
-    /// Test that asset is address zero
-    function testNonZeroAsset(uint256 aliceSeed, address asset, string memory shareName, string memory shareSymbol)
-        external
-    {
-        address alice = LibUniqueAddressesGenerator.generateUniqueAddresses(vm, aliceSeed);
-
+    /// The asset is off-chain, so a non-zero asset reverts.
+    function testNonZeroAsset(address asset) external {
         vm.assume(asset != address(0));
-
+        (ExposedInitializeOffchainAssetReceiptVault vault, address receipt) = pair();
         vm.expectRevert(abi.encodeWithSelector(NonZeroAsset.selector));
-        iDeployer.newOffchainAssetReceiptVault(
-            OffchainAssetReceiptVaultConfigV2({
-                initialAdmin: alice,
-                receiptVaultConfig: ReceiptVaultConfigV2({
-                    asset: asset, name: shareName, symbol: shareSymbol, receipt: address(0)
-                })
-            })
-        );
+        vault.exposedInitializeAsInitializer(config(address(1), asset, receipt));
     }
 
-    /// Test that OffchainAssetReceiptVaultInitializedV2 event is emitted upon
-    /// initialization
-    function testOffchainAssetReceiptVaultInitializedV2Event(
-        uint256 aliceSeed,
-        string memory shareName,
-        string memory shareSymbol
-    ) external {
-        address alice = LibUniqueAddressesGenerator.generateUniqueAddresses(vm, aliceSeed);
-
-        address asset = address(0);
-
-        // Simulate transaction from alice
-        vm.prank(alice);
-
-        // Start recording logs
-        vm.recordLogs();
-        OffchainAssetReceiptVault vault = createVault(alice, shareName, shareSymbol);
-
-        // Get the logs
-        Vm.Log[] memory logs = vm.getRecordedLogs();
-
-        // Find the OffchainAssetReceiptVaultInitialized event log
-        address msgSender;
-
-        OffchainAssetReceiptVaultConfigV2 memory config;
-        bool eventFound = false;
-
-        address authorizeSetMsgSender;
-        address authorizeSetTo;
-        bool authorizeSetEventFound = false;
-        for (uint256 i = 0; i < logs.length; i++) {
-            if (
-                logs[i].topics[0]
-                    == keccak256(
-                        "OffchainAssetReceiptVaultInitializedV2(address,(address,(address,string,string,address)))"
-                    )
-            ) {
-                // Decode the event data
-                (msgSender, config) = abi.decode(logs[i].data, (address, OffchainAssetReceiptVaultConfigV2));
-                eventFound = true; // Set the flag to true since event log was found
-            } else if (logs[i].topics[0] == keccak256("AuthorizerSet(address,address)")) {
-                // Decode the event data
-                (authorizeSetMsgSender, authorizeSetTo) = abi.decode(logs[i].data, (address, address));
-                authorizeSetEventFound = true; // Set the flag to true since event log was found
-            }
-        }
-
-        // Assert that the event log was found
-        assertTrue(eventFound, "OffchainAssetReceiptVaultInitializedV2 event log not found");
-
-        assertEq(msgSender, address(iDeployer));
-        assertEq(config.initialAdmin, alice);
-        assert(address(vault) != address(0));
-
-        assertEq(config.receiptVaultConfig.name, shareName);
-        assertEq(keccak256(bytes(vault.name())), keccak256(bytes(shareName)));
-
-        assertEq(config.receiptVaultConfig.symbol, shareSymbol);
-        assertEq(keccak256(bytes(vault.symbol())), keccak256(bytes(shareSymbol)));
-
-        assertEq(address(config.receiptVaultConfig.asset), asset);
-
-        assertTrue(address(config.receiptVaultConfig.receipt) != address(0));
-        assertEq(address(config.receiptVaultConfig.receipt), address(vault.receipt()));
-
-        /// Check the authorizer set event
-        assertTrue(authorizeSetEventFound, "AuthorizerSet event log not found");
-        assertEq(authorizeSetMsgSender, address(alice));
-        assertEq(authorizeSetTo, address(vault.authorizer()));
-        assertTrue(address(vault) != address(0));
-
-        // Check the receipt manager is the vault.
-        assertEq(address(vault), vault.receipt().manager());
-    }
-
-    /// Test creating several different vaults
-    function testCreatingSeveralVaults(
-        uint256 aliceSeed,
-        uint256 bobSeed,
-        string memory shareName,
-        string memory shareSymbol,
-        string memory shareNameTwo,
-        string memory shareSymbolTwo
-    ) external {
-        (address alice, address bob) = LibUniqueAddressesGenerator.generateUniqueAddresses(vm, aliceSeed, bobSeed);
-
-        // Simulate transaction from alice
-        vm.prank(alice);
-
-        OffchainAssetReceiptVault vault = createVault(alice, shareName, shareSymbol);
-
-        assert(address(vault) != address(0));
-        assertEq(keccak256(bytes(vault.name())), keccak256(bytes(shareName)));
-        assertEq(keccak256(bytes(vault.symbol())), keccak256(bytes(shareSymbol)));
-        assertEq(address(vault.receipt().manager()), address(vault));
-        assertEq(vault.owner(), alice);
-
-        // Simulate transaction from alice
-        vm.prank(bob);
-
-        OffchainAssetReceiptVault vaultTwo = createVault(bob, shareNameTwo, shareSymbolTwo);
-
-        assert(address(vaultTwo) != address(0));
-        assertEq(keccak256(bytes(vaultTwo.name())), keccak256(bytes(shareNameTwo)));
-        assertEq(keccak256(bytes(vaultTwo.symbol())), keccak256(bytes(shareSymbolTwo)));
-        assertEq(address(vaultTwo.receipt().manager()), address(vaultTwo));
-        assertEq(vaultTwo.owner(), bob);
-    }
-
-    /// Initialization makes the vault its own authorizer.
-    function testInitializeSelfAuthorizer(uint256 aliceSeed, string memory shareName, string memory shareSymbol)
-        external
-    {
-        address alice = LibUniqueAddressesGenerator.generateUniqueAddresses(vm, aliceSeed);
-        // The deployer creates the receipt, then the vault.
-        address predictedVault = vm.computeCreateAddress(address(iDeployer), vm.getNonce(address(iDeployer)) + 1);
-
-        vm.expectEmit(predictedVault);
-        emit IAuthorizeV1.AuthorizerSet(address(iDeployer), IAuthorizeV1(predictedVault));
-        OffchainAssetReceiptVault vault = iDeployer.newOffchainAssetReceiptVault(
-            OffchainAssetReceiptVaultConfigV2({
-                initialAdmin: alice,
-                receiptVaultConfig: ReceiptVaultConfigV2({
-                    asset: address(0), name: shareName, symbol: shareSymbol, receipt: address(0)
-                })
-            })
-        );
-
-        assertEq(address(vault), predictedVault);
+    /// `_initialize` makes the vault its own authorizer and the admin its
+    /// owner.
+    function testInitializeSelfAuthorizer(address initialAdmin) external {
+        vm.assume(initialAdmin != address(0));
+        (ExposedInitializeOffchainAssetReceiptVault vault, address receipt) = pair();
+        vm.expectEmit(address(vault));
+        emit IAuthorizeV1.AuthorizerSet(address(this), IAuthorizeV1(address(vault)));
+        vault.exposedInitializeAsInitializer(config(initialAdmin, address(0), receipt));
         assertEq(address(vault.authorizer()), address(vault));
+        assertEq(vault.owner(), initialAdmin);
     }
 
     /// `_initialize` refuses to run outside an initializer before it checks
@@ -227,13 +94,6 @@ contract OffChainAssetReceiptVaultInitializeTest is OffchainAssetReceiptVaultTes
         ExposedInitializeOffchainAssetReceiptVault vault = new ExposedInitializeOffchainAssetReceiptVault();
         vm.warp(0);
         vm.expectRevert(abi.encodeWithSelector(Initializable.NotInitializing.selector));
-        vault.exposedInitialize(
-            OffchainAssetReceiptVaultConfigV2({
-                initialAdmin: initialAdmin,
-                receiptVaultConfig: ReceiptVaultConfigV2({
-                    asset: address(0), name: "a", symbol: "b", receipt: address(0)
-                })
-            })
-        );
+        vault.exposedInitialize(config(initialAdmin, address(0), address(0)));
     }
 }

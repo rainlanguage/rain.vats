@@ -4,14 +4,14 @@ pragma solidity ^0.8.0;
 
 import {IAuthorizeV1} from "./IAuthorizeV1.sol";
 
-/// @dev The version tag leading `ConfigRegistryOffchainAssetReceiptVault`
+/// @dev The version tag leading `OffchainAssetReceiptVault`
 /// `initialize` data: `abi.encode(TAG, config)`. An implementation rejects a
 /// tag it does not know, so data written for a later implementation reverts on
 /// an earlier one instead of being misread.
 bytes32 constant CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG =
     keccak256("ConfigRegistryOffchainAssetReceiptVaultConfigV1");
 
-/// The config `ConfigRegistryOffchainAssetReceiptVault.initialize` takes after
+/// The config `OffchainAssetReceiptVault.initialize` takes after
 /// its version tag. Deployed through an open-salt factory, the tag and config
 /// are all part of the vault's address.
 /// @param name As per ERC20.
@@ -32,7 +32,7 @@ struct ConfigRegistryOffchainAssetReceiptVaultConfigV1 {
 }
 
 /// @title IConfigRegistryOffchainAssetReceiptVaultV1
-/// @notice The event and config of `ConfigRegistryOffchainAssetReceiptVault`,
+/// @notice The event and config of `OffchainAssetReceiptVault`,
 /// for decoders that do not need the concrete vault.
 interface IConfigRegistryOffchainAssetReceiptVaultV1 {
     /// Contract has initialized from the registry.

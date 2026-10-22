@@ -9,10 +9,10 @@ import {
 } from "rain-factory-deploy-0.2.1/src/generated/candidate/CloneFactory.sol";
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {
-    ConfigRegistryOffchainAssetReceiptVault,
+    OffchainAssetReceiptVault,
     ConfigRegistryOffchainAssetReceiptVaultConfigV1,
     CONFIG_REGISTRY_RBAC_MIN_AGE
-} from "../../src/concrete/vault/ConfigRegistryOffchainAssetReceiptVault.sol";
+} from "../../src/concrete/vault/OffchainAssetReceiptVault.sol";
 import {
     CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG
 } from "../../src/interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
@@ -43,7 +43,7 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
 
     TestOffchainAssetReceipt internal immutable iReceiptImplementation;
     UpgradeableBeacon internal immutable iReceiptBeacon;
-    ConfigRegistryOffchainAssetReceiptVault internal immutable iImplementation;
+    OffchainAssetReceiptVault internal immutable iImplementation;
     UpgradeableBeacon internal immutable iVaultBeacon;
     TestCloneFactory internal immutable iFactory;
     OffchainAssetReceiptVaultAuthorizerV1 internal immutable iAuthorizerImplementation;
@@ -51,7 +51,7 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
     constructor() {
         iReceiptImplementation = new TestOffchainAssetReceipt();
         iReceiptBeacon = new UpgradeableBeacon(address(iReceiptImplementation), address(this));
-        iImplementation = new ConfigRegistryOffchainAssetReceiptVault();
+        iImplementation = new OffchainAssetReceiptVault();
         iVaultBeacon = new UpgradeableBeacon(address(iImplementation), address(this));
         iFactory = new TestCloneFactory();
         iAuthorizerImplementation = new OffchainAssetReceiptVaultAuthorizerV1();
@@ -129,9 +129,9 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
 
     function deploy(ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig, bytes32 salt)
         internal
-        returns (ConfigRegistryOffchainAssetReceiptVault)
+        returns (OffchainAssetReceiptVault)
     {
-        return ConfigRegistryOffchainAssetReceiptVault(
+        return OffchainAssetReceiptVault(
             payable(iFactory.beaconProxyDeterministicOpenSalt(address(iVaultBeacon), encodeConfig(vaultConfig), salt))
         );
     }

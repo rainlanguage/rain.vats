@@ -12,4 +12,8 @@ contract ExposedInitializeOffchainAssetReceiptVault is OffchainAssetReceiptVault
     function exposedInitialize(OffchainAssetReceiptVaultConfigV2 memory config) external {
         _initialize(config);
     }
+
+    function exposedInitializeAsInitializer(OffchainAssetReceiptVaultConfigV2 memory config) external initializer {
+        _initialize(config);
+    }
 }
