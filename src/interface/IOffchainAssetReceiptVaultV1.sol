@@ -8,8 +8,7 @@ import {IAuthorizeV1} from "./IAuthorizeV1.sol";
 /// `initialize` data: `abi.encode(TAG, config)`. An implementation rejects a
 /// tag it does not know, so data written for a later implementation reverts on
 /// an earlier one instead of being misread.
-bytes32 constant CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG =
-    keccak256("ConfigRegistryOffchainAssetReceiptVaultConfigV1");
+bytes32 constant OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG = keccak256("OffchainAssetReceiptVaultConfigV3");
 
 /// The config `OffchainAssetReceiptVault.initialize` takes after
 /// its version tag. Deployed through an open-salt factory, the tag and config
@@ -22,7 +21,7 @@ bytes32 constant CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG =
 /// @param authorizerIndex Which of the binding's authorizers the vault uses.
 /// @param metadata Opaque to the vault. Committed to by the address and
 /// emitted, never decoded.
-struct ConfigRegistryOffchainAssetReceiptVaultConfigV1 {
+struct OffchainAssetReceiptVaultConfigV3 {
     string name;
     string symbol;
     address authority;
@@ -31,16 +30,16 @@ struct ConfigRegistryOffchainAssetReceiptVaultConfigV1 {
     bytes metadata;
 }
 
-/// @title IConfigRegistryOffchainAssetReceiptVaultV1
+/// @title IOffchainAssetReceiptVaultV1
 /// @notice The event and config of `OffchainAssetReceiptVault`,
 /// for decoders that do not need the concrete vault.
-interface IConfigRegistryOffchainAssetReceiptVaultV1 {
+interface IOffchainAssetReceiptVaultV1 {
     /// Contract has initialized from the registry.
     /// @param sender The msg sender initializing the contract.
     /// @param config The config it was initialized with.
     /// @param owner The owner the binding resolved to.
     /// @param authorizer The authorizer the config selected from the binding.
-    event ConfigRegistryOffchainAssetReceiptVaultInitializedV1(
-        address sender, ConfigRegistryOffchainAssetReceiptVaultConfigV1 config, address owner, IAuthorizeV1 authorizer
+    event OffchainAssetReceiptVaultInitializedV3(
+        address sender, OffchainAssetReceiptVaultConfigV3 config, address owner, IAuthorizeV1 authorizer
     );
 }

@@ -8,12 +8,10 @@ import {
     OffchainAssetReceiptVaultConfigV2,
     OffchainAssetReceiptVault,
     ReceiptVaultConfigV2,
-    ConfigRegistryOffchainAssetReceiptVaultConfigV1,
+    OffchainAssetReceiptVaultConfigV3,
     CONFIG_REGISTRY_RBAC_MIN_AGE
 } from "src/abstract/OffchainAssetReceiptVault.sol";
-import {
-    CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG
-} from "../../src/interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
+import {OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG} from "../../src/interface/IOffchainAssetReceiptVaultV1.sol";
 import {OffchainAssetReceiptVaultRbacV1} from "../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {Receipt as ReceiptContract} from "../../src/concrete/receipt/Receipt.sol";
 import {TestOffchainAssetReceipt} from "../concrete/TestOffchainAssetReceipt.sol";
@@ -94,8 +92,8 @@ contract OffchainAssetReceiptVaultTest is Test {
                     .beaconProxyDeterministicOpenSalt(
                         address(iVaultBeacon),
                         abi.encode(
-                            CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG,
-                            ConfigRegistryOffchainAssetReceiptVaultConfigV1({
+                            OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG,
+                            OffchainAssetReceiptVaultConfigV3({
                             name: shareName,
                             symbol: shareSymbol,
                             authority: VAULT_AUTHORITY,

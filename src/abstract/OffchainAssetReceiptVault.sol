@@ -12,10 +12,10 @@ import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165
 import {ZeroInitialAdmin} from "../concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {OwnerFreezable} from "./OwnerFreezable.sol";
 import {
-    IConfigRegistryOffchainAssetReceiptVaultV1,
-    ConfigRegistryOffchainAssetReceiptVaultConfigV1,
-    CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG
-} from "../interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
+    IOffchainAssetReceiptVaultV1,
+    OffchainAssetReceiptVaultConfigV3,
+    OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG
+} from "../interface/IOffchainAssetReceiptVaultV1.sol";
 import {ICloneableV2} from "rain-factory-0.2.4/src/interface/ICloneableV2.sol";
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {ICloneableFactoryV5} from "rain-factory-0.2.4/src/interface/ICloneableFactoryV5.sol";
@@ -56,11 +56,11 @@ error ZeroReceiptBeacon();
 error AuthorizerIndexOutOfRange(uint256 authorizerIndex, uint256 authorizersLength);
 
 /// Thrown when `initialize` data is not the canonical ABI encoding of the
-/// version tag and `ConfigRegistryOffchainAssetReceiptVaultConfigV1`.
+/// version tag and `OffchainAssetReceiptVaultConfigV3`.
 error NonCanonicalConfig();
 
 /// Thrown when `initialize` data does not lead with
-/// `CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG`.
+/// `OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG`.
 /// @param version The leading word, or zero for data shorter than a word.
 error UnknownConfigVersion(bytes32 version);
 
@@ -319,7 +319,7 @@ abstract contract OffchainAssetReceiptVault is
     IAuthorizableV1,
     ICertifiableV1,
     IAuthorizeV1,
-    IConfigRegistryOffchainAssetReceiptVaultV1,
+    IOffchainAssetReceiptVaultV1,
     ReceiptVault,
     OwnerFreezable
 {
@@ -402,18 +402,18 @@ abstract contract OffchainAssetReceiptVault is
     /// vault beacon is part of the vault's address, so only the pinned beacon
     /// matters.
     ///
-    /// @param data `abi.encode(CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG, config)`.
+    /// @param data `abi.encode(OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG, config)`.
     /// @inheritdoc ICloneableV2
     function initialize(bytes memory data) public virtual override initializer returns (bytes32) {
         if (data.length < 0x20) {
             revert UnknownConfigVersion(bytes32(0));
         }
         bytes32 version = abi.decode(data, (bytes32));
-        if (version != CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG) {
+        if (version != OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG) {
             revert UnknownConfigVersion(version);
         }
-        (, ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory config) =
-            abi.decode(data, (bytes32, ConfigRegistryOffchainAssetReceiptVaultConfigV1));
+        (, OffchainAssetReceiptVaultConfigV3 memory config) =
+            abi.decode(data, (bytes32, OffchainAssetReceiptVaultConfigV3));
         // `abi.decode` ignores trailing bytes and accepts non-canonical
         // offsets, and the factory hashes the raw `data` into the address, so
         // without this one config has many addresses.
@@ -475,7 +475,7 @@ abstract contract OffchainAssetReceiptVault is
             revert ReceiptMetadataReverts(newReceipt);
         }
 
-        emit ConfigRegistryOffchainAssetReceiptVaultInitializedV1(_msgSender(), config, rbac.owner, selectedAuthorizer);
+        emit OffchainAssetReceiptVaultInitializedV3(_msgSender(), config, rbac.owner, selectedAuthorizer);
 
         return ICLONEABLE_V2_SUCCESS;
     }

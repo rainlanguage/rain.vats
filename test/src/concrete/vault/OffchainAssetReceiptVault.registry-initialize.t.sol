@@ -2,12 +2,10 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {
-    ConfigRegistryOffchainAssetReceiptVaultTest
-} from "../../../abstract/ConfigRegistryOffchainAssetReceiptVaultTest.sol";
+import {OffchainAssetReceiptVaultRegistryTest} from "../../../abstract/OffchainAssetReceiptVaultRegistryTest.sol";
 import {
     OffchainAssetReceiptVault,
-    ConfigRegistryOffchainAssetReceiptVaultConfigV1,
+    OffchainAssetReceiptVaultConfigV3,
     AuthorizerIndexOutOfRange,
     NonCanonicalConfig,
     UnknownConfigVersion,
@@ -27,9 +25,7 @@ import {
     OffchainAssetReceiptVault,
     OffchainAssetReceiptVaultConfigV2
 } from "../../../../src/abstract/OffchainAssetReceiptVault.sol";
-import {
-    CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG
-} from "../../../../src/interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
+import {OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG} from "../../../../src/interface/IOffchainAssetReceiptVaultV1.sol";
 import {ReceiptVaultConfigV2} from "../../../../src/abstract/ReceiptVault.sol";
 import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";
 import {ZeroInitialAdmin} from "../../../../src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
@@ -44,14 +40,12 @@ import {LibConfigRegistryDeploy} from "rain-deploy-0.1.21/src/lib/LibConfigRegis
 import {IConfigRegistryV3} from "rain-deploy-0.1.21/src/interface/IConfigRegistryV3.sol";
 import {FailingInitializeReceipt} from "../../../concrete/FailingInitializeReceipt.sol";
 import {OwnerlessBeacon} from "../../../concrete/OwnerlessBeacon.sol";
-import {
-    IConfigRegistryOffchainAssetReceiptVaultV1
-} from "../../../../src/interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
+import {IOffchainAssetReceiptVaultV1} from "../../../../src/interface/IOffchainAssetReceiptVaultV1.sol";
 import {Vm} from "forge-std-1.17.0/src/Vm.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
 import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.1/src/lib/LibCloneFactoryDeploy.sol";
 
-contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistryOffchainAssetReceiptVaultTest {
+contract OffchainAssetReceiptVaultRegistryInitializeTest is OffchainAssetReceiptVaultRegistryTest {
     function testInitializeWiresRolesFromRegistry(uint8 index) external {
         IAuthorizeV1[] memory authorizers = twoAuthorizers();
         uint256 authorizerIndex = uint256(index) % authorizers.length;
@@ -62,12 +56,12 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
                 owner: OWNER, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizers: authorizers
             })
         );
-        ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig = config(authorizerIndex);
+        OffchainAssetReceiptVaultConfigV3 memory vaultConfig = config(authorizerIndex);
 
         address predicted =
             iFactory.predictBeaconProxyAddressOpenSalt(address(iVaultBeacon), encodeConfig(vaultConfig), 0);
         vm.expectEmit(predicted);
-        emit IConfigRegistryOffchainAssetReceiptVaultV1.ConfigRegistryOffchainAssetReceiptVaultInitializedV1(
+        emit IOffchainAssetReceiptVaultV1.OffchainAssetReceiptVaultInitializedV3(
             address(iFactory), vaultConfig, OWNER, authorizers[authorizerIndex]
         );
         OffchainAssetReceiptVault vault = deploy(vaultConfig, 0);
@@ -156,7 +150,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
                 owner: OWNER, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizers: twoAuthorizers()
             })
         );
-        ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig = config(0);
+        OffchainAssetReceiptVaultConfigV3 memory vaultConfig = config(0);
         vaultConfig.rbacName = name;
         vm.expectRevert(abi.encodeWithSelector(IConfigRegistryV3.NameNotRegistered.selector, AUTHORITY, name));
         deploy(vaultConfig, 0);
@@ -171,7 +165,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
                 owner: OWNER, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizers: twoAuthorizers()
             })
         );
-        ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig = config(0);
+        OffchainAssetReceiptVaultConfigV3 memory vaultConfig = config(0);
         vaultConfig.authority = authority;
         vm.expectRevert(abi.encodeWithSelector(IConfigRegistryV3.NameNotRegistered.selector, authority, RBAC_NAME));
         deploy(vaultConfig, 0);
@@ -336,7 +330,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
                 owner: OWNER, receiptBeacon: IBeacon(address(iReceiptBeacon)), authorizers: authorizers
             })
         );
-        ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig = config(secondAuthorizer ? 1 : 0);
+        OffchainAssetReceiptVaultConfigV3 memory vaultConfig = config(secondAuthorizer ? 1 : 0);
         IAuthorizeV1 selected = authorizers[vaultConfig.authorizerIndex];
         address vault = address(new BeaconProxy(address(iVaultBeacon), ""));
 
@@ -349,7 +343,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
             IAuthorizeV1.AuthorizerSet.selector,
             OffchainAssetReceiptVault.OffchainAssetReceiptVaultInitializedV2.selector,
             IAuthorizeV1.AuthorizerSet.selector,
-            IConfigRegistryOffchainAssetReceiptVaultV1.ConfigRegistryOffchainAssetReceiptVaultInitializedV1.selector
+            IOffchainAssetReceiptVaultV1.OffchainAssetReceiptVaultInitializedV3.selector
         ];
         bytes[4] memory data = [
             abi.encode(caller, vault),
@@ -403,7 +397,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
     /// naming that word: data written for another config version is never
     /// read as V1.
     function testInitializeUnknownConfigVersion(bytes32 version) external {
-        vm.assume(version != CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG);
+        vm.assume(version != OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG);
         bindAged(
             AUTHORITY,
             RBAC_NAME,
@@ -453,8 +447,8 @@ contract ConfigRegistryOffchainAssetReceiptVaultInitializeTest is ConfigRegistry
         // leave its last byte as padding.
         assertEq(bytes(config(0).name).length, 14);
         data[10 * 32 - 1] = bytes1(dirt);
-        (bytes32 version, ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory decoded) =
-            abi.decode(data, (bytes32, ConfigRegistryOffchainAssetReceiptVaultConfigV1));
+        (bytes32 version, OffchainAssetReceiptVaultConfigV3 memory decoded) =
+            abi.decode(data, (bytes32, OffchainAssetReceiptVaultConfigV3));
         assertEq(abi.encode(version, decoded), encodeConfig(config(0)));
         assertEq(abi.encode(version, decoded).length, data.length);
         vm.expectRevert(abi.encodeWithSelector(NonCanonicalConfig.selector));

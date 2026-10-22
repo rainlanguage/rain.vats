@@ -3,12 +3,10 @@
 pragma solidity =0.8.25;
 
 import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
-import {
-    ConfigRegistryOffchainAssetReceiptVaultTest
-} from "../../../abstract/ConfigRegistryOffchainAssetReceiptVaultTest.sol";
+import {OffchainAssetReceiptVaultRegistryTest} from "../../../abstract/OffchainAssetReceiptVaultRegistryTest.sol";
 import {
     OffchainAssetReceiptVault,
-    ConfigRegistryOffchainAssetReceiptVaultConfigV1
+    OffchainAssetReceiptVaultConfigV3
 } from "../../../../src/abstract/OffchainAssetReceiptVault.sol";
 import {OffchainAssetReceiptVaultRbacV1} from "../../../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
@@ -17,8 +15,8 @@ import {
 } from "rain-factory-0.2.4/src/interface/ICloneableFactoryV5.sol";
 import {BEACON_PROXY_CREATION_CODE} from "rain-factory-0.2.4/src/generated/BeaconProxy.sol";
 
-contract ConfigRegistryOffchainAssetReceiptVaultDeterministicTest is ConfigRegistryOffchainAssetReceiptVaultTest {
-    function expectedAddress(ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig, bytes32 salt)
+contract OffchainAssetReceiptVaultRegistryDeterministicTest is OffchainAssetReceiptVaultRegistryTest {
+    function expectedAddress(OffchainAssetReceiptVaultConfigV3 memory vaultConfig, bytes32 salt)
         internal
         view
         returns (address)
@@ -85,11 +83,11 @@ contract ConfigRegistryOffchainAssetReceiptVaultDeterministicTest is ConfigRegis
 
     /// Every config field moves the address.
     function testEveryConfigFieldMovesAddress() external view {
-        ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory base = config(0);
+        OffchainAssetReceiptVaultConfigV3 memory base = config(0);
         address baseAddress = expectedAddress(base, 0);
         assertEq(iFactory.predictBeaconProxyAddressOpenSalt(address(iVaultBeacon), encodeConfig(base), 0), baseAddress);
 
-        ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig = config(0);
+        OffchainAssetReceiptVaultConfigV3 memory vaultConfig = config(0);
         vaultConfig.name = "x";
         assertTrue(expectedAddress(vaultConfig, 0) != baseAddress);
         vaultConfig = config(0);

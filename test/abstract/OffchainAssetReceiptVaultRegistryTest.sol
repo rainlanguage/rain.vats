@@ -11,12 +11,10 @@ import {TestOffchainAssetReceiptVault} from "../concrete/TestOffchainAssetReceip
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {
     OffchainAssetReceiptVault,
-    ConfigRegistryOffchainAssetReceiptVaultConfigV1,
+    OffchainAssetReceiptVaultConfigV3,
     CONFIG_REGISTRY_RBAC_MIN_AGE
 } from "../../src/abstract/OffchainAssetReceiptVault.sol";
-import {
-    CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG
-} from "../../src/interface/IConfigRegistryOffchainAssetReceiptVaultV1.sol";
+import {OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG} from "../../src/interface/IOffchainAssetReceiptVaultV1.sol";
 import {OffchainAssetReceiptVaultRbacV1} from "../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {TestOffchainAssetReceipt} from "../concrete/TestOffchainAssetReceipt.sol";
 import {
@@ -37,7 +35,7 @@ import {TestCloneFactory} from "rain-factory-0.2.4/src/test/TestCloneFactory.sol
 /// Shared fixture: the pinned `ConfigRegistry` runtime code at its pinned
 /// address, a vault beacon and a receipt beacon, a V5 factory, and two
 /// authorizers.
-abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
+abstract contract OffchainAssetReceiptVaultRegistryTest is Test {
     bytes32 internal constant RBAC_NAME = "st0x.rbac.v1";
     address internal constant AUTHORITY = address(uint160(uint256(keccak256("authority"))));
     address internal constant OWNER = address(uint160(uint256(keccak256("owner"))));
@@ -104,12 +102,8 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
         bindAged(authority, name, abi.encode(rbac));
     }
 
-    function config(uint256 authorizerIndex)
-        internal
-        pure
-        returns (ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory)
-    {
-        return ConfigRegistryOffchainAssetReceiptVaultConfigV1({
+    function config(uint256 authorizerIndex) internal pure returns (OffchainAssetReceiptVaultConfigV3 memory) {
+        return OffchainAssetReceiptVaultConfigV3({
             name: "Tesla Inc ST0x",
             symbol: "tTSLA",
             authority: AUTHORITY,
@@ -120,15 +114,11 @@ abstract contract ConfigRegistryOffchainAssetReceiptVaultTest is Test {
     }
 
     /// The `initialize` data for `vaultConfig`: the V1 tag, then the config.
-    function encodeConfig(ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig)
-        internal
-        pure
-        returns (bytes memory)
-    {
-        return abi.encode(CONFIG_REGISTRY_OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V1_TAG, vaultConfig);
+    function encodeConfig(OffchainAssetReceiptVaultConfigV3 memory vaultConfig) internal pure returns (bytes memory) {
+        return abi.encode(OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG, vaultConfig);
     }
 
-    function deploy(ConfigRegistryOffchainAssetReceiptVaultConfigV1 memory vaultConfig, bytes32 salt)
+    function deploy(OffchainAssetReceiptVaultConfigV3 memory vaultConfig, bytes32 salt)
         internal
         returns (OffchainAssetReceiptVault)
     {
