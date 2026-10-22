@@ -17,7 +17,7 @@ import {
     TRANSFER_RECEIPT,
     TransferSharesStateChange,
     TransferReceiptStateChange
-} from "../vault/OffchainAssetReceiptVault.sol";
+} from "../../abstract/OffchainAssetReceiptVault.sol";
 import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
 
 /// Thrown when the admin is address zero.

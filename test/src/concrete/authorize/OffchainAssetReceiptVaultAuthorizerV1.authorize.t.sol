@@ -17,7 +17,7 @@ import {
     CertificationExpired
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {TestCloneFactory} from "rain-factory-0.2.5/src/test/TestCloneFactory.sol";
-import {TransferSharesStateChange, TransferReceiptStateChange} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {TransferSharesStateChange, TransferReceiptStateChange} from "src/abstract/OffchainAssetReceiptVault.sol";
 
 contract OffchainAssetReceiptVaultAuthorizerV1AuthorizeTest is OffchainAssetReceiptVaultAuthorizerV1Test {
     function newAuthorizer(address initialAdmin) internal returns (OffchainAssetReceiptVaultAuthorizerV1) {

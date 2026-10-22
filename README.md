@@ -124,6 +124,11 @@ that the fungible shares in circulation are all backed 1:1 with mint/burn
 justifications.
 
 `OffchainAssetReceiptVault.sol` is a concrete implementation of RWA minting.
+`ConfigRegistryOffchainAssetReceiptVault.sol` is the same vault initialized from
+a `ConfigRegistry` RBAC binding named in its config rather than from
+caller-supplied roles, so anyone can deploy it through an open-salt beacon-proxy
+factory at an address determined by the factory, the vault beacon, the salt and
+the config.
 
 The same approach can be applied to onchain collateral, allowing for vault
 tokenomics other than the standard ERC4626 style approach of minting shares in

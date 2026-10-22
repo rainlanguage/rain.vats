@@ -13,7 +13,7 @@ import {
     DepositStateChange,
     TransferReceiptStateChange,
     Unauthorized
-} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+} from "src/abstract/OffchainAssetReceiptVault.sol";
 import {OffchainAssetReceiptVaultTest} from "test/abstract/OffchainAssetReceiptVaultTest.sol";
 import {IReceiptVaultV1} from "src/interface/IReceiptVaultV3.sol";
 import {IReceiptV3} from "src/interface/IReceiptV3.sol";

@@ -2,21 +2,33 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {
-    ReceiptVaultConfigV2,
-    ReceiptVault,
-    ShareAction,
-    InvalidId,
-    ICLONEABLE_V2_SUCCESS
-} from "../../abstract/ReceiptVault.sol";
+import {ReceiptVaultConfigV2, ReceiptVault, ShareAction, InvalidId, ICLONEABLE_V2_SUCCESS} from "./ReceiptVault.sol";
 import {Math} from "@openzeppelin-contracts-5.7.0/utils/math/Math.sol";
-import {IAuthorizeV1, Unauthorized} from "../../interface/IAuthorizeV1.sol";
-import {IAuthorizableV1} from "../../interface/IAuthorizableV1.sol";
-import {ICertifiableV1} from "../../interface/ICertifiableV1.sol";
+import {IAuthorizeV1, Unauthorized} from "../interface/IAuthorizeV1.sol";
+import {IAuthorizableV1} from "../interface/IAuthorizableV1.sol";
+import {ICertifiableV1} from "../interface/ICertifiableV1.sol";
 import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
 
-import {ZeroInitialAdmin} from "../authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {OwnerFreezable} from "../../abstract/OwnerFreezable.sol";
+import {ZeroInitialAdmin} from "../concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
+import {OwnerFreezable} from "./OwnerFreezable.sol";
+import {
+    IOffchainAssetReceiptVaultV1,
+    OffchainAssetReceiptVaultConfigV3,
+    OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG
+} from "../interface/IOffchainAssetReceiptVaultV1.sol";
+import {ICloneableV2} from "rain-factory-0.2.5/src/interface/ICloneableV2.sol";
+import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFactoryV6.sol";
+import {LibICloneableFactoryV6} from "rain-factory-0.2.5/src/lib/LibICloneableFactoryV6.sol";
+import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.2/src/lib/LibCloneFactoryDeploy.sol";
+import {ERC1967Utils} from "@openzeppelin-contracts-5.7.0/proxy/ERC1967/ERC1967Utils.sol";
+import {Ownable} from "@openzeppelin-contracts-5.7.0/access/Ownable.sol";
+import {IERC1155MetadataURI} from "@openzeppelin-contracts-5.7.0/token/ERC1155/extensions/IERC1155MetadataURI.sol";
+import {LibConfigRegistry} from "rain-deploy-0.1.22/src/lib/LibConfigRegistry.sol";
+import {LibConfigRegistryDeploy} from "rain-deploy-0.1.22/src/lib/LibConfigRegistryDeploy.sol";
+import {
+    LibOffchainAssetReceiptVaultRbac,
+    OffchainAssetReceiptVaultRbacV1
+} from "../lib/LibOffchainAssetReceiptVaultRbac.sol";
 
 /// Thrown when the asset is NOT address zero.
 error NonZeroAsset();
@@ -29,6 +41,34 @@ error ZeroConfiscateAmount();
 
 /// Thrown when the authorizer is incompatible according to `IERC165` when set.
 error IncompatibleAuthorizer();
+
+/// Thrown when `receiptBeaconName` resolves to address zero.
+error ZeroReceiptBeacon();
+
+/// Thrown when `initialize` data is not the canonical ABI encoding of the
+/// version tag and `OffchainAssetReceiptVaultConfigV3`.
+error NonCanonicalConfig();
+
+/// Thrown when `initialize` data does not lead with
+/// `OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG`.
+/// @param version The leading word, or zero for data shorter than a word.
+error UnknownConfigVersion(bytes32 version);
+
+/// Thrown when initializing outside a beacon proxy.
+error VaultNotBeaconProxy();
+
+/// Thrown when the pinned clone factory's code is not the pinned code.
+/// @param actual The code hash found at the pinned address.
+error UnexpectedCloneFactoryCodeHash(bytes32 actual);
+
+/// Thrown when the receipt beacon's owner is not the vault beacon's owner.
+/// @param vaultBeaconOwner The owner of the beacon this vault proxies.
+/// @param receiptBeaconOwner The owner of the receipt beacon.
+error ReceiptBeaconOwnerMismatch(address vaultBeaconOwner, address receiptBeaconOwner);
+
+/// Thrown when the new receipt's `uri` reverts.
+/// @param receipt The new receipt.
+error ReceiptMetadataReverts(address receipt);
 
 /// @dev String ID for the OffchainAssetReceiptVault storage location v1.
 string constant OFFCHAIN_ASSET_RECEIPT_VAULT_STORAGE_ID = "rain.storage.offchain-asset-receipt-vault.1";
@@ -231,7 +271,45 @@ bytes32 constant WITHDRAW = keccak256("WITHDRAW");
 /// - `ERC20` shares in the vault that can be traded minted/burned to track a peg
 /// - `ERC4626` inspired vault interface (inherited from `ReceiptVault`)
 /// - Fine grained standard Open Zeppelin access control for all system roles
-contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthorizeV1, ReceiptVault, OwnerFreezable {
+///
+/// Its `initialize` takes no roles
+/// from its caller. It resolves them from the `ConfigRegistry` binding the
+/// config names, and deploys its own receipt, so it can be initialized by
+/// anyone through an open-salt beacon-proxy factory. The vault's address is
+/// a function of the factory, the beacon, the salt and the config, so the
+/// same four give the same address on every chain where the factory and
+/// beacon share their addresses. The chain must support Cancun, as
+/// `BeaconProxy` uses `MCOPY`. The owner and authorizer are resolved on each
+/// chain at that chain's first deploy, so the same address on two chains has
+/// the same roles only if the binding was the same on both when each was
+/// deployed.
+///
+/// The authority comes from the config rather than from this implementation.
+/// An open-salt factory hashes the config into the address, so whoever pins
+/// the address pins the authority and the RBAC name, and a config with a
+/// different authority is a different address nothing pins. The address
+/// commits to the authority and names, not to what they resolve to: a pinned
+/// address not yet deployed takes whatever is bound when anyone first deploys
+/// it. The implementation stays the same for every authority.
+///
+/// Anyone can deploy a look-alike vault under the same authority and RBAC
+/// name with another token name, symbol, salt or metadata, and it resolves
+/// the same owner and authorizer. The owner, the authorizer and the fields of
+/// the initialization event are therefore not evidence a vault is genuine.
+/// Only the pinned address is.
+///
+/// The authority is trusted for the initial owner, the authorizer and the
+/// receipt beacon. Its bindings are read once, here. After initialization the
+/// vault never reads the registry again.
+
+abstract contract OffchainAssetReceiptVault is
+    IAuthorizableV1,
+    ICertifiableV1,
+    IAuthorizeV1,
+    IOffchainAssetReceiptVaultV1,
+    ReceiptVault,
+    OwnerFreezable
+{
     using Math for uint256;
 
     /// Contract has initialized.
@@ -295,15 +373,137 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
         }
     }
 
-    /// Initializes the initial admin and the underlying `ReceiptVault`.
-    /// The admin provided will be admin of all roles and can reassign and revoke
-    /// this as appropriate according to standard Open Zeppelin access control
-    /// logic.
-    /// @param data All config required to initialize abi encoded.
+    /// The receipt beacon is the RBAC binding's `receiptBeacon`. Its owner can
+    /// upgrade every receipt made from it, so it is trusted for the receipt as
+    /// the vault beacon's owner is for the vault, and the two MUST be the same
+    /// principal. Its implementation MUST override
+    /// the asset-symbol metadata, as the generic `Receipt` metadata reverts for
+    /// a vault whose asset is `address(0)` (see `_initialize`). The
+    /// implementation cannot see the vault beacon, so `initialize` checks both:
+    /// the two beacons' `owner` must be equal and the new receipt's `uri` must
+    /// not revert. Neither holds after initialization if either beacon changes
+    /// owner or the receipt beacon is upgraded; nothing on chain prevents that.
+    /// Both beacons MUST expose `Ownable.owner`, or `initialize` reverts
+    /// without data. `owner` is reported by each beacon itself, so the check
+    /// catches a misconfigured pairing, not a beacon built to pass it; the
+    /// vault beacon is part of the vault's address, so only the pinned beacon
+    /// matters.
+    ///
+    /// @param data `abi.encode(OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG, config)`.
+    /// @inheritdoc ICloneableV2
     function initialize(bytes memory data) public virtual override initializer returns (bytes32) {
-        __OwnerFreezable_init();
+        if (data.length < 0x20) {
+            revert UnknownConfigVersion(bytes32(0));
+        }
+        bytes32 version = abi.decode(data, (bytes32));
+        if (version != OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG) {
+            revert UnknownConfigVersion(version);
+        }
+        (, OffchainAssetReceiptVaultConfigV3 memory config) =
+            abi.decode(data, (bytes32, OffchainAssetReceiptVaultConfigV3));
+        // `abi.decode` ignores trailing bytes and accepts non-canonical
+        // offsets, and the factory hashes the raw `data` into the address, so
+        // without this one config has many addresses.
+        if (keccak256(abi.encode(version, config)) != keccak256(data)) {
+            revert NonCanonicalConfig();
+        }
 
-        OffchainAssetReceiptVaultConfigV2 memory config = abi.decode(data, (OffchainAssetReceiptVaultConfigV2));
+        // When the binding was written does not matter here.
+        //slither-disable-next-line unused-return
+        (bytes memory rbacValue,) = LibConfigRegistry.resolve(config.authority, config.rbacName);
+        OffchainAssetReceiptVaultRbacV1 memory rbac =
+            LibOffchainAssetReceiptVaultRbac.decodeCanonical(config.authority, config.rbacName, rbacValue);
+        address receiptBeacon = LibICloneableFactoryV6.resolveBeacon(
+            LibConfigRegistryDeploy.CONFIG_REGISTRY_DEPLOYED_ADDRESS, config.authority, config.receiptBeaconName
+        );
+        if (receiptBeacon == address(0)) {
+            revert ZeroReceiptBeacon();
+        }
+        address vaultBeacon = ERC1967Utils.getBeacon();
+        if (vaultBeacon == address(0)) {
+            revert VaultNotBeaconProxy();
+        }
+        address vaultBeaconOwner = Ownable(vaultBeacon).owner();
+        address receiptBeaconOwner = Ownable(receiptBeacon).owner();
+        if (vaultBeaconOwner != receiptBeaconOwner) {
+            revert ReceiptBeaconOwnerMismatch(vaultBeaconOwner, receiptBeaconOwner);
+        }
+
+        IAuthorizeV1 selectedAuthorizer = rbac.authorizer;
+
+        // The receipt is a registry beacon proxy from the pinned factory, which
+        // initializes it with this vault as manager and checks the answer. Its
+        // address commits to this vault's and to the binding, not the beacon,
+        // so it is the same on every chain.
+        if (
+            LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS.codehash
+                != LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_CODEHASH
+        ) {
+            revert UnexpectedCloneFactoryCodeHash(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS.codehash);
+        }
+        address newReceipt = receiptFor(config.authority, config.receiptBeaconName);
+
+        _initialize(
+            OffchainAssetReceiptVaultConfigV2({
+                initialAdmin: rbac.owner,
+                receiptVaultConfig: ReceiptVaultConfigV2({
+                    asset: address(0), name: config.name, symbol: config.symbol, receipt: newReceipt
+                })
+            })
+        );
+        _setAuthorizer(selectedAuthorizer);
+
+        // `uri` reads this vault's share symbol and decimals, so it runs after
+        // `_initialize`.
+        // Only whether `uri` reverts matters, not what it returns.
+        //slither-disable-next-line unused-return
+        try IERC1155MetadataURI(newReceipt).uri(0) returns (string memory) {}
+        catch {
+            revert ReceiptMetadataReverts(newReceipt);
+        }
+
+        emit OffchainAssetReceiptVaultInitializedV3(_msgSender(), config, rbac.owner, selectedAuthorizer);
+
+        return ICLONEABLE_V2_SUCCESS;
+    }
+
+    /// This vault's receipt from the pinned factory, deployed or, if anyone
+    /// made it first, adopted. Anyone can, since the factory is open and the
+    /// address is known before the vault exists. The address commits to the
+    /// registry, authority, name and `abi.encode(this)`, so code there is this
+    /// vault's receipt.
+    /// @param authority The authority binding the receipt beacon.
+    /// @param receiptBeaconName The name the receipt beacon is bound to.
+    /// @return The receipt.
+    function receiptFor(address authority, bytes32 receiptBeaconName) internal returns (address) {
+        ICloneableFactoryV6 factory = ICloneableFactoryV6(LibCloneFactoryDeploy.CLONE_FACTORY_DEPLOYED_ADDRESS);
+        bytes memory receiptData = abi.encode(address(this));
+        address deployed = factory.predictRegistryBeaconProxyAddress(
+            LibConfigRegistryDeploy.CONFIG_REGISTRY_DEPLOYED_ADDRESS,
+            authority,
+            receiptBeaconName,
+            receiptData,
+            bytes32(0)
+        );
+        if (deployed.code.length == 0) {
+            deployed = factory.registryBeaconProxy(
+                LibConfigRegistryDeploy.CONFIG_REGISTRY_DEPLOYED_ADDRESS,
+                authority,
+                receiptBeaconName,
+                receiptData,
+                bytes32(0)
+            );
+        }
+        return deployed;
+    }
+
+    /// `initialize` without the `initializer` modifier or the decode, so an
+    /// inheriting contract that builds the config itself can be the
+    /// initializer. Makes `initialAdmin` the owner and the vault its own
+    /// authorizer.
+    /// @param config All config required to initialize.
+    function _initialize(OffchainAssetReceiptVaultConfigV2 memory config) internal virtual onlyInitializing {
+        __OwnerFreezable_init();
 
         __ReceiptVault_init(config.receiptVaultConfig);
 
@@ -331,8 +531,6 @@ contract OffchainAssetReceiptVault is IAuthorizableV1, ICertifiableV1, IAuthoriz
                 initialAdmin: config.initialAdmin, receiptVaultConfig: config.receiptVaultConfig
             })
         );
-
-        return ICLONEABLE_V2_SUCCESS;
     }
 
     /// Returns the current highwater id.

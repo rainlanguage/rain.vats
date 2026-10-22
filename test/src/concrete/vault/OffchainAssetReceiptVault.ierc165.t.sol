@@ -3,14 +3,15 @@
 pragma solidity =0.8.25;
 
 import {IReceiptManagerV2, IReceiptVaultV3, ICloneableV2} from "src/abstract/ReceiptVault.sol";
+import {TestOffchainAssetReceiptVault} from "../../../concrete/TestOffchainAssetReceiptVault.sol";
 import {Test} from "forge-std-1.17.0/src/Test.sol";
-import {OffchainAssetReceiptVault, IAuthorizeV1} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {OffchainAssetReceiptVault, IAuthorizeV1} from "src/abstract/OffchainAssetReceiptVault.sol";
 
 import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
 
 contract OffchainAssetReceiptVaultIERC165Test is Test {
     function testOffchainAssetReceiptVaultIERC165(bytes4 badInterfaceId) external {
-        OffchainAssetReceiptVault receiptVault = new OffchainAssetReceiptVault();
+        OffchainAssetReceiptVault receiptVault = new TestOffchainAssetReceiptVault();
         vm.assume(badInterfaceId != type(IERC165).interfaceId);
         vm.assume(badInterfaceId != type(IReceiptManagerV2).interfaceId);
         vm.assume(badInterfaceId != type(IReceiptVaultV3).interfaceId);
