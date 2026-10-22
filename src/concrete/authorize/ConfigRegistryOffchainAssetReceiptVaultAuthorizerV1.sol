@@ -30,7 +30,7 @@ contract ConfigRegistryOffchainAssetReceiptVaultAuthorizerV1 is OffchainAssetRec
         ConfigRegistryOffchainAssetReceiptVaultAuthorizerV1Config memory config =
             abi.decode(data, (ConfigRegistryOffchainAssetReceiptVaultAuthorizerV1Config));
         //slither-disable-next-line unused-return
-        (bytes memory admin,) =LibConfigRegistry.resolve(config.authority, config.adminName);
+        (bytes memory admin,) = LibConfigRegistry.resolve(config.authority, config.adminName);
         return _initialize(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: abi.decode(admin, (address))}));
     }
 }
