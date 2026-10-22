@@ -29,7 +29,8 @@ contract ConfigRegistryOffchainAssetReceiptVaultAuthorizerV1 is OffchainAssetRec
     function initialize(bytes memory data) external virtual override initializer returns (bytes32) {
         ConfigRegistryOffchainAssetReceiptVaultAuthorizerV1Config memory config =
             abi.decode(data, (ConfigRegistryOffchainAssetReceiptVaultAuthorizerV1Config));
-        (bytes memory admin,) = LibConfigRegistry.resolve(config.authority, config.adminName);
+        //slither-disable-next-line unused-return
+        (bytes memory admin,) =LibConfigRegistry.resolve(config.authority, config.adminName);
         return _initialize(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: abi.decode(admin, (address))}));
     }
 }
