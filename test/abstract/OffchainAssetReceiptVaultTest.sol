@@ -26,11 +26,11 @@ import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
 } from "rain-factory-deploy-0.2.2/src/generated/0_2_2/CloneFactory.sol";
-import {IConfigRegistryV3} from "rain-deploy-0.1.22/src/interface/IConfigRegistryV3.sol";
+import {IConfigRegistryV3} from "rain-deploy-0.1.25/src/interface/IConfigRegistryV3.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
-} from "rain-deploy-0.1.22/src/generated/0_1_21/ConfigRegistry.sol";
+} from "rain-deploy-0.1.25/src/generated/0_1_21/ConfigRegistry.sol";
 
 /// Vaults as production makes them: a registry beacon proxy over the vault
 /// beacon, initialized from an RBAC binding in the pinned `ConfigRegistry`

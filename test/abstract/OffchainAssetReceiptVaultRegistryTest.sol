@@ -23,11 +23,11 @@ import {
 import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {IConfigRegistryV3} from "rain-deploy-0.1.22/src/interface/IConfigRegistryV3.sol";
+import {IConfigRegistryV3} from "rain-deploy-0.1.25/src/interface/IConfigRegistryV3.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
-} from "rain-deploy-0.1.22/src/generated/0_1_21/ConfigRegistry.sol";
+} from "rain-deploy-0.1.25/src/generated/0_1_21/ConfigRegistry.sol";
 import {TestCloneFactory} from "rain-factory-0.2.5/src/test/TestCloneFactory.sol";
 
 /// Shared fixture: the pinned `ConfigRegistry` runtime code at its pinned
