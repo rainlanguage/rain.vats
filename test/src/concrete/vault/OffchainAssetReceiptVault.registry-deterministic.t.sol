@@ -12,7 +12,7 @@ import {
 import {OffchainAssetReceiptVaultRbacV1} from "../../../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
 import {REGISTRY_BEACON_PROXY_CREATION_CODE} from "rain-factory-0.2.5/src/generated/RegistryBeaconProxy.sol";
-import {DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS} from "rain-deploy-0.1.22/src/generated/0_1_21/ConfigRegistry.sol";
+import {DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS} from "rain-deploy-0.1.25/src/generated/0_1_21/ConfigRegistry.sol";
 
 /// What one chain deployed.
 struct ChainDeployment {
