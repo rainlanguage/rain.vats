@@ -19,7 +19,7 @@ import {
 import {ICloneableV2} from "rain-factory-0.2.5/src/interface/ICloneableV2.sol";
 import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFactoryV6.sol";
 import {LibICloneableFactoryV6} from "rain-factory-0.2.5/src/lib/LibICloneableFactoryV6.sol";
-import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.2/src/lib/LibCloneFactoryDeploy.sol";
+import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.3/src/lib/LibCloneFactoryDeploy.sol";
 import {ERC1967Utils} from "@openzeppelin-contracts-5.7.0/proxy/ERC1967/ERC1967Utils.sol";
 import {Ownable} from "@openzeppelin-contracts-5.7.0/access/Ownable.sol";
 import {IERC1155MetadataURI} from "@openzeppelin-contracts-5.7.0/token/ERC1155/extensions/IERC1155MetadataURI.sol";
