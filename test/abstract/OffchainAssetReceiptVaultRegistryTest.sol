@@ -6,7 +6,7 @@ import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFa
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
-} from "rain-factory-deploy-0.2.2/src/generated/0_2_2/CloneFactory.sol";
+} from "rain-factory-deploy-0.2.3/src/generated/0_2_2/CloneFactory.sol";
 import {TestOffchainAssetReceiptVault} from "../concrete/TestOffchainAssetReceiptVault.sol";
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {

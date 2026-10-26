@@ -42,11 +42,11 @@ import {OwnerlessBeacon} from "../../../concrete/OwnerlessBeacon.sol";
 import {IOffchainAssetReceiptVaultV1} from "../../../../src/interface/IOffchainAssetReceiptVaultV1.sol";
 import {Vm} from "forge-std-1.17.0/src/Vm.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.2/src/lib/LibCloneFactoryDeploy.sol";
+import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.3/src/lib/LibCloneFactoryDeploy.sol";
 import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFactoryV6.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS
-} from "rain-factory-deploy-0.2.2/src/generated/0_2_2/CloneFactory.sol";
+} from "rain-factory-deploy-0.2.3/src/generated/0_2_2/CloneFactory.sol";
 import {DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS} from "rain-deploy-0.1.25/src/generated/0_1_21/ConfigRegistry.sol";
 
 contract OffchainAssetReceiptVaultRegistryInitializeTest is OffchainAssetReceiptVaultRegistryTest {
