@@ -23,8 +23,8 @@ import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.4/src/lib/LibCloneF
 import {ERC1967Utils} from "@openzeppelin-contracts-5.7.0/proxy/ERC1967/ERC1967Utils.sol";
 import {Ownable} from "@openzeppelin-contracts-5.7.0/access/Ownable.sol";
 import {IERC1155MetadataURI} from "@openzeppelin-contracts-5.7.0/token/ERC1155/extensions/IERC1155MetadataURI.sol";
-import {LibConfigRegistry} from "rain-deploy-0.1.26/src/lib/LibConfigRegistry.sol";
-import {LibConfigRegistryDeploy} from "rain-deploy-0.1.26/src/lib/LibConfigRegistryDeploy.sol";
+import {LibConfigRegistry} from "rain-deploy-0.1.27/src/lib/LibConfigRegistry.sol";
+import {LibConfigRegistryDeploy} from "rain-deploy-0.1.27/src/lib/LibConfigRegistryDeploy.sol";
 import {
     LibOffchainAssetReceiptVaultRbac,
     OffchainAssetReceiptVaultRbacV1,
