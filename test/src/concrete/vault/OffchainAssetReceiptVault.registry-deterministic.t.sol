@@ -12,7 +12,7 @@ import {
 import {OffchainAssetReceiptVaultRbacV1} from "../../../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
 import {REGISTRY_BEACON_PROXY_CREATION_CODE} from "rain-factory-0.2.5/src/generated/RegistryBeaconProxy.sol";
-import {DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS} from "rain-deploy-0.1.26/src/generated/0_1_21/ConfigRegistry.sol";
+import {DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS} from "rain-deploy-0.1.26/src/generated/0_1_26/ConfigRegistry.sol";
 
 /// What one chain deployed.
 struct ChainDeployment {
@@ -52,8 +52,8 @@ contract OffchainAssetReceiptVaultRegistryDeterministicTest is OffchainAssetRece
         vm.chainId(chainId);
         d.vaultBeacon = address(new UpgradeableBeacon(address(iImplementation), address(this)));
         d.receiptBeacon = address(new UpgradeableBeacon(address(iReceiptImplementation), address(this)));
-        bindValue(AUTHORITY, VAULT_BEACON_NAME, abi.encode(d.vaultBeacon));
-        bindValue(AUTHORITY, RECEIPT_BEACON_NAME, abi.encode(d.receiptBeacon));
+        bindValue(AUTHORITY, VAULT_BEACON_NAME, "address", abi.encode(d.vaultBeacon));
+        bindValue(AUTHORITY, RECEIPT_BEACON_NAME, "address", abi.encode(d.receiptBeacon));
         d.authorizer = newAuthorizer(OWNER);
         bind(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: owner, authorizer: d.authorizer}));
         vm.prank(caller);
