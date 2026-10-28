@@ -47,7 +47,7 @@ import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.4/src/lib/LibCloneF
 import {ICloneableFactoryV7} from "rain-factory-0.2.6/src/interface/ICloneableFactoryV7.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS
-} from "rain-factory-deploy-0.2.4/src/generated/0_2_2/CloneFactory.sol";
+} from "rain-factory-deploy-0.2.4/src/generated/0_2_4/CloneFactory.sol";
 import {DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS} from "rain-deploy-0.1.27/src/generated/0_1_26/ConfigRegistry.sol";
 
 contract OffchainAssetReceiptVaultRegistryInitializeTest is OffchainAssetReceiptVaultRegistryTest {
