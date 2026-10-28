@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity ^0.8.25;
 
-import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFactoryV6.sol";
+import {ICloneableFactoryV7} from "rain-factory-0.2.6/src/interface/ICloneableFactoryV7.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
@@ -31,7 +31,7 @@ import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
 } from "rain-deploy-0.1.26/src/generated/0_1_26/ConfigRegistry.sol";
-import {TestCloneFactory} from "rain-factory-0.2.5/src/test/TestCloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.6/src/test/TestCloneFactory.sol";
 
 /// Shared fixture: the pinned `ConfigRegistry` runtime code at its pinned
 /// address, a vault beacon and a receipt beacon bound in it, a V6 factory,
@@ -77,7 +77,7 @@ abstract contract OffchainAssetReceiptVaultRegistryTest is Test {
     /// The receipt the pinned factory deploys for `vault` from `config().authority`'s
     /// `RECEIPT_BEACON_NAME` binding, as the factory itself predicts it.
     function receiptOf(address vault) internal view returns (address) {
-        return ICloneableFactoryV6(CLONE_FACTORY_ADDRESS)
+        return ICloneableFactoryV7(CLONE_FACTORY_ADDRESS)
             .predictRegistryBeaconProxyAddress(
                 CONFIG_REGISTRY_ADDRESS, AUTHORITY, RECEIPT_BEACON_NAME, abi.encode(vault), bytes32(0)
             );

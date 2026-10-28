@@ -24,7 +24,7 @@ import {
 import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFactoryV6.sol";
+import {ICloneableFactoryV7} from "rain-factory-0.2.6/src/interface/ICloneableFactoryV7.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
@@ -90,7 +90,7 @@ contract OffchainAssetReceiptVaultTest is Test {
                 ""
             );
         OffchainAssetReceiptVault vault = OffchainAssetReceiptVault(
-            payable(ICloneableFactoryV6(CLONE_FACTORY_ADDRESS)
+            payable(ICloneableFactoryV7(CLONE_FACTORY_ADDRESS)
                     .registryBeaconProxy(
                         CONFIG_REGISTRY_ADDRESS,
                         VAULT_AUTHORITY,

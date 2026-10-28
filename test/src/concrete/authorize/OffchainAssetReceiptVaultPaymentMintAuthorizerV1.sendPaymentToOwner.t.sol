@@ -5,7 +5,7 @@ pragma solidity =0.8.25;
 import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainAssetReceiptVaultAuthorizerV1Test.sol";
 
 import {TestErc20} from "test/concrete/TestErc20.sol";
-import {TestCloneFactory} from "rain-factory-0.2.5/src/test/TestCloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.6/src/test/TestCloneFactory.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts-5.7.0/token/ERC20/extensions/IERC20Metadata.sol";
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1

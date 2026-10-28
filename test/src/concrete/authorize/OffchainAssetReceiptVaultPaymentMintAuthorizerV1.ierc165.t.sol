@@ -5,7 +5,7 @@ pragma solidity =0.8.25;
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 
 import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
-import {ICloneableV2} from "rain-factory-0.2.5/src/interface/ICloneableV2.sol";
+import {ICloneableV2} from "rain-factory-0.2.6/src/interface/ICloneableV2.sol";
 import {IAuthorizeV1} from "src/interface/IAuthorizeV1.sol";
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1

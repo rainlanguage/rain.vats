@@ -29,7 +29,7 @@ import {ReceiptVaultConfigV2} from "../../../../src/abstract/ReceiptVault.sol";
 import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";
 import {ERC1967Utils} from "@openzeppelin-contracts-5.7.0/proxy/ERC1967/ERC1967Utils.sol";
 import {ZeroInitialAdmin} from "../../../../src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {InitializationFailed} from "rain-factory-0.2.5/src/lib/LibICloneableFactoryV5.sol";
+import {InitializationFailed} from "rain-factory-0.2.6/src/lib/LibICloneableFactoryV5.sol";
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
 import {Receipt as ReceiptContract} from "../../../../src/concrete/receipt/Receipt.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
@@ -44,7 +44,7 @@ import {IOffchainAssetReceiptVaultV1} from "../../../../src/interface/IOffchainA
 import {Vm} from "forge-std-1.17.0/src/Vm.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
 import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.4/src/lib/LibCloneFactoryDeploy.sol";
-import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFactoryV6.sol";
+import {ICloneableFactoryV7} from "rain-factory-0.2.6/src/interface/ICloneableFactoryV7.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS
 } from "rain-factory-deploy-0.2.4/src/generated/0_2_2/CloneFactory.sol";
@@ -412,7 +412,7 @@ contract OffchainAssetReceiptVaultRegistryInitializeTest is OffchainAssetReceipt
         bind(AUTHORITY, RBAC_NAME, OffchainAssetReceiptVaultRbacV1({owner: OWNER, authorizer: authorizer}));
         address vaultAddress = vaultOf(config(), 0);
         vm.prank(frontRunner);
-        address frontRun = ICloneableFactoryV6(CLONE_FACTORY_ADDRESS)
+        address frontRun = ICloneableFactoryV7(CLONE_FACTORY_ADDRESS)
             .registryBeaconProxy(CONFIG_REGISTRY_ADDRESS, AUTHORITY, RECEIPT_BEACON_NAME, abi.encode(vaultAddress), 0);
         assertEq(frontRun, receiptOf(vaultAddress));
 
