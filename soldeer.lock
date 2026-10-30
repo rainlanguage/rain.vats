@@ -21,10 +21,10 @@ integrity = "fa706c8a7caf3426c90f75e6aafa3224b0a6c899b490800cf6944e4ec42f9344"
 
 [[dependencies]]
 name = "rain-deploy"
-version = "0.1.26"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-deploy/0_1_26_27-10-2026_20:34:21_rain.zip"
-checksum = "757eb4186264fafe3d3e7ca27952c45b73a16644365e3eac2bfcc57451944998"
-integrity = "e7a2153b543e6bdd488ec1c73a93a633b179a83a484260b461bd2f25ed4ec6bc"
+version = "0.1.29"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-deploy/0_1_29_29-10-2026_11:28:37_rain.zip"
+checksum = "8de2a1aa0b36f0b4184c74034378b365307e91d9b6b955a43dd9a7698537a36d"
+integrity = "fdec4728f17773d4cfd1252ce01e8edd0f2b711b5da1c1e9317aaefa4cdded0a"
 
 [[dependencies]]
 name = "rain-extrospection"
@@ -35,17 +35,17 @@ integrity = "dedbb76615c7e68e6666c77ef40f3abb8a284bf5d052e294d1c34cc4e6755d68"
 
 [[dependencies]]
 name = "rain-factory"
-version = "0.2.5"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory/0_2_5_22-10-2026_16:07:01_rain.zip"
-checksum = "6ab4a3ae642358b2068314070c28a0f28a7d58913ff199cb46ea1d0b744c71fe"
-integrity = "d1a5e360ef066a175c267a83f906f442572957bc99f625747408fa827b3ab87f"
+version = "0.2.7"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory/0_2_7_30-10-2026_08:37:55_rain.zip"
+checksum = "51735fb4ba8f1408bcf0d634fb125a8b2fe878fd8cea3b73de90d5987cedd434"
+integrity = "b399f33168607cbc3f1e347ff5f0c3ab016ecea7a7e38baec316d3423395c191"
 
 [[dependencies]]
 name = "rain-factory-deploy"
-version = "0.2.3"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory-deploy/0_2_3_26-10-2026_17:40:16_rain.factory.zip"
-checksum = "e69bd88deea85fc7ebbd0d18f28a284361d2c2493ca6a680eb0e1b9e9b5af293"
-integrity = "311f4311ecdb3bbfc19ad7c9e6db92bc35fe4b2c59f1d85fd2d3f6fc4c1f2f11"
+version = "0.2.4"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory-deploy/0_2_4_30-10-2026_12:18:52_rain.factory.zip"
+checksum = "6d3ef086c34cebce692eb3b184dad52ded129f55d420d986394c86c55e2204a3"
+integrity = "e007413db6e96fc7d1ea69285b8164170d65d821582f3185dcfebe27fcde6ca8"
 
 [[dependencies]]
 name = "rain-math-fixedpoint"
