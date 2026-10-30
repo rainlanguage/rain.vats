@@ -18,7 +18,7 @@ import {
     WITHDRAW_ADMIN,
     WITHDRAW
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {TestCloneFactory} from "rain-factory-0.2.6/src/test/TestCloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.7/src/test/TestCloneFactory.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts-5.7.0/token/ERC20/extensions/IERC20Metadata.sol";
 import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/VerifyAlwaysApproved.sol";
 import {IAccessControl} from "@openzeppelin-contracts-5.7.0/access/IAccessControl.sol";

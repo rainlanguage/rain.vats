@@ -16,9 +16,9 @@ import {
     OffchainAssetReceiptVaultConfigV3,
     OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG
 } from "../interface/IOffchainAssetReceiptVaultV1.sol";
-import {ICloneableV2} from "rain-factory-0.2.6/src/interface/ICloneableV2.sol";
-import {ICloneableFactoryV7} from "rain-factory-0.2.6/src/interface/ICloneableFactoryV7.sol";
-import {LibICloneableFactoryV7} from "rain-factory-0.2.6/src/lib/LibICloneableFactoryV7.sol";
+import {ICloneableV2} from "rain-factory-0.2.7/src/interface/ICloneableV2.sol";
+import {ICloneableFactoryV7} from "rain-factory-0.2.7/src/interface/ICloneableFactoryV7.sol";
+import {LibICloneableFactoryV7} from "rain-factory-0.2.7/src/lib/LibICloneableFactoryV7.sol";
 import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.4/src/lib/LibCloneFactoryDeploy.sol";
 import {ERC1967Utils} from "@openzeppelin-contracts-5.7.0/proxy/ERC1967/ERC1967Utils.sol";
 import {Ownable} from "@openzeppelin-contracts-5.7.0/access/Ownable.sol";
