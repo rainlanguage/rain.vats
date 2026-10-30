@@ -33,7 +33,7 @@ import {IConfigRegistryV4} from "rain-deploy-0.1.29/src/interface/deprecated/ICo
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
-} from "rain-deploy-0.1.29/src/generated/0_1_26/ConfigRegistry.sol";
+} from "rain-deploy-0.1.29/src/generated/candidate/ConfigRegistry.sol";
 
 /// Vaults as production makes them: a registry beacon proxy over the vault
 /// beacon, initialized from an RBAC binding in the pinned `ConfigRegistry`
