@@ -11,7 +11,10 @@ import {
     OffchainAssetReceiptVaultConfigV3
 } from "src/abstract/OffchainAssetReceiptVault.sol";
 import {OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG} from "../../src/interface/IOffchainAssetReceiptVaultV1.sol";
-import {OffchainAssetReceiptVaultRbacV1} from "../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
+import {
+    OffchainAssetReceiptVaultRbacV1,
+    OFFCHAIN_ASSET_RECEIPT_VAULT_RBAC_V1_VALUE_TYPE
+} from "../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {Receipt as ReceiptContract} from "../../src/concrete/receipt/Receipt.sol";
 import {TestOffchainAssetReceipt} from "../concrete/TestOffchainAssetReceipt.sol";
 import {
@@ -21,16 +24,16 @@ import {
 import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFactoryV6.sol";
+import {ICloneableFactoryV7} from "rain-factory-0.2.7/src/interface/ICloneableFactoryV7.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
-} from "rain-factory-deploy-0.2.3/src/generated/0_2_2/CloneFactory.sol";
-import {IConfigRegistryV3} from "rain-deploy-0.1.25/src/interface/IConfigRegistryV3.sol";
+} from "rain-factory-deploy-0.2.4/src/generated/0_2_4/CloneFactory.sol";
+import {IConfigRegistryV5} from "rain-deploy-0.1.29/src/interface/IConfigRegistryV5.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
-} from "rain-deploy-0.1.25/src/generated/0_1_21/ConfigRegistry.sol";
+} from "rain-deploy-0.1.29/src/generated/candidate/ConfigRegistry.sol";
 
 /// Vaults as production makes them: a registry beacon proxy over the vault
 /// beacon, initialized from an RBAC binding in the pinned `ConfigRegistry`
@@ -60,10 +63,10 @@ contract OffchainAssetReceiptVaultTest is Test {
         vm.etch(CONFIG_REGISTRY_ADDRESS, CONFIG_REGISTRY_RUNTIME_CODE);
         vm.etch(CLONE_FACTORY_ADDRESS, CLONE_FACTORY_RUNTIME_CODE);
         vm.startPrank(VAULT_AUTHORITY);
-        IConfigRegistryV3(CONFIG_REGISTRY_ADDRESS)
-            .registerV3(VAULT_AUTHORITY, VAULT_BEACON_NAME, abi.encode(address(iVaultBeacon)));
-        IConfigRegistryV3(CONFIG_REGISTRY_ADDRESS)
-            .registerV3(VAULT_AUTHORITY, RECEIPT_BEACON_NAME, abi.encode(address(iReceiptBeacon)));
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS)
+            .registerV5(VAULT_AUTHORITY, VAULT_BEACON_NAME, "address", abi.encode(address(iVaultBeacon)), "");
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS)
+            .registerV5(VAULT_AUTHORITY, RECEIPT_BEACON_NAME, "address", abi.encode(address(iReceiptBeacon)), "");
         vm.stopPrank();
     }
 
@@ -78,14 +81,16 @@ contract OffchainAssetReceiptVaultTest is Test {
         bytes32 rbacName = keccak256(abi.encode("vault-rbac", sVaultCount++));
 
         vm.prank(VAULT_AUTHORITY);
-        IConfigRegistryV3(CONFIG_REGISTRY_ADDRESS)
-            .registerV3(
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS)
+            .registerV5(
                 VAULT_AUTHORITY,
                 rbacName,
-                abi.encode(OffchainAssetReceiptVaultRbacV1({owner: admin, authorizer: authorizer}))
+                OFFCHAIN_ASSET_RECEIPT_VAULT_RBAC_V1_VALUE_TYPE,
+                abi.encode(OffchainAssetReceiptVaultRbacV1({owner: admin, authorizer: authorizer})),
+                ""
             );
         OffchainAssetReceiptVault vault = OffchainAssetReceiptVault(
-            payable(ICloneableFactoryV6(CLONE_FACTORY_ADDRESS)
+            payable(ICloneableFactoryV7(CLONE_FACTORY_ADDRESS)
                     .registryBeaconProxy(
                         CONFIG_REGISTRY_ADDRESS,
                         VAULT_AUTHORITY,

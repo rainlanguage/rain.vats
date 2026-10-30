@@ -19,6 +19,12 @@ struct OffchainAssetReceiptVaultRbacV1 {
     IAuthorizeV1 authorizer;
 }
 
+/// @dev The ABI type `OffchainAssetReceiptVaultRbacV1` is registered under.
+string constant OFFCHAIN_ASSET_RECEIPT_VAULT_RBAC_V1_VALUE_TYPE = "(address,address)";
+
+bytes32 constant OFFCHAIN_ASSET_RECEIPT_VAULT_RBAC_V1_VALUE_TYPE_HASH =
+    keccak256(bytes(OFFCHAIN_ASSET_RECEIPT_VAULT_RBAC_V1_VALUE_TYPE));
+
 /// @title LibOffchainAssetReceiptVaultRbac
 /// @notice Decodes an `OffchainAssetReceiptVaultRbacV1` binding, accepting
 /// only its canonical encoding, so a binder can run the same check before

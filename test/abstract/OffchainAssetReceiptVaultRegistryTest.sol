@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity ^0.8.25;
 
-import {ICloneableFactoryV6} from "rain-factory-0.2.5/src/interface/ICloneableFactoryV6.sol";
+import {ICloneableFactoryV7} from "rain-factory-0.2.7/src/interface/ICloneableFactoryV7.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
-} from "rain-factory-deploy-0.2.3/src/generated/0_2_2/CloneFactory.sol";
+} from "rain-factory-deploy-0.2.4/src/generated/0_2_4/CloneFactory.sol";
 import {TestOffchainAssetReceiptVault} from "../concrete/TestOffchainAssetReceiptVault.sol";
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {
@@ -14,7 +14,10 @@ import {
     OffchainAssetReceiptVaultConfigV3
 } from "../../src/abstract/OffchainAssetReceiptVault.sol";
 import {OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG} from "../../src/interface/IOffchainAssetReceiptVaultV1.sol";
-import {OffchainAssetReceiptVaultRbacV1} from "../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
+import {
+    OffchainAssetReceiptVaultRbacV1,
+    OFFCHAIN_ASSET_RECEIPT_VAULT_RBAC_V1_VALUE_TYPE
+} from "../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {TestOffchainAssetReceipt} from "../concrete/TestOffchainAssetReceipt.sol";
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
@@ -23,12 +26,12 @@ import {
 import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {IConfigRegistryV3} from "rain-deploy-0.1.25/src/interface/IConfigRegistryV3.sol";
+import {IConfigRegistryV5} from "rain-deploy-0.1.29/src/interface/IConfigRegistryV5.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
-} from "rain-deploy-0.1.25/src/generated/0_1_21/ConfigRegistry.sol";
-import {TestCloneFactory} from "rain-factory-0.2.5/src/test/TestCloneFactory.sol";
+} from "rain-deploy-0.1.29/src/generated/candidate/ConfigRegistry.sol";
+import {TestCloneFactory} from "rain-factory-0.2.7/src/test/TestCloneFactory.sol";
 
 /// Shared fixture: the pinned `ConfigRegistry` runtime code at its pinned
 /// address, a vault beacon and a receipt beacon bound in it, a V6 factory,
@@ -60,8 +63,8 @@ abstract contract OffchainAssetReceiptVaultRegistryTest is Test {
         vm.etch(CONFIG_REGISTRY_ADDRESS, CONFIG_REGISTRY_RUNTIME_CODE);
         vm.etch(CLONE_FACTORY_ADDRESS, CLONE_FACTORY_RUNTIME_CODE);
         vm.warp(1_000_000_000);
-        bindValue(AUTHORITY, VAULT_BEACON_NAME, abi.encode(address(iVaultBeacon)));
-        bindValue(AUTHORITY, RECEIPT_BEACON_NAME, abi.encode(address(iReceiptBeacon)));
+        bindValue(AUTHORITY, VAULT_BEACON_NAME, "address", abi.encode(address(iVaultBeacon)));
+        bindValue(AUTHORITY, RECEIPT_BEACON_NAME, "address", abi.encode(address(iReceiptBeacon)));
     }
 
     function newAuthorizer(address admin) internal returns (IAuthorizeV1) {
@@ -74,7 +77,7 @@ abstract contract OffchainAssetReceiptVaultRegistryTest is Test {
     /// The receipt the pinned factory deploys for `vault` from `config().authority`'s
     /// `RECEIPT_BEACON_NAME` binding, as the factory itself predicts it.
     function receiptOf(address vault) internal view returns (address) {
-        return ICloneableFactoryV6(CLONE_FACTORY_ADDRESS)
+        return ICloneableFactoryV7(CLONE_FACTORY_ADDRESS)
             .predictRegistryBeaconProxyAddress(
                 CONFIG_REGISTRY_ADDRESS, AUTHORITY, RECEIPT_BEACON_NAME, abi.encode(vault), bytes32(0)
             );
@@ -82,14 +85,14 @@ abstract contract OffchainAssetReceiptVaultRegistryTest is Test {
 
     /// Moves the clock a second first, since the registry refuses a rebind at
     /// the moment of the binding it replaces.
-    function bindValue(address authority, bytes32 name, bytes memory value) internal {
+    function bindValue(address authority, bytes32 name, string memory valueType, bytes memory value) internal {
         vm.warp(block.timestamp + 1);
         vm.prank(authority);
-        IConfigRegistryV3(CONFIG_REGISTRY_ADDRESS).registerV3(authority, name, value);
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS).registerV5(authority, name, valueType, value, "");
     }
 
     function bind(address authority, bytes32 name, OffchainAssetReceiptVaultRbacV1 memory rbac) internal {
-        bindValue(authority, name, abi.encode(rbac));
+        bindValue(authority, name, OFFCHAIN_ASSET_RECEIPT_VAULT_RBAC_V1_VALUE_TYPE, abi.encode(rbac));
     }
 
     function config() internal pure returns (OffchainAssetReceiptVaultConfigV3 memory) {
