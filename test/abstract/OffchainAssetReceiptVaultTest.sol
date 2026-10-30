@@ -29,7 +29,7 @@ import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
 } from "rain-factory-deploy-0.2.4/src/generated/0_2_4/CloneFactory.sol";
-import {IConfigRegistryV4} from "rain-deploy-0.1.29/src/interface/deprecated/IConfigRegistryV4.sol";
+import {IConfigRegistryV5} from "rain-deploy-0.1.29/src/interface/IConfigRegistryV5.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
@@ -63,10 +63,10 @@ contract OffchainAssetReceiptVaultTest is Test {
         vm.etch(CONFIG_REGISTRY_ADDRESS, CONFIG_REGISTRY_RUNTIME_CODE);
         vm.etch(CLONE_FACTORY_ADDRESS, CLONE_FACTORY_RUNTIME_CODE);
         vm.startPrank(VAULT_AUTHORITY);
-        IConfigRegistryV4(CONFIG_REGISTRY_ADDRESS)
-            .registerV4(VAULT_AUTHORITY, VAULT_BEACON_NAME, "address", abi.encode(address(iVaultBeacon)), "");
-        IConfigRegistryV4(CONFIG_REGISTRY_ADDRESS)
-            .registerV4(VAULT_AUTHORITY, RECEIPT_BEACON_NAME, "address", abi.encode(address(iReceiptBeacon)), "");
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS)
+            .registerV5(VAULT_AUTHORITY, VAULT_BEACON_NAME, "address", abi.encode(address(iVaultBeacon)), "");
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS)
+            .registerV5(VAULT_AUTHORITY, RECEIPT_BEACON_NAME, "address", abi.encode(address(iReceiptBeacon)), "");
         vm.stopPrank();
     }
 
@@ -81,8 +81,8 @@ contract OffchainAssetReceiptVaultTest is Test {
         bytes32 rbacName = keccak256(abi.encode("vault-rbac", sVaultCount++));
 
         vm.prank(VAULT_AUTHORITY);
-        IConfigRegistryV4(CONFIG_REGISTRY_ADDRESS)
-            .registerV4(
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS)
+            .registerV5(
                 VAULT_AUTHORITY,
                 rbacName,
                 OFFCHAIN_ASSET_RECEIPT_VAULT_RBAC_V1_VALUE_TYPE,

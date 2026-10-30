@@ -26,7 +26,7 @@ import {
 import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {IConfigRegistryV4} from "rain-deploy-0.1.29/src/interface/deprecated/IConfigRegistryV4.sol";
+import {IConfigRegistryV5} from "rain-deploy-0.1.29/src/interface/IConfigRegistryV5.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
@@ -88,7 +88,7 @@ abstract contract OffchainAssetReceiptVaultRegistryTest is Test {
     function bindValue(address authority, bytes32 name, string memory valueType, bytes memory value) internal {
         vm.warp(block.timestamp + 1);
         vm.prank(authority);
-        IConfigRegistryV4(CONFIG_REGISTRY_ADDRESS).registerV4(authority, name, valueType, value, "");
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS).registerV5(authority, name, valueType, value, "");
     }
 
     function bind(address authority, bytes32 name, OffchainAssetReceiptVaultRbacV1 memory rbac) internal {
