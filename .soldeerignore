@@ -1,6 +1,5 @@
 .DS_Store
 .cargo
-.coderabbit.yaml
 .devcontainer.json
 .envrc
 .gas-snapshot
