@@ -18,10 +18,8 @@ bytes32 constant ERC20_STORAGE_LOCATION =
 bytes32 constant ERC20_TOTAL_SUPPLY_SLOT = bytes32(uint256(ERC20_STORAGE_LOCATION) + 2);
 
 /// @title LibERC20Storage
-/// @notice Direct storage access to OpenZeppelin ERC20Upgradeable internals.
-/// Used by the rebase migration system to write balances and totalSupply
-/// without going through `_update`, which would emit spurious Transfer events
-/// and create reentrancy concerns.
+/// @notice Direct storage access to OpenZeppelin ERC20Upgradeable internals,
+/// for writes that must not go through `_update` and its `Transfer` events.
 ///
 /// SAFETY: This is tightly coupled to OZ v5's ERC20Upgradeable ERC-7201
 /// storage layout. The struct layout at the namespaced slot is:
@@ -73,8 +71,7 @@ library LibERC20Storage {
 
     /// @notice Read the raw underlying `_totalSupply` at OZ's ERC-7201 slot.
     /// This is whatever value OZ's `_update` has last written; no semantic
-    /// overlay is applied here. Consumers that need a rebase-aware or
-    /// otherwise-derived supply figure must compute it themselves.
+    /// overlay is applied here.
     /// @return The raw value of OZ's `_totalSupply`.
     function underlyingTotalSupply() internal view returns (uint256) {
         bytes32 slot = ERC20_TOTAL_SUPPLY_SLOT;
@@ -88,12 +85,6 @@ library LibERC20Storage {
     /// @notice Write the raw underlying `_totalSupply` at OZ's ERC-7201 slot.
     /// Bypasses OZ's `_update` entirely — no `Transfer` event, no balance
     /// adjustment.
-    ///
-    /// @dev This slot is NOT the reported supply: `StoxReceiptVault.totalSupply()`
-    /// is the rebase-aware `LibTotalSupply.effectiveTotalSupply()`. Writing
-    /// here keeps OZ's internals self-consistent and does not change what the
-    /// token reports.
-    ///
     /// @param newTotalSupply The new value to write to `_totalSupply`.
     function setUnderlyingTotalSupply(uint256 newTotalSupply) internal {
         bytes32 slot = ERC20_TOTAL_SUPPLY_SLOT;
@@ -102,38 +93,20 @@ library LibERC20Storage {
         }
     }
 
-    /// @notice Shift OZ's raw `_totalSupply` by the delta a rebase applied to
-    /// one account's balance, preserving OZ's own `_totalSupply == Σ _balances`
-    /// invariant.
-    ///
-    /// @dev The lazy rebase migration rewrites `_balances` behind OZ's back.
-    /// OZ's `_update` still subtracts from the raw slot **unchecked** on burn
-    /// and adds to it **checked** on mint, so a slot left stale by a rebase
-    /// drifts below the true balance sum, wraps to ~`2**256` on the first burn
-    /// that exceeds it, and from then on reverts every mint with `Panic(0x11)`
-    /// — silently, because `totalSupply()`, `balanceOf()` and all events keep
-    /// agreeing with each other. The slot has no write path other than
-    /// mint/burn, so recovery would need a beacon implementation upgrade.
-    /// See `StoxReceiptVaultRawTotalSupplyTest` (Protofire H01).
-    ///
-    /// Arithmetic is checked. `supply >= oldBalance` always holds (the account's
-    /// balance is one of the summands of the supply), so the only reachable
-    /// revert is an overflow on `supply + newBalance`, which means the split
-    /// multiplier has pushed supply past `uint256` — `LibRebaseMath` would
-    /// already have hit that on the individual balance, and failing closed is
-    /// the correct outcome.
-    ///
-    /// @param oldBalance The account's stored balance before rasterization.
-    /// @param newBalance The account's stored balance after rasterization.
+    /// @notice Shift OZ's raw `_totalSupply` by the delta of a direct write to
+    /// one account's balance, preserving `_totalSupply == Σ _balances`.
+    /// @dev A stale `_totalSupply` wraps on OZ's unchecked burn subtraction and
+    /// then reverts every checked mint.
+    /// @param oldBalance The account's stored balance before the write.
+    /// @param newBalance The account's stored balance after the write.
     function applyBalanceDeltaToTotalSupply(uint256 oldBalance, uint256 newBalance) internal {
         setUnderlyingTotalSupply(underlyingTotalSupply() + newBalance - oldBalance);
     }
 
     /// @notice OZ's own `ERC20Storage` struct at its ERC-7201 root, typed with
     /// OZ's declaration so the `_name` / `_symbol` offsets follow OZ rather
-    /// than a local mirror. Used by code that runs in the vault's storage
-    /// context without inheriting `ERC20Upgradeable` (the delegatecalled
-    /// facet's `setUnderlying`) to overwrite the stored name and symbol.
+    /// than a local mirror, for code that shares the token's storage without
+    /// inheriting `ERC20Upgradeable`.
     /// @return s Storage reference to OZ's `ERC20Storage` struct.
     function getStorage() internal pure returns (ERC20Upgradeable.ERC20Storage storage s) {
         bytes32 position = ERC20_STORAGE_LOCATION;
