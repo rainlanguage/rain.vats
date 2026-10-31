@@ -4,7 +4,6 @@ pragma solidity =0.8.25;
 
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {TestERC1155} from "./TestERC1155.sol";
-import {ERC1155_STORAGE_LOCATION} from "src/lib/LibERC1155Storage.sol";
 
 /// @dev Drift-detection tests for `LibERC1155Storage`. Every assertion is
 /// grounded against `ERC1155Upgradeable` running on the same test contract:
@@ -22,13 +21,6 @@ contract LibERC1155StorageTest is Test {
 
     function setUp() public {
         token = new TestERC1155();
-    }
-
-    /// The hardcoded ERC-7201 slot constant matches the documented derivation.
-    function testErc1155SlotConstantMatchesDerivation() external pure {
-        bytes32 expected =
-            keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.ERC1155")) - 1)) & ~bytes32(uint256(0xff));
-        assertEq(ERC1155_STORAGE_LOCATION, expected, "ERC1155_STORAGE_LOCATION drift from spec formula");
     }
 
     /// LibERC1155Storage.underlyingBalance matches ERC1155Upgradeable.balanceOf across

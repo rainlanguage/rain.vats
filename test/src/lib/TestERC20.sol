@@ -38,4 +38,45 @@ contract TestERC20 is ERC20Upgradeable {
     function libSetTotalSupply(uint256 newTotalSupply) external {
         LibERC20Storage.setUnderlyingTotalSupply(newTotalSupply);
     }
+
+    function libApplyBalanceDeltaToTotalSupply(uint256 oldBalance, uint256 newBalance) external {
+        LibERC20Storage.applyBalanceDeltaToTotalSupply(oldBalance, newBalance);
+    }
+
+    function libStorageSlot() external pure returns (bytes32) {
+        ERC20Upgradeable.ERC20Storage storage s = LibERC20Storage.getStorage();
+        bytes32 slot;
+        assembly ("memory-safe") {
+            slot := s.slot
+        }
+        return slot;
+    }
+
+    function libStorageBalance(address account) external view returns (uint256) {
+        return LibERC20Storage.getStorage()._balances[account];
+    }
+
+    function libStorageAllowance(address owner, address spender) external view returns (uint256) {
+        return LibERC20Storage.getStorage()._allowances[owner][spender];
+    }
+
+    function libStorageTotalSupply() external view returns (uint256) {
+        return LibERC20Storage.getStorage()._totalSupply;
+    }
+
+    function libStorageName() external view returns (string memory) {
+        return LibERC20Storage.getStorage()._name;
+    }
+
+    function libStorageSymbol() external view returns (string memory) {
+        return LibERC20Storage.getStorage()._symbol;
+    }
+
+    function libStorageSetName(string calldata newName) external {
+        LibERC20Storage.getStorage()._name = newName;
+    }
+
+    function libStorageSetSymbol(string calldata newSymbol) external {
+        LibERC20Storage.getStorage()._symbol = newSymbol;
+    }
 }
