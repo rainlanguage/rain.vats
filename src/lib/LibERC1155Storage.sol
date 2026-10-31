@@ -18,9 +18,7 @@ bytes32 constant ERC1155_STORAGE_LOCATION =
 ///   slot+0: mapping(uint256 id => mapping(address account => uint256)) _balances
 ///   slot+1: mapping(address => mapping(address => bool)) _operatorApprovals
 ///   slot+2: string _uri
-/// If OZ changes this layout, this library MUST be updated and
-/// `testErc1155SlotConstantMatchesDerivation` in the accompanying test file
-/// will fail first.
+/// If OZ changes this layout, this library MUST be updated.
 library LibERC1155Storage {
     /// @dev Derive the storage slot holding `_balances[id][account]`. The
     /// nested mapping resolves in two steps:

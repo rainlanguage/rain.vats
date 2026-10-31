@@ -6,8 +6,7 @@ import {ERC20Upgradeable} from "@openzeppelin-contracts-upgradeable-5.7.0/token/
 
 /// @dev The ERC-7201 namespaced storage root for OpenZeppelin's
 /// `ERC20Upgradeable`, computed in-source from the spec formula rather than
-/// hardcoded as a hex literal. The compiler evaluates this at deploy time,
-/// so there is no runtime cost versus a hardcoded hex.
+/// hardcoded as a hex literal.
 bytes32 constant ERC20_STORAGE_LOCATION =
     keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.ERC20")) - 1)) & ~bytes32(uint256(0xff));
 
