@@ -10,11 +10,8 @@ bytes32 constant ERC1155_STORAGE_LOCATION =
 
 /// @title LibERC1155Storage
 /// @notice Direct storage access to OpenZeppelin ERC1155Upgradeable internals,
-/// mirroring the role `LibERC20Storage` plays for the share-side rebase.
-/// Used by the receipt-side rebase migration to write
-/// `_balances[id][account]` without going through `_update` (which would
-/// recurse into the migration logic, emit spurious TransferSingle events,
-/// and perform the authorizer callback a second time).
+/// for writes to `_balances[id][account]` that must not go through `_update`
+/// and its `TransferSingle` events.
 ///
 /// SAFETY: Tightly coupled to OZ v5's ERC1155Upgradeable ERC-7201 storage
 /// layout. The struct at the namespaced slot is:
@@ -60,7 +57,7 @@ library LibERC1155Storage {
 
     /// @notice Write an account's balance for a given receipt id directly to
     /// OZ's ERC-7201 `_balances` slot. Bypasses OZ's `_update` entirely —
-    /// no `TransferSingle` event, no authorizer callback.
+    /// no `TransferSingle` event.
     /// @param account The account to write.
     /// @param id The receipt id.
     /// @param newBalance The new value to write to `_balances[id][account]`.
