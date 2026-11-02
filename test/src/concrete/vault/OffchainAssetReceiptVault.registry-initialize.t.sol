@@ -43,11 +43,11 @@ import {OwnerlessBeacon} from "../../../concrete/OwnerlessBeacon.sol";
 import {IOffchainAssetReceiptVaultV1} from "../../../../src/interface/IOffchainAssetReceiptVaultV1.sol";
 import {Vm} from "forge-std-1.17.0/src/Vm.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.4/src/lib/LibCloneFactoryDeploy.sol";
+import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.5/src/lib/LibCloneFactoryDeploy.sol";
 import {ICloneableFactoryV7} from "rain-factory-0.2.9/src/interface/ICloneableFactoryV7.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS
-} from "rain-factory-deploy-0.2.4/src/generated/0_2_4/CloneFactory.sol";
+} from "rain-factory-deploy-0.2.5/src/generated/candidate/CloneFactory.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS
 } from "rain-deploy-0.1.29/src/generated/candidate/ConfigRegistry.sol";
