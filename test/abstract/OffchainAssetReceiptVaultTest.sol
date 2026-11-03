@@ -24,16 +24,16 @@ import {
 import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {ICloneableFactoryV7} from "rain-factory-0.2.9/src/interface/ICloneableFactoryV7.sol";
+import {ICloneableFactoryV7} from "rain-factory-0.2.10/src/interface/ICloneableFactoryV7.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
 } from "rain-factory-deploy-0.2.5/src/generated/candidate/CloneFactory.sol";
-import {IConfigRegistryV5} from "rain-deploy-0.1.29/src/interface/IConfigRegistryV5.sol";
+import {IConfigRegistryV5} from "rain-deploy-0.1.30/src/interface/IConfigRegistryV5.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
-} from "rain-deploy-0.1.29/src/generated/candidate/ConfigRegistry.sol";
+} from "rain-deploy-0.1.30/src/generated/candidate/ConfigRegistry.sol";
 
 /// Vaults as production makes them: a registry beacon proxy over the vault
 /// beacon, initialized from an RBAC binding in the pinned `ConfigRegistry`
