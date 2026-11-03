@@ -16,15 +16,15 @@ import {
     OffchainAssetReceiptVaultConfigV3,
     OFFCHAIN_ASSET_RECEIPT_VAULT_CONFIG_V3_TAG
 } from "../interface/IOffchainAssetReceiptVaultV1.sol";
-import {ICloneableV2} from "rain-factory-0.2.9/src/interface/ICloneableV2.sol";
-import {ICloneableFactoryV7} from "rain-factory-0.2.9/src/interface/ICloneableFactoryV7.sol";
-import {LibICloneableFactoryV7} from "rain-factory-0.2.9/src/lib/LibICloneableFactoryV7.sol";
+import {ICloneableV2} from "rain-factory-0.2.10/src/interface/ICloneableV2.sol";
+import {ICloneableFactoryV7} from "rain-factory-0.2.10/src/interface/ICloneableFactoryV7.sol";
+import {LibICloneableFactoryV7} from "rain-factory-0.2.10/src/lib/LibICloneableFactoryV7.sol";
 import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.5/src/lib/LibCloneFactoryDeploy.sol";
 import {ERC1967Utils} from "@openzeppelin-contracts-5.7.0/proxy/ERC1967/ERC1967Utils.sol";
 import {Ownable} from "@openzeppelin-contracts-5.7.0/access/Ownable.sol";
 import {IERC1155MetadataURI} from "@openzeppelin-contracts-5.7.0/token/ERC1155/extensions/IERC1155MetadataURI.sol";
-import {LibConfigRegistry} from "rain-deploy-0.1.29/src/lib/LibConfigRegistry.sol";
-import {LibConfigRegistryDeploy} from "rain-deploy-0.1.29/src/lib/LibConfigRegistryDeploy.sol";
+import {LibConfigRegistry} from "rain-deploy-0.1.30/src/lib/LibConfigRegistry.sol";
+import {LibConfigRegistryDeploy} from "rain-deploy-0.1.30/src/lib/LibConfigRegistryDeploy.sol";
 import {
     LibOffchainAssetReceiptVaultRbac,
     OffchainAssetReceiptVaultRbacV1,

@@ -21,10 +21,10 @@ integrity = "fa706c8a7caf3426c90f75e6aafa3224b0a6c899b490800cf6944e4ec42f9344"
 
 [[dependencies]]
 name = "rain-deploy"
-version = "0.1.29"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-deploy/0_1_29_29-10-2026_11:28:37_rain.zip"
-checksum = "8de2a1aa0b36f0b4184c74034378b365307e91d9b6b955a43dd9a7698537a36d"
-integrity = "fdec4728f17773d4cfd1252ce01e8edd0f2b711b5da1c1e9317aaefa4cdded0a"
+version = "0.1.30"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-deploy/0_1_30_03-11-2026_16:49:01_rain.zip"
+checksum = "dde77ee2624341aeb24efbda511a61bf300c698f147408ec5f22257f96b612cd"
+integrity = "012942e051f11beea12b66a0d76d832516dd9b6fb2934f0a5302cbc9df78d99a"
 
 [[dependencies]]
 name = "rain-extrospection"
@@ -35,10 +35,10 @@ integrity = "dedbb76615c7e68e6666c77ef40f3abb8a284bf5d052e294d1c34cc4e6755d68"
 
 [[dependencies]]
 name = "rain-factory"
-version = "0.2.9"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory/0_2_9_01-11-2026_16:11:52_rain.zip"
-checksum = "e802e68301c83c14c4316c088bd3ab5d738d60df86f3eaabf0c76999e9dcf275"
-integrity = "a3463440f12c820f0ee0cd60eb19f24ec0ae98ee1fba2b0bee9b94c1e603ef73"
+version = "0.2.10"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory/0_2_10_03-11-2026_18:56:07_rain.zip"
+checksum = "614373be442e93981fa9bcfa313bd07ca24f412f5fa2937df47581beab0769dd"
+integrity = "8759c2ccbd7f839314c155327971bf82d9384729ae59461f50f3f2ba0e19c29c"
 
 [[dependencies]]
 name = "rain-factory-deploy"
@@ -63,10 +63,10 @@ integrity = "b6900769eac19e9d23413a8950318ccaade1ca292d1743737771e71cc624b8a4"
 
 [[dependencies]]
 name = "rain-metadata"
-version = "0.1.43"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-metadata/0_1_43_03-09-2026_09:14:04_rain.zip"
-checksum = "554ca7c1c9ecdafc69252f887cb57f7fac96d0ba7d6f2078f0cd0b626b77511f"
-integrity = "56d91b5dc7e097d013009d2dd6a8d07dcd2db481ea745f53910696dcaaa7fd24"
+version = "0.1.45"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-metadata/0_1_45_01-11-2026_15:46:56_rain.zip"
+checksum = "61d1e21c68091ff62caeab545db8f37512e88d2f0ad90e147aded9fd35221b1a"
+integrity = "7d5b3baeccfc070115d7428d0bf44e0c8e21f09878ce40e7759660ea1b631782"
 
 [[dependencies]]
 name = "rain-string"
