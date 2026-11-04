@@ -74,11 +74,7 @@ contract OffchainAssetReceiptVaultTest is Test {
     }
 
     /// Authorizer `initialize` data naming `initialAdminName` under `authority`.
-    function encodeAuthorizerConfig(address authority, bytes32 initialAdminName)
-        internal
-        pure
-        returns (bytes memory)
-    {
+    function encodeAuthorizerConfig(address authority, bytes32 initialAdminName) internal pure returns (bytes memory) {
         return abi.encode(
             OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG,
             OffchainAssetReceiptVaultAuthorizerV1ConfigV2({authority: authority, initialAdminName: initialAdminName})

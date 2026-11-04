@@ -102,7 +102,9 @@ contract OffchainAssetReceiptVaultAuthorizerV1InitializeTest is OffchainAssetRec
         clone(
             abi.encode(
                 version,
-                OffchainAssetReceiptVaultAuthorizerV1ConfigV2({authority: VAULT_AUTHORITY, initialAdminName: ADMIN_NAME})
+                OffchainAssetReceiptVaultAuthorizerV1ConfigV2({
+                    authority: VAULT_AUTHORITY, initialAdminName: ADMIN_NAME
+                })
             )
         );
     }
@@ -112,13 +114,13 @@ contract OffchainAssetReceiptVaultAuthorizerV1InitializeTest is OffchainAssetRec
     function testInitializeUntaggedConfig() external {
         bindAdmin(ADMIN);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                UnknownAuthorizerConfigVersion.selector, bytes32(uint256(uint160(VAULT_AUTHORITY)))
-            )
+            abi.encodeWithSelector(UnknownAuthorizerConfigVersion.selector, bytes32(uint256(uint160(VAULT_AUTHORITY))))
         );
         clone(
             abi.encode(
-                OffchainAssetReceiptVaultAuthorizerV1ConfigV2({authority: VAULT_AUTHORITY, initialAdminName: ADMIN_NAME})
+                OffchainAssetReceiptVaultAuthorizerV1ConfigV2({
+                    authority: VAULT_AUTHORITY, initialAdminName: ADMIN_NAME
+                })
             )
         );
     }

@@ -74,11 +74,14 @@ abstract contract OffchainAssetReceiptVaultRegistryTest is Test {
             OffchainAssetReceiptVaultAuthorizerV1(Clones.clone(address(iAuthorizerImplementation)));
         bytes32 initialAdminName = keccak256(abi.encode("authorizer-initial-admin", sAuthorizerCount++));
         vm.prank(AUTHORITY);
-        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS).registerV5(AUTHORITY, initialAdminName, "address", abi.encode(admin), "");
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS)
+            .registerV5(AUTHORITY, initialAdminName, "address", abi.encode(admin), "");
         authorizer.initialize(
             abi.encode(
                 OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG,
-                OffchainAssetReceiptVaultAuthorizerV1ConfigV2({authority: AUTHORITY, initialAdminName: initialAdminName})
+                OffchainAssetReceiptVaultAuthorizerV1ConfigV2({
+                    authority: AUTHORITY, initialAdminName: initialAdminName
+                })
             )
         );
         return authorizer;
