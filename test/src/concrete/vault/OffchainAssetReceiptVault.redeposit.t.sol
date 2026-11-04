@@ -4,7 +4,7 @@ pragma solidity =0.8.25;
 
 import {InvalidId, ZeroAssetsAmount} from "src/abstract/ReceiptVault.sol";
 import {OffchainAssetReceiptVaultTest} from "test/abstract/OffchainAssetReceiptVaultTest.sol";
-import {OffchainAssetReceiptVault, DEPOSIT, CERTIFY} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {OffchainAssetReceiptVault, DEPOSIT, CERTIFY} from "src/abstract/OffchainAssetReceiptVault.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin
 } from "rain-math-fixedpoint-0.2.2/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";

@@ -1,0 +1,72 @@
+[
+  {
+    "timestamp": "2026-10-20T21:50:28Z",
+    "commit": "818dbb29f2d079e9fdef6e9520ae29545a7ee8d0",
+    "testsAfterCommit": "087e561d8d99621857f58fd4ca226186b78a0490",
+    "publishedTag": "sol-v0.2.5",
+    "commitsAheadOfTag": 9,
+    "scope": "pr:345 changed src: ConfigRegistryOffchainAssetReceiptVault, LibOffchainAssetReceiptVaultRbac, OffchainAssetReceiptVault initialize/_initialize",
+    "tool": "adversarial-mutation-test",
+    "skillVersion": "0.35.0",
+    "summary": {
+      "behaviours": 38,
+      "mutants": 38,
+      "killedFirstPass": 37,
+      "survivorsKilled": [
+        "_initialize onlyInitializing dropped: testInternalInitializeOutsideInitializer"
+      ],
+      "candidates": 0,
+      "confirmed": 0,
+      "testsBefore": 431,
+      "testsAfter": 432,
+      "testsCountExcludes": "test/prod/*",
+      "filed": []
+    }
+  },
+  {
+    "timestamp": "2026-10-20T22:39:45Z",
+    "commit": "7739156bfb2c9e864159be9d8f574ad4cf0cbb4f",
+    "testsAfterCommit": "7739156bfb2c9e864159be9d8f574ad4cf0cbb4f",
+    "publishedTag": "sol-v0.2.5",
+    "commitsAheadOfTag": 13,
+    "scope": "pr:345 changed src after Marvin round: canonical config check, vault/receipt beacon owner equality, receipt uri check in ConfigRegistryOffchainAssetReceiptVault.initialize; LibOffchainAssetReceiptVaultRbac length-only canonical mutant; plus the 38 prior pr:345 mutants re-run",
+    "tool": "adversarial-mutation-test",
+    "skillVersion": "0.35.0",
+    "summary": {
+      "behaviours": 49,
+      "mutants": 49,
+      "killedFirstPass": 49,
+      "survivorsKilled": [],
+      "note": "Tests for the new initialize checks and the same-length RBAC test were committed with the fixes (6092fe4, 7739156) before this probe, so first-pass kills on M39-M49 credit those tests, not a pre-existing suite.",
+      "candidates": 0,
+      "confirmed": 0,
+      "testsBefore": 439,
+      "testsAfter": 439,
+      "testsCountExcludes": "test/prod/*",
+      "filed": []
+    }
+  },
+  {
+    "timestamp": "2026-10-20T23:24:35Z",
+    "commit": "3a71cfd91f596e401637d1cde873317aa4f62697",
+    "testsAfterCommit": "3a71cfd91f596e401637d1cde873317aa4f62697",
+    "publishedTag": "sol-v0.2.5",
+    "commitsAheadOfTag": 18,
+    "scope": "pr:345 Marvin review 5592932211 follow-up: OffchainAssetReceiptVault.initialize initializer version (reported survivor initializer -> reinitializer(2)); ConfigRegistryOffchainAssetReceiptVault.initialize vault beacon and receipt beacon owner() calls mutated to fall through to address(0) when owner() is missing",
+    "tool": "adversarial-mutation-test",
+    "skillVersion": "0.35.0",
+    "summary": {
+      "behaviours": 3,
+      "mutants": 3,
+      "killedFirstPass": 3,
+      "survivorsKilled": [],
+      "note": "testPlainInitializeAfterUpgradeFromConfigRegistryVault and testInitialize{Vault,Receipt}BeaconWithoutOwner were committed (3a71cfd) before this probe to answer the review, so first-pass kills credit those tests. src unchanged by this round: the event/config move to IConfigRegistryOffchainAssetReceiptVaultV1 leaves creation and runtime bytecode identical. Adversarial pass: expected behaviour from the constructor NatSpec (both beacons MUST expose Ownable.owner or initialize reverts without data) and OZ Initializable version semantics; no candidates.",
+      "candidates": 0,
+      "confirmed": 0,
+      "testsBefore": 442,
+      "testsAfter": 442,
+      "testsCountExcludes": "test/prod/*",
+      "filed": []
+    }
+  }
+]

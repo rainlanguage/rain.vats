@@ -8,7 +8,7 @@ import {
     DEPOSIT,
     TRANSFER_RECEIPT,
     CONFISCATE_RECEIPT
-} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+} from "src/abstract/OffchainAssetReceiptVault.sol";
 import {AlwaysAuthorize} from "test/concrete/AlwaysAuthorize.sol";
 import {ReentrantDepositReceiver, IReentrantDepositTarget} from "test/concrete/ReentrantDepositReceiver.sol";
 import {ReentrancyGuard} from "@openzeppelin-contracts-5.7.0/utils/ReentrancyGuard.sol";

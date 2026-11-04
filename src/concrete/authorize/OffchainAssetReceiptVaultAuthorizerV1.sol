@@ -6,7 +6,7 @@ import {IAuthorizeV1, Unauthorized} from "../../interface/IAuthorizeV1.sol";
 
 import {AccessControlUpgradeable} from "@openzeppelin-contracts-upgradeable-5.7.0/access/AccessControlUpgradeable.sol";
 import {IAccessControl} from "@openzeppelin-contracts-5.7.0/access/IAccessControl.sol";
-import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.2.4/src/interface/ICloneableV2.sol";
+import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.2.10/src/interface/ICloneableV2.sol";
 import {
     CONFISCATE_RECEIPT,
     CONFISCATE_SHARES,
@@ -17,7 +17,7 @@ import {
     TRANSFER_RECEIPT,
     TransferSharesStateChange,
     TransferReceiptStateChange
-} from "../vault/OffchainAssetReceiptVault.sol";
+} from "../../abstract/OffchainAssetReceiptVault.sol";
 import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
 
 /// Thrown when the admin is address zero.

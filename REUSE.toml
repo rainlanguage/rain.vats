@@ -3,6 +3,7 @@ version = 1
 [[annotations]]
 path = [
   ".gas-snapshot",
+  ".github/pull_request_template.md",
   ".github/workflows/**/",
   ".gitignore",
   ".idea/**/",
