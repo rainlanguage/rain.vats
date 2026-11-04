@@ -104,24 +104,30 @@ contract OffchainAssetReceiptVaultAuthorizerV1 is IAuthorizeV1, ICloneableV2, Ac
         if (version != OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG) {
             revert UnknownAuthorizerConfigVersion(version);
         }
-        (, OffchainAssetReceiptVaultAuthorizerV1ConfigV2 memory config) =
-            abi.decode(data, (bytes32, OffchainAssetReceiptVaultAuthorizerV1ConfigV2));
-        // The factory hashes the raw `data` into the address, so without this
-        // one config has many addresses.
-        if (keccak256(abi.encode(version, config)) != keccak256(data)) {
+        // The factory hashes the raw `data` into the address, so without these
+        // checks one config has many addresses.
+        if (data.length != 0x60) {
             revert NonCanonicalAuthorizerConfig();
         }
+        (, uint256 authorityWord, bytes32 initialAdminName) = abi.decode(data, (bytes32, uint256, bytes32));
+        if (authorityWord >> 160 != 0) {
+            revert NonCanonicalAuthorizerConfig();
+        }
+        address authority = address(uint160(authorityWord));
 
         // When the binding was written does not matter here.
         //slither-disable-next-line unused-return
         (bytes memory adminValue,) =
-            LibConfigRegistry.resolve(config.authority, config.initialAdminName, INITIAL_ADMIN_VALUE_TYPE_HASH);
-        address initialAdmin = abi.decode(adminValue, (address));
-        if (keccak256(abi.encode(initialAdmin)) != keccak256(adminValue)) {
-            revert NonCanonicalInitialAdmin(config.authority, config.initialAdminName);
+            LibConfigRegistry.resolve(authority, initialAdminName, INITIAL_ADMIN_VALUE_TYPE_HASH);
+        if (adminValue.length != 0x20) {
+            revert NonCanonicalInitialAdmin(authority, initialAdminName);
+        }
+        uint256 adminWord = abi.decode(adminValue, (uint256));
+        if (adminWord >> 160 != 0) {
+            revert NonCanonicalInitialAdmin(authority, initialAdminName);
         }
 
-        return _initialize(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: initialAdmin}));
+        return _initialize(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: address(uint160(adminWord))}));
     }
 
     /// Initialization logic without the initializer modifier so inheriting
