@@ -19,9 +19,25 @@ import {
     TransferReceiptStateChange
 } from "../../abstract/OffchainAssetReceiptVault.sol";
 import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
+import {LibConfigRegistry} from "rain-deploy-0.1.30/src/lib/LibConfigRegistry.sol";
 
 /// Thrown when the admin is address zero.
 error ZeroInitialAdmin();
+
+/// Thrown when `initialize` data does not lead with
+/// `OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG`.
+/// @param version The leading word, or zero for data shorter than a word.
+error UnknownAuthorizerConfigVersion(bytes32 version);
+
+/// Thrown when `initialize` data is not the canonical ABI encoding of the
+/// version tag and `OffchainAssetReceiptVaultAuthorizerV1ConfigV2`.
+error NonCanonicalAuthorizerConfig();
+
+/// Thrown when the initial admin binding is not the canonical ABI encoding of
+/// an address.
+/// @param authority The authority the binding was resolved under.
+/// @param name The name the binding was resolved from.
+error NonCanonicalInitialAdmin(address authority, bytes32 name);
 
 /// Thrown when a transfer is attempted by an unpriviledged account during system
 /// freeze due to certification lapse.
@@ -40,10 +56,33 @@ bytes32 constant DEPOSIT_ADMIN = keccak256("DEPOSIT_ADMIN");
 /// @dev Rolename for withdraw admins.
 bytes32 constant WITHDRAW_ADMIN = keccak256("WITHDRAW_ADMIN");
 
-/// @dev Configuration for the OffchainAssetReceiptVaultAuthorizorV1.
+/// @dev The `ConfigRegistry` value type the initial admin is bound as.
+bytes32 constant INITIAL_ADMIN_VALUE_TYPE_HASH = keccak256("address");
+
+/// @dev The version tag leading `OffchainAssetReceiptVaultAuthorizerV1`
+/// `initialize` data: `abi.encode(TAG, config)`. An implementation rejects a
+/// tag it does not know, so data written for a later implementation reverts on
+/// an earlier one instead of being misread.
+bytes32 constant OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG =
+    keccak256("OffchainAssetReceiptVaultAuthorizerV1ConfigV2");
+
+/// @dev The resolved config `_initialize` takes.
 /// @param initialAdmin The initial admin of the contract.
 struct OffchainAssetReceiptVaultAuthorizerV1Config {
     address initialAdmin;
+}
+
+/// The config `OffchainAssetReceiptVaultAuthorizerV1.initialize` takes after
+/// its version tag. It names the admin binding, not the admin, so the same
+/// data initializes a clone at one address on every chain while each chain
+/// binds its own admin.
+/// @param authority The `ConfigRegistry` authority whose binding of
+/// `initialAdminName` is trusted for the initial admin.
+/// @param initialAdminName The name the initial admin is resolved from, once,
+/// at `initialize`. A later rebind moves no roles.
+struct OffchainAssetReceiptVaultAuthorizerV1ConfigV2 {
+    address authority;
+    bytes32 initialAdminName;
 }
 
 /// @title OffchainAssetReceiptVaultAuthorizorV1
@@ -54,9 +93,41 @@ contract OffchainAssetReceiptVaultAuthorizerV1 is IAuthorizeV1, ICloneableV2, Ac
         _disableInitializers();
     }
 
+    /// Resolves the initial admin from the registry and initializes with it.
+    /// @param data `abi.encode(OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG, config)`.
     /// @inheritdoc ICloneableV2
     function initialize(bytes memory data) external virtual override initializer returns (bytes32) {
-        return _initialize(abi.decode(data, (OffchainAssetReceiptVaultAuthorizerV1Config)));
+        if (data.length < 0x20) {
+            revert UnknownAuthorizerConfigVersion(bytes32(0));
+        }
+        bytes32 version = abi.decode(data, (bytes32));
+        if (version != OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG) {
+            revert UnknownAuthorizerConfigVersion(version);
+        }
+        // The factory hashes the raw `data` into the address, so without these
+        // checks one config has many addresses.
+        if (data.length != 0x60) {
+            revert NonCanonicalAuthorizerConfig();
+        }
+        (, uint256 authorityWord) = abi.decode(data, (bytes32, uint256));
+        if (authorityWord >> 160 != 0) {
+            revert NonCanonicalAuthorizerConfig();
+        }
+        (, address authority, bytes32 initialAdminName) = abi.decode(data, (bytes32, address, bytes32));
+
+        // When the binding was written does not matter here.
+        //slither-disable-next-line unused-return
+        (bytes memory adminValue,) =
+            LibConfigRegistry.resolve(authority, initialAdminName, INITIAL_ADMIN_VALUE_TYPE_HASH);
+        if (adminValue.length != 0x20) {
+            revert NonCanonicalInitialAdmin(authority, initialAdminName);
+        }
+        if (abi.decode(adminValue, (uint256)) >> 160 != 0) {
+            revert NonCanonicalInitialAdmin(authority, initialAdminName);
+        }
+        address initialAdmin = abi.decode(adminValue, (address));
+
+        return _initialize(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: initialAdmin}));
     }
 
     /// Initialization logic without the initializer modifier so inheriting

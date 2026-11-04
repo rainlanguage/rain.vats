@@ -19,7 +19,8 @@ import {Receipt as ReceiptContract} from "../../src/concrete/receipt/Receipt.sol
 import {TestOffchainAssetReceipt} from "../concrete/TestOffchainAssetReceipt.sol";
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
-    OffchainAssetReceiptVaultAuthorizerV1Config
+    OffchainAssetReceiptVaultAuthorizerV1ConfigV2,
+    OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG
 } from "../../src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
@@ -51,6 +52,8 @@ contract OffchainAssetReceiptVaultTest is Test {
 
     /// Keys each vault's RBAC binding under its own name.
     uint256 internal sVaultCount;
+    /// Keys each authorizer's initial admin binding under its own name.
+    uint256 internal sAuthorizerCount;
 
     constructor() {
         iReceiptImplementation = ReceiptContract(address(new TestOffchainAssetReceipt()));
@@ -70,6 +73,24 @@ contract OffchainAssetReceiptVaultTest is Test {
         vm.stopPrank();
     }
 
+    /// Authorizer `initialize` data naming `initialAdminName` under `authority`.
+    function encodeAuthorizerConfig(address authority, bytes32 initialAdminName) internal pure returns (bytes memory) {
+        return abi.encode(
+            OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG,
+            OffchainAssetReceiptVaultAuthorizerV1ConfigV2({authority: authority, initialAdminName: initialAdminName})
+        );
+    }
+
+    /// Authorizer `initialize` data whose initial admin is `admin`, bound under
+    /// a fresh name.
+    function authorizerInitData(address admin) internal returns (bytes memory) {
+        bytes32 initialAdminName = keccak256(abi.encode("authorizer-initial-admin", sAuthorizerCount++));
+        vm.prank(VAULT_AUTHORITY);
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS)
+            .registerV5(VAULT_AUTHORITY, initialAdminName, "address", abi.encode(admin), "");
+        return encodeAuthorizerConfig(VAULT_AUTHORITY, initialAdminName);
+    }
+
     /// A vault owned by `admin`, with a fresh authorizer administered by it.
     function createVault(address admin, string memory shareName, string memory shareSymbol)
         internal
@@ -77,7 +98,7 @@ contract OffchainAssetReceiptVaultTest is Test {
     {
         OffchainAssetReceiptVaultAuthorizerV1 authorizer =
             OffchainAssetReceiptVaultAuthorizerV1(Clones.clone(address(iAuthorizerImplementation)));
-        authorizer.initialize(abi.encode(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: admin})));
+        authorizer.initialize(authorizerInitData(admin));
         bytes32 rbacName = keccak256(abi.encode("vault-rbac", sVaultCount++));
 
         vm.prank(VAULT_AUTHORITY);

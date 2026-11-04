@@ -2,11 +2,10 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test} from "forge-std-1.17.0/src/Test.sol";
+import {OffchainAssetReceiptVaultTest} from "test/abstract/OffchainAssetReceiptVaultTest.sol";
 
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
-    OffchainAssetReceiptVaultAuthorizerV1Config,
     CERTIFY_ADMIN,
     CONFISCATE_SHARES_ADMIN,
     CONFISCATE_RECEIPT_ADMIN,
@@ -22,12 +21,13 @@ import {
 import {TestCloneFactory} from "rain-factory-0.2.10/src/test/TestCloneFactory.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
 
-contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
+contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is OffchainAssetReceiptVaultTest {
     function testOffchainAssetReceiptVaultAuthorizerV1Construct(address initialAdmin) external {
         OffchainAssetReceiptVaultAuthorizerV1 authorizer = new OffchainAssetReceiptVaultAuthorizerV1();
+        bytes memory initData = authorizerInitData(initialAdmin);
 
         vm.expectRevert(abi.encodeWithSelector(Initializable.InvalidInitialization.selector));
-        authorizer.initialize(abi.encode(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: initialAdmin})));
+        authorizer.initialize(initData);
     }
 
     function testOffchainAssetReceiptVaultAuthorizerV1Initialize(address initialAdmin, bytes32 badRole) external {
@@ -45,7 +45,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
 
         OffchainAssetReceiptVaultAuthorizerV1 authorizerImplementation = new OffchainAssetReceiptVaultAuthorizerV1();
 
-        bytes memory initData = abi.encode(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: initialAdmin}));
+        bytes memory initData = authorizerInitData(initialAdmin);
 
         vm.expectRevert(abi.encodeWithSelector(Initializable.InvalidInitialization.selector));
         authorizerImplementation.initialize(initData);
@@ -73,7 +73,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1ConstructTest is Test {
     function testOffchainAssetReceiptVaultAuthorizerV1InitializeZeroAdmin() external {
         OffchainAssetReceiptVaultAuthorizerV1 authorizerImplementation = new OffchainAssetReceiptVaultAuthorizerV1();
 
-        bytes memory initData = abi.encode(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: address(0)}));
+        bytes memory initData = authorizerInitData(address(0));
 
         TestCloneFactory factory = new TestCloneFactory();
 
