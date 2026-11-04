@@ -18,7 +18,6 @@ import {
     WITHDRAW_ADMIN
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {TestCloneFactory} from "rain-factory-0.2.10/src/test/TestCloneFactory.sol";
-import {InitializationFailed} from "rain-factory-0.2.10/src/lib/LibICloneableFactoryV5.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
 import {IConfigRegistryV5} from "rain-deploy-0.1.30/src/interface/IConfigRegistryV5.sol";
 import {LibConfigRegistry} from "rain-deploy-0.1.30/src/lib/LibConfigRegistry.sol";
@@ -85,11 +84,12 @@ contract OffchainAssetReceiptVaultAuthorizerV1InitializeTest is OffchainAssetRec
         clone(prefix(adminConfig(), length));
     }
 
-    /// The tag with less than a whole config after it cannot initialize.
+    /// The tag with less than a whole config after it is a non-canonical
+    /// config.
     function testInitializeTruncatedConfig(uint256 length) external {
         length = bound(length, 0x20, adminConfig().length - 1);
         bindAdmin(ADMIN);
-        vm.expectRevert(abi.encodeWithSelector(InitializationFailed.selector));
+        vm.expectRevert(abi.encodeWithSelector(NonCanonicalAuthorizerConfig.selector));
         clone(prefix(adminConfig(), length));
     }
 
@@ -144,7 +144,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1InitializeTest is OffchainAssetRec
     }
 
     /// Config data as long as the canonical encoding but with dirty high bits
-    /// in the authority word cannot initialize.
+    /// in the authority word is a non-canonical config.
     function testInitializeDirtyAuthorityBits(uint96 dirt) external {
         vm.assume(dirt != 0);
         bindAdmin(ADMIN);
@@ -153,7 +153,7 @@ contract OffchainAssetReceiptVaultAuthorizerV1InitializeTest is OffchainAssetRec
         for (uint256 i = 0; i < 12; i++) {
             data[0x20 + i] = dirtBytes[i];
         }
-        vm.expectRevert(abi.encodeWithSelector(InitializationFailed.selector));
+        vm.expectRevert(abi.encodeWithSelector(NonCanonicalAuthorizerConfig.selector));
         clone(data);
     }
 
@@ -166,19 +166,20 @@ contract OffchainAssetReceiptVaultAuthorizerV1InitializeTest is OffchainAssetRec
         clone(adminConfig());
     }
 
-    /// A one-word binding with bits above the address cannot initialize.
+    /// A one-word binding with bits above the address reverts naming the
+    /// binding.
     function testInitializeDirtyInitialAdminBinding(uint96 dirt) external {
         vm.assume(dirt != 0);
         bindAdmin("address", abi.encode(uint256(uint160(ADMIN)) | (uint256(dirt) << 160)));
-        vm.expectRevert(abi.encodeWithSelector(InitializationFailed.selector));
+        vm.expectRevert(abi.encodeWithSelector(NonCanonicalInitialAdmin.selector, VAULT_AUTHORITY, ADMIN_NAME));
         clone(adminConfig());
     }
 
-    /// A binding shorter than a word cannot initialize.
+    /// A binding shorter than a word reverts naming the binding.
     function testInitializeShortInitialAdminBinding(uint256 length) external {
         length = bound(length, 1, 0x1f);
         bindAdmin("address", prefix(abi.encode(ADMIN), length));
-        vm.expectRevert(abi.encodeWithSelector(InitializationFailed.selector));
+        vm.expectRevert(abi.encodeWithSelector(NonCanonicalInitialAdmin.selector, VAULT_AUTHORITY, ADMIN_NAME));
         clone(adminConfig());
     }
 
