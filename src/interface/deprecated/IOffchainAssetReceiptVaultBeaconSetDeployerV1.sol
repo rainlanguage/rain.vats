@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity ^0.8.0;
 
-import {IBeacon} from "@openzeppelin-contracts-5.6.1/proxy/beacon/IBeacon.sol";
+import {IBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/IBeacon.sol";
 import {
     OffchainAssetReceiptVault,
     OffchainAssetReceiptVaultConfigV2
-} from "../concrete/vault/OffchainAssetReceiptVault.sol";
+} from "../../abstract/OffchainAssetReceiptVault.sol";
 
 /// @title IOffchainAssetReceiptVaultBeaconSetDeployerV1
 /// @notice V1 interface for the OffchainAssetReceiptVaultBeaconSetDeployer.

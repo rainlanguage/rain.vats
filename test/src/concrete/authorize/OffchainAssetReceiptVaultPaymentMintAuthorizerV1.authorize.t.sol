@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainAssetReceiptVaultAuthorizerV1Test.sol";
-import {Strings} from "@openzeppelin-contracts-5.6.1/utils/Strings.sol";
+import {Strings} from "@openzeppelin-contracts-5.7.0/utils/Strings.sol";
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1,
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config,
@@ -18,10 +18,10 @@ import {
     WITHDRAW_ADMIN,
     WITHDRAW
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {CloneFactory} from "rain-factory-0.1.1/src/concrete/CloneFactory.sol";
-import {IERC20Metadata} from "@openzeppelin-contracts-5.6.1/token/ERC20/extensions/IERC20Metadata.sol";
+import {TestCloneFactory} from "rain-factory-0.2.10/src/test/TestCloneFactory.sol";
+import {IERC20Metadata} from "@openzeppelin-contracts-5.7.0/token/ERC20/extensions/IERC20Metadata.sol";
 import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/VerifyAlwaysApproved.sol";
-import {IAccessControl} from "@openzeppelin-contracts-5.6.1/access/IAccessControl.sol";
+import {IAccessControl} from "@openzeppelin-contracts-5.7.0/access/IAccessControl.sol";
 
 contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is OffchainAssetReceiptVaultAuthorizerV1Test {
     using Strings for address;
@@ -35,7 +35,7 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) internal returns (OffchainAssetReceiptVaultPaymentMintAuthorizerV1) {
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 implementation =
             new OffchainAssetReceiptVaultPaymentMintAuthorizerV1();
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
         bytes memory initData = abi.encode(
             OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config({
                 receiptVault: receiptVault,
@@ -48,7 +48,9 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
         vm.mockCall(
             paymentToken, abi.encodeWithSelector(IERC20Metadata.decimals.selector), abi.encode(paymentTokenDecimals)
         );
-        return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(factory.clone(address(implementation), initData));
+        return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
+            factory.cloneDeterministic(address(implementation), initData, bytes32(0))
+        );
     }
 
     function testOffchainAssetReceiptVaultPaymentMintAuthorizerV1UnauthorizedCaller(
@@ -64,10 +66,15 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(receiptVault != address(0));
         vm.assume(owner != address(0));
-        vm.assume(paymentToken != address(0));
+        // `newAuthorizer` calls `decimals()` on the payment token, so it must
+        // not be the forge cheatcode address or a precompile. Upper half of the
+        // address space excludes both, matching the sibling tests below.
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         vm.assume(caller != receiptVault);
-        vm.assume(uint160(caller) > type(uint160).max / 2);
+        assumeAddressIsNot(caller, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(caller.code.length == 0);
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 authorizer =
             newAuthorizer(receiptVault, owner, paymentToken, paymentTokenDecimals, maxSharesSupply);
 
@@ -89,9 +96,11 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
-        vm.assume(uint160(sender) > type(uint160).max / 2);
+        assumeAddressIsNot(sender, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(sender.code.length == 0);
         // The first check in `authorize` only reverts when sender is NOT the
         // receipt vault. With sender == receiptVault the call falls into the
         // DEPOSIT / TRANSFER_* branches; an empty `data` then trips
@@ -118,7 +127,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 authorizer =
             newAuthorizer(receiptVault, owner, paymentToken, paymentTokenDecimals, maxSharesSupply);
@@ -142,7 +152,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         vm.assume(user != address(0));
         vm.assume(from != address(0));
@@ -166,7 +177,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         vm.assume(user != address(0));
         vm.assume(from != address(0));
@@ -189,7 +201,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         vm.assume(user != address(0));
         vm.assume(from != address(0));
@@ -213,7 +226,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         vm.assume(user != address(0));
         vm.assume(from != address(0));
@@ -233,7 +247,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 authorizer =
             newAuthorizer(receiptVault, owner, paymentToken, paymentTokenDecimals, maxSharesSupply);
@@ -255,7 +270,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1IERC165Test is Offchain
     ) external {
         vm.assume(owner != address(0));
         vm.assume(receiptVault != address(0));
-        vm.assume(uint160(paymentToken) > type(uint160).max / 2);
+        assumeAddressIsNot(paymentToken, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(paymentToken.code.length == 0);
         vm.assume(maxSharesSupply > 0);
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 authorizer =
             newAuthorizer(receiptVault, owner, paymentToken, paymentTokenDecimals, maxSharesSupply);

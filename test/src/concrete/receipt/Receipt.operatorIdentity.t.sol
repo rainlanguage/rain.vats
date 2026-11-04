@@ -7,7 +7,7 @@ import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
 import {SpyReceiptManager} from "test/concrete/SpyReceiptManager.sol";
 import {RecordingReceiver} from "test/concrete/RecordingReceiver.sol";
 import {ReentrantTransferReceiver} from "test/concrete/ReentrantTransferReceiver.sol";
-import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
+import {IERC1155} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155.sol";
 
 /// @title ReceiptOperatorIdentityTest
 /// @notice Validates the operator identity the #309 fix forwards to
@@ -19,7 +19,7 @@ import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol
 contract ReceiptOperatorIdentityTest is ReceiptFactoryTest {
     function _setup() internal returns (SpyReceiptManager manager, ReceiptContract receipt) {
         manager = new SpyReceiptManager();
-        receipt = ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(manager))));
+        receipt = ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(manager))));
     }
 
     /// managerMint forwards the explicit `sender` as the authorization operator.

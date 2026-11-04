@@ -33,12 +33,20 @@ contract TestReceiptManager is IReceiptManagerV2 {
 
     /// Anon can set the from address.
     /// @param from The new `from` address.
+    // The zero address is the mint leg of a receipt transfer, and tests call
+    // `setFrom(address(0))` deliberately to authorize mints. A zero check would
+    // refuse the very value this harness exists to accept.
+    // forge-lint: disable-next-line(missing-zero-check)
     function setFrom(address from) external {
         sFrom = from;
     }
 
     /// Anon can set the to address.
     /// @param to The new `to` address.
+    // The zero address is the burn leg of a receipt transfer, and tests call
+    // `setTo(address(0))` deliberately to authorize burns. Same reasoning as
+    // `setFrom`.
+    // forge-lint: disable-next-line(missing-zero-check)
     function setTo(address to) external {
         sTo = to;
     }

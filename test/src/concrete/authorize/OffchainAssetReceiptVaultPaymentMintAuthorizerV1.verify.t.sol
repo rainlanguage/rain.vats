@@ -3,15 +3,15 @@
 pragma solidity =0.8.25;
 
 import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainAssetReceiptVaultAuthorizerV1Test.sol";
-import {CloneFactory} from "rain-factory-0.1.1/src/concrete/CloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.10/src/test/TestCloneFactory.sol";
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1,
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config,
     Unauthorized
 } from "src/concrete/authorize/OffchainAssetReceiptVaultPaymentMintAuthorizerV1.sol";
-import {DepositStateChange, DEPOSIT, CERTIFY} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
-import {IERC20} from "@openzeppelin-contracts-5.6.1/token/ERC20/IERC20.sol";
-import {OffchainAssetReceiptVault} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {DepositStateChange, DEPOSIT, CERTIFY} from "src/abstract/OffchainAssetReceiptVault.sol";
+import {IERC20} from "@openzeppelin-contracts-5.7.0/token/ERC20/IERC20.sol";
+import {OffchainAssetReceiptVault} from "src/abstract/OffchainAssetReceiptVault.sol";
 import {
     IVerifyV1,
     VerifyStatus,
@@ -34,9 +34,9 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1VerifyTest is OffchainA
     {
         OffchainAssetReceiptVaultPaymentMintAuthorizerV1 implementation =
             new OffchainAssetReceiptVaultPaymentMintAuthorizerV1();
-        CloneFactory factory = new CloneFactory();
+        TestCloneFactory factory = new TestCloneFactory();
         return OffchainAssetReceiptVaultPaymentMintAuthorizerV1(
-            factory.clone(
+            factory.cloneDeterministic(
                 address(implementation),
                 abi.encode(
                     OffchainAssetReceiptVaultPaymentMintAuthorizerV1Config({
@@ -46,7 +46,8 @@ contract OffchainAssetReceiptVaultPaymentMintAuthorizerV1VerifyTest is OffchainA
                         paymentToken: paymentToken,
                         maxSharesSupply: 1e27
                     })
-                )
+                ),
+                bytes32(0)
             )
         );
     }

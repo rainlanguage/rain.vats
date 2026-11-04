@@ -16,6 +16,11 @@ contract SpyReceiptManager is IReceiptManagerV2 {
     address public lastFrom;
     address public lastTo;
 
+    // All three are recorded verbatim so tests can assert exactly what the
+    // receipt forwarded. Zero is a value under test, not an error: `from` is
+    // zero on every mint and `to` is zero on every burn, and tests assert
+    // those. A zero check would refuse the cases the spy exists to record.
+    // forge-lint: disable-next-line(missing-zero-check)
     function authorizeReceiptTransfer3(address operator, address from, address to, uint256[] memory, uint256[] memory)
         external
     {

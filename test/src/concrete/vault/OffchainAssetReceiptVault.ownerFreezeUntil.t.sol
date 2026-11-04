@@ -2,12 +2,12 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {console2} from "forge-std-1.16.1/src/Test.sol";
+import {console2} from "forge-std-1.17.0/src/Test.sol";
 import {
     OwnerFreezableOwnerFreezeUntilTest,
     IOwnerFreezableV1
 } from "test/abstract/OwnerFreezableOwnerFreezeUntilTest.t.sol";
-import {OffchainAssetReceiptVault} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {OffchainAssetReceiptVault} from "src/abstract/OffchainAssetReceiptVault.sol";
 import {IReceiptV3} from "src/concrete/receipt/Receipt.sol";
 import {
     CERTIFY,
@@ -16,7 +16,7 @@ import {
     CONFISCATE_SHARES,
     CONFISCATE_RECEIPT
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {IAccessControl} from "@openzeppelin-contracts-5.6.1/access/IAccessControl.sol";
+import {IAccessControl} from "@openzeppelin-contracts-5.7.0/access/IAccessControl.sol";
 
 contract OffchainAssetReceiptVaultOwnerFreezeUntilTest is OwnerFreezableOwnerFreezeUntilTest {
     constructor() {

@@ -2,14 +2,18 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {Test} from "forge-std-1.16.1/src/Test.sol";
+import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {TwoPriceOracleConfigV2, IPriceOracleV2, TwoPriceOracleV2} from "src/concrete/oracle/TwoPriceOracleV2.sol";
 import {ErrTwoPriceOracleV2SameQuoteBase} from "src/error/ErrTwoPriceOracleV2.sol";
 
 contract TwoPriceOracleTest is Test {
     /// A zero address for the base errors construction.
     function testZeroAddressBase(address quote) public {
-        vm.assume(quote != address(0));
+        // The constructor dry-runs `QUOTE.price()` before `BASE.price()`, so
+        // the quote is called: keep it off the forge cheatcode address and the
+        // precompiles.
+        assumeAddressIsNot(quote, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(quote.code.length == 0);
         TwoPriceOracleConfigV2 memory config =
             TwoPriceOracleConfigV2({base: IPriceOracleV2(payable(0)), quote: IPriceOracleV2(payable(quote))});
 
@@ -38,8 +42,12 @@ contract TwoPriceOracleTest is Test {
 
     /// Addresses that are not oracles error construction.
     function testNotOracle(address base, address quote) public {
-        vm.assume(base != address(0));
-        vm.assume(quote != address(0));
+        // Both are called by the constructor's price dry run: keep them off the
+        // forge cheatcode address and the precompiles.
+        assumeAddressIsNot(base, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(base.code.length == 0);
+        assumeAddressIsNot(quote, AddressType.ZeroAddress, AddressType.Precompile, AddressType.ForgeAddress);
+        vm.assume(quote.code.length == 0);
         TwoPriceOracleConfigV2 memory config =
             TwoPriceOracleConfigV2({base: IPriceOracleV2(payable(base)), quote: IPriceOracleV2(payable(quote))});
 

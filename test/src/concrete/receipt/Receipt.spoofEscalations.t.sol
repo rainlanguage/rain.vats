@@ -13,8 +13,8 @@ import {ManagerForgeReceiver} from "test/concrete/ManagerForgeReceiver.sol";
 import {SpyReceiptManager} from "test/concrete/SpyReceiptManager.sol";
 import {IReceiptV3} from "src/interface/IReceiptV3.sol";
 import {OnlyManager} from "src/error/ErrReceipt.sol";
-import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
-import {IERC1155Errors} from "@openzeppelin-contracts-5.6.1/interfaces/draft-IERC6093.sol";
+import {IERC1155} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155.sol";
+import {IERC1155Errors} from "@openzeppelin-contracts-5.7.0/interfaces/draft-IERC6093.sol";
 
 /// @title ReceiptSpoofEscalationsTest
 /// @notice Regression tests for issue #309 against a free-transfer (no-op
@@ -24,7 +24,7 @@ import {IERC1155Errors} from "@openzeppelin-contracts-5.6.1/interfaces/draft-IER
 contract ReceiptSpoofEscalationsTest is ReceiptFactoryTest {
     function _setup() internal returns (FreeTransferReceiptManager manager, ReceiptContract receipt) {
         manager = new FreeTransferReceiptManager();
-        receipt = ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(manager))));
+        receipt = ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(manager))));
     }
 
     /// E1 (neutralized): the atomic same-tx drain of the victim's pre-existing
@@ -175,7 +175,7 @@ contract ReceiptSpoofEscalationsTest is ReceiptFactoryTest {
 
         SpyReceiptManager manager = new SpyReceiptManager();
         ReceiptContract receipt =
-            ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(manager))));
+            ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(manager))));
         address from = makeAddr("from");
         address confiscator = makeAddr("confiscator");
         address attacker = makeAddr("attacker");

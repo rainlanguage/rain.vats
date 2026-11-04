@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {IERC1155Receiver} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155Receiver.sol";
-import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
+import {IERC1155Receiver} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155Receiver.sol";
+import {IERC1155} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155.sol";
 
 /// @title ReentrantTransferReceiver
 /// @notice TEST receiver that, during the ERC1155 acceptance callback, transfers
@@ -17,6 +17,11 @@ contract ReentrantTransferReceiver is IERC1155Receiver {
     uint256 internal immutable iId;
     uint256 internal immutable iAmount;
 
+    // `to` is where the receiver forwards its own tokens, and the receipt
+    // applies its real `to` checks on that transfer (a zero `to` is rejected
+    // there). What is under observation is the operator identity the manager
+    // sees, not the destination, so there is nothing for this double to guard.
+    // forge-lint: disable-next-line(missing-zero-check)
     constructor(IERC1155 receipt, address to, uint256 id, uint256 amount) {
         iReceipt = receipt;
         iTo = to;

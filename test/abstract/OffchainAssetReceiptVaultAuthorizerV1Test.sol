@@ -9,8 +9,8 @@ import {
     TRANSFER_RECEIPT,
     CertificationExpired
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {IAccessControl} from "@openzeppelin-contracts-5.6.1/access/IAccessControl.sol";
-import {TransferSharesStateChange, TransferReceiptStateChange} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
+import {IAccessControl} from "@openzeppelin-contracts-5.7.0/access/IAccessControl.sol";
+import {TransferSharesStateChange, TransferReceiptStateChange} from "src/abstract/OffchainAssetReceiptVault.sol";
 
 contract OffchainAssetReceiptVaultAuthorizerV1Test is OffchainAssetReceiptVaultTest {
     function checkDefaultOffchainAssetReceiptVaultAuthorizerV1AuthorizeUnauthorized(

@@ -28,7 +28,7 @@ contract ReceiptReceiptInformationTest is ReceiptFactoryTest {
 
         FreeTransferReceiptManager manager = new FreeTransferReceiptManager();
         ReceiptContract receipt =
-            ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(manager))));
+            ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(manager))));
 
         vm.expectEmit(true, true, true, true);
         emit IReceiptV3.ReceiptInformation(depositor, id, data);
@@ -46,7 +46,7 @@ contract ReceiptReceiptInformationTest is ReceiptFactoryTest {
 
         SpyReceiptManager manager = new SpyReceiptManager();
         ReceiptContract receipt =
-            ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(manager))));
+            ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(manager))));
 
         manager.mint(receipt, makeAddr("mintSender"), holder, id, amount, "");
 
@@ -64,7 +64,7 @@ contract ReceiptReceiptInformationTest is ReceiptFactoryTest {
 
         FreeTransferReceiptManager manager = new FreeTransferReceiptManager();
         ReceiptContract receipt =
-            ReceiptContract(iFactory.clone(address(iReceiptImplementation), abi.encode(address(manager))));
+            ReceiptContract(cloneReceipt(address(iReceiptImplementation), abi.encode(address(manager))));
 
         vm.expectEmit(true, true, true, true);
         emit IReceiptV3.ReceiptInformation(alice, id, data);

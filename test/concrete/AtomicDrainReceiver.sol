@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {IERC1155Receiver} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155Receiver.sol";
-import {IERC1155} from "@openzeppelin-contracts-5.6.1/token/ERC1155/IERC1155.sol";
+import {IERC1155Receiver} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155Receiver.sol";
+import {IERC1155} from "@openzeppelin-contracts-5.7.0/token/ERC1155/IERC1155.sol";
 
 /// @title AtomicDrainReceiver
 /// @notice TEST receiver that re-enters the receipt during the ERC1155
@@ -18,6 +18,10 @@ contract AtomicDrainReceiver is IERC1155Receiver {
     uint256 internal immutable iDrainId;
     uint256 internal immutable iDrainAmount;
 
+    // `victim` and `attacker` are the endpoints of a drain the test expects to
+    // be REFUSED; either being zero just changes which revert refuses it. The
+    // receiver holds no funds and no authority, so there is nothing to guard.
+    // forge-lint: disable-next-line(missing-zero-check)
     constructor(IERC1155 receipt, address victim, address attacker, uint256 drainId, uint256 drainAmount) {
         iReceipt = receipt;
         iVictim = victim;

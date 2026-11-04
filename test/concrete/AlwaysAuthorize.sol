@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity =0.8.25;
 
-import {IAuthorizeV1} from "src/concrete/vault/OffchainAssetReceiptVault.sol";
-import {IERC165} from "@openzeppelin-contracts-5.6.1/utils/introspection/IERC165.sol";
+import {IAuthorizeV1} from "src/abstract/OffchainAssetReceiptVault.sol";
+import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
 
 contract AlwaysAuthorize is IAuthorizeV1, IERC165 {
     /// @inheritdoc IERC165
