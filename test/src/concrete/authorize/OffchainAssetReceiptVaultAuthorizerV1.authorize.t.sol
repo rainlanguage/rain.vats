@@ -6,7 +6,6 @@ import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainA
 
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
-    OffchainAssetReceiptVaultAuthorizerV1Config,
     TRANSFER_SHARES,
     TRANSFER_RECEIPT,
     CERTIFY,
@@ -23,12 +22,9 @@ contract OffchainAssetReceiptVaultAuthorizerV1AuthorizeTest is OffchainAssetRece
     function newAuthorizer(address initialAdmin) internal returns (OffchainAssetReceiptVaultAuthorizerV1) {
         OffchainAssetReceiptVaultAuthorizerV1 authorizerImplementation = new OffchainAssetReceiptVaultAuthorizerV1();
 
-        OffchainAssetReceiptVaultAuthorizerV1Config memory config =
-            OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: initialAdmin});
-
         TestCloneFactory factory = new TestCloneFactory();
         return OffchainAssetReceiptVaultAuthorizerV1(
-            factory.cloneDeterministic(address(authorizerImplementation), abi.encode(config), bytes32(0))
+            factory.cloneDeterministic(address(authorizerImplementation), authorizerInitData(initialAdmin), bytes32(0))
         );
     }
 
