@@ -21,7 +21,8 @@ import {
 import {TestOffchainAssetReceipt} from "../concrete/TestOffchainAssetReceipt.sol";
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
-    OffchainAssetReceiptVaultAuthorizerV1Config
+    OffchainAssetReceiptVaultAuthorizerV1ConfigV2,
+    OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG
 } from "../../src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
@@ -42,6 +43,7 @@ abstract contract OffchainAssetReceiptVaultRegistryTest is Test {
     address internal constant OWNER = address(uint160(uint256(keccak256("owner"))));
     bytes32 internal constant VAULT_BEACON_NAME = "st0x.vault-beacon.v1";
     bytes32 internal constant RECEIPT_BEACON_NAME = "st0x.receipt-beacon.v1";
+    uint256 internal sAuthorizerCount;
 
     TestOffchainAssetReceipt internal immutable iReceiptImplementation;
     UpgradeableBeacon internal immutable iReceiptBeacon;
@@ -70,7 +72,15 @@ abstract contract OffchainAssetReceiptVaultRegistryTest is Test {
     function newAuthorizer(address admin) internal returns (IAuthorizeV1) {
         OffchainAssetReceiptVaultAuthorizerV1 authorizer =
             OffchainAssetReceiptVaultAuthorizerV1(Clones.clone(address(iAuthorizerImplementation)));
-        authorizer.initialize(abi.encode(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: admin})));
+        bytes32 initialAdminName = keccak256(abi.encode("authorizer-initial-admin", sAuthorizerCount++));
+        vm.prank(AUTHORITY);
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS).registerV5(AUTHORITY, initialAdminName, "address", abi.encode(admin), "");
+        authorizer.initialize(
+            abi.encode(
+                OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG,
+                OffchainAssetReceiptVaultAuthorizerV1ConfigV2({authority: AUTHORITY, initialAdminName: initialAdminName})
+            )
+        );
         return authorizer;
     }
 

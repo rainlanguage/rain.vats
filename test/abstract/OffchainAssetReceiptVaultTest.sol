@@ -19,7 +19,8 @@ import {Receipt as ReceiptContract} from "../../src/concrete/receipt/Receipt.sol
 import {TestOffchainAssetReceipt} from "../concrete/TestOffchainAssetReceipt.sol";
 import {
     OffchainAssetReceiptVaultAuthorizerV1,
-    OffchainAssetReceiptVaultAuthorizerV1Config
+    OffchainAssetReceiptVaultAuthorizerV1ConfigV2,
+    OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG
 } from "../../src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
 import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
@@ -77,7 +78,18 @@ contract OffchainAssetReceiptVaultTest is Test {
     {
         OffchainAssetReceiptVaultAuthorizerV1 authorizer =
             OffchainAssetReceiptVaultAuthorizerV1(Clones.clone(address(iAuthorizerImplementation)));
-        authorizer.initialize(abi.encode(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: admin})));
+        bytes32 initialAdminName = keccak256(abi.encode("authorizer-initial-admin", sVaultCount));
+        vm.prank(VAULT_AUTHORITY);
+        IConfigRegistryV5(CONFIG_REGISTRY_ADDRESS)
+            .registerV5(VAULT_AUTHORITY, initialAdminName, "address", abi.encode(admin), "");
+        authorizer.initialize(
+            abi.encode(
+                OFFCHAIN_ASSET_RECEIPT_VAULT_AUTHORIZER_V1_CONFIG_V2_TAG,
+                OffchainAssetReceiptVaultAuthorizerV1ConfigV2({
+                    authority: VAULT_AUTHORITY, initialAdminName: initialAdminName
+                })
+            )
+        );
         bytes32 rbacName = keccak256(abi.encode("vault-rbac", sVaultCount++));
 
         vm.prank(VAULT_AUTHORITY);
