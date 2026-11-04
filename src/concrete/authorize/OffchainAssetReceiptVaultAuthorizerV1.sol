@@ -109,11 +109,11 @@ contract OffchainAssetReceiptVaultAuthorizerV1 is IAuthorizeV1, ICloneableV2, Ac
         if (data.length != 0x60) {
             revert NonCanonicalAuthorizerConfig();
         }
-        (, uint256 authorityWord, bytes32 initialAdminName) = abi.decode(data, (bytes32, uint256, bytes32));
+        (, uint256 authorityWord) = abi.decode(data, (bytes32, uint256));
         if (authorityWord >> 160 != 0) {
             revert NonCanonicalAuthorizerConfig();
         }
-        address authority = address(uint160(authorityWord));
+        (, address authority, bytes32 initialAdminName) = abi.decode(data, (bytes32, address, bytes32));
 
         // When the binding was written does not matter here.
         //slither-disable-next-line unused-return
@@ -122,12 +122,12 @@ contract OffchainAssetReceiptVaultAuthorizerV1 is IAuthorizeV1, ICloneableV2, Ac
         if (adminValue.length != 0x20) {
             revert NonCanonicalInitialAdmin(authority, initialAdminName);
         }
-        uint256 adminWord = abi.decode(adminValue, (uint256));
-        if (adminWord >> 160 != 0) {
+        if (abi.decode(adminValue, (uint256)) >> 160 != 0) {
             revert NonCanonicalInitialAdmin(authority, initialAdminName);
         }
+        address initialAdmin = abi.decode(adminValue, (address));
 
-        return _initialize(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: address(uint160(adminWord))}));
+        return _initialize(OffchainAssetReceiptVaultAuthorizerV1Config({initialAdmin: initialAdmin}));
     }
 
     /// Initialization logic without the initializer modifier so inheriting
