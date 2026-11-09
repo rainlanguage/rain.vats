@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020 Rain Open Source Software Ltd
 pragma solidity ^0.8.25;
 
-import {ICloneableFactoryV7} from "rain-factory-0.2.10/src/interface/ICloneableFactoryV7.sol";
+import {ICloneableFactoryV7} from "rain-factory-0.2.11/src/interface/ICloneableFactoryV7.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
-} from "rain-factory-deploy-0.2.6/src/generated/candidate/CloneFactory.sol";
+} from "rain-factory-deploy-0.2.8/src/generated/candidate/CloneFactory.sol";
 import {TestOffchainAssetReceiptVault} from "../concrete/TestOffchainAssetReceiptVault.sol";
 import {Test} from "forge-std-1.17.0/src/Test.sol";
 import {
@@ -32,7 +32,7 @@ import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
     RUNTIME_CODE as CONFIG_REGISTRY_RUNTIME_CODE
 } from "rain-deploy-0.1.30/src/generated/candidate/ConfigRegistry.sol";
-import {TestCloneFactory} from "rain-factory-0.2.10/src/test/TestCloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.11/src/test/TestCloneFactory.sol";
 
 /// Shared fixture: the pinned `ConfigRegistry` runtime code at its pinned
 /// address, a vault beacon and a receipt beacon bound in it, a V6 factory,
