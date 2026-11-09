@@ -25,11 +25,11 @@ import {
 import {IAuthorizeV1} from "../../src/interface/IAuthorizeV1.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {ICloneableFactoryV7} from "rain-factory-0.2.10/src/interface/ICloneableFactoryV7.sol";
+import {ICloneableFactoryV7} from "rain-factory-0.2.11/src/interface/ICloneableFactoryV7.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
-} from "rain-factory-deploy-0.2.6/src/generated/candidate/CloneFactory.sol";
+} from "rain-factory-deploy-0.2.8/src/generated/candidate/CloneFactory.sol";
 import {IConfigRegistryV5} from "rain-deploy-0.1.30/src/interface/IConfigRegistryV5.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,

@@ -17,7 +17,7 @@ import {
     DEPOSIT_ADMIN,
     WITHDRAW_ADMIN
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {TestCloneFactory} from "rain-factory-0.2.10/src/test/TestCloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.11/src/test/TestCloneFactory.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
 import {IConfigRegistryV5} from "rain-deploy-0.1.30/src/interface/IConfigRegistryV5.sol";
 import {LibConfigRegistry} from "rain-deploy-0.1.30/src/lib/LibConfigRegistry.sol";

@@ -11,7 +11,7 @@ import {
 } from "../../../../src/abstract/OffchainAssetReceiptVault.sol";
 import {OffchainAssetReceiptVaultRbacV1} from "../../../../src/lib/LibOffchainAssetReceiptVaultRbac.sol";
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
-import {REGISTRY_BEACON_PROXY_CREATION_CODE} from "rain-factory-0.2.10/src/generated/RegistryBeaconProxy.sol";
+import {REGISTRY_BEACON_PROXY_CREATION_CODE} from "rain-factory-0.2.11/src/generated/RegistryBeaconProxy.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS
 } from "rain-deploy-0.1.30/src/generated/candidate/ConfigRegistry.sol";

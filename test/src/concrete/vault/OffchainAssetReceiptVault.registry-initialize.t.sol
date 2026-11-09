@@ -29,7 +29,7 @@ import {ReceiptVaultConfigV2} from "../../../../src/abstract/ReceiptVault.sol";
 import {BeaconProxy} from "@openzeppelin-contracts-5.7.0/proxy/beacon/BeaconProxy.sol";
 import {ERC1967Utils} from "@openzeppelin-contracts-5.7.0/proxy/ERC1967/ERC1967Utils.sol";
 import {ZeroInitialAdmin} from "../../../../src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {InitializationFailed} from "rain-factory-0.2.10/src/lib/LibICloneableFactoryV5.sol";
+import {InitializationFailed} from "rain-factory-0.2.11/src/lib/LibICloneableFactoryV5.sol";
 import {IAuthorizeV1} from "../../../../src/interface/IAuthorizeV1.sol";
 import {Receipt as ReceiptContract} from "../../../../src/concrete/receipt/Receipt.sol";
 import {UpgradeableBeacon} from "@openzeppelin-contracts-5.7.0/proxy/beacon/UpgradeableBeacon.sol";
@@ -43,11 +43,11 @@ import {OwnerlessBeacon} from "../../../concrete/OwnerlessBeacon.sol";
 import {IOffchainAssetReceiptVaultV1} from "../../../../src/interface/IOffchainAssetReceiptVaultV1.sol";
 import {Vm} from "forge-std-1.17.0/src/Vm.sol";
 import {Clones} from "@openzeppelin-contracts-5.7.0/proxy/Clones.sol";
-import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.6/src/lib/LibCloneFactoryDeploy.sol";
-import {ICloneableFactoryV7} from "rain-factory-0.2.10/src/interface/ICloneableFactoryV7.sol";
+import {LibCloneFactoryDeploy} from "rain-factory-deploy-0.2.8/src/lib/LibCloneFactoryDeploy.sol";
+import {ICloneableFactoryV7} from "rain-factory-0.2.11/src/interface/ICloneableFactoryV7.sol";
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS
-} from "rain-factory-deploy-0.2.6/src/generated/candidate/CloneFactory.sol";
+} from "rain-factory-deploy-0.2.8/src/generated/candidate/CloneFactory.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS
 } from "rain-deploy-0.1.30/src/generated/candidate/ConfigRegistry.sol";
