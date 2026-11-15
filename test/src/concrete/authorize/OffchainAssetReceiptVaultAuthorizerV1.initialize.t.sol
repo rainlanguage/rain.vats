@@ -17,11 +17,11 @@ import {
     DEPOSIT_ADMIN,
     WITHDRAW_ADMIN
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {TestCloneFactory} from "rain-factory-0.2.11/src/test/TestCloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.13/src/test/TestCloneFactory.sol";
 import {Initializable} from "@openzeppelin-contracts-upgradeable-5.7.0/proxy/utils/Initializable.sol";
-import {IConfigRegistryV5} from "rain-deploy-0.1.30/src/interface/IConfigRegistryV5.sol";
-import {LibConfigRegistry} from "rain-deploy-0.1.30/src/lib/LibConfigRegistry.sol";
-import {LibConfigRegistryDeploy} from "rain-deploy-0.1.30/src/lib/LibConfigRegistryDeploy.sol";
+import {IConfigRegistryV5} from "rain-deploy-0.1.32/src/interface/IConfigRegistryV5.sol";
+import {LibConfigRegistry} from "rain-deploy-0.1.32/src/lib/LibConfigRegistry.sol";
+import {LibConfigRegistryDeploy} from "rain-deploy-0.1.32/src/lib/LibConfigRegistryDeploy.sol";
 
 contract OffchainAssetReceiptVaultAuthorizerV1InitializeTest is OffchainAssetReceiptVaultTest {
     bytes32 internal constant ADMIN_NAME = keccak256("authorizer-initial-admin");
