@@ -42,10 +42,10 @@ integrity = "a62442c990217a3c778bca0bb335085794aa7f0d08d5a9119308288d91f2679a"
 
 [[dependencies]]
 name = "rain-factory-deploy"
-version = "0.2.10"
-url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory-deploy/0_2_10_15-11-2026_16:00:24_rain.factory.zip"
-checksum = "84ee3fae6608021b09e457b34717f5780144d61c74184803d9c6b5170a2d3712"
-integrity = "ee706238d35f30027ffb5cc39c881cf399b2a57536e2d0d8431c1e876433b902"
+version = "0.2.11"
+url = "https://soldeer-revisions.s3.amazonaws.com/rain-factory-deploy/0_2_11_16-11-2026_14:36:54_rain.factory.zip"
+checksum = "784e672b26aa196389a77559eb72a1dbb9d23bf1ce5246c330f06c9c994c2d22"
+integrity = "b30e3235c8bde03f60c2d20024e3a6aa550561b7bed0478051c2da3feafd1ade"
 
 [[dependencies]]
 name = "rain-math-fixedpoint"
