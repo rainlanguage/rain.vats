@@ -3,7 +3,7 @@
 pragma solidity =0.8.25;
 
 import {OffchainAssetReceiptVaultAuthorizerV1Test} from "test/abstract/OffchainAssetReceiptVaultAuthorizerV1Test.sol";
-import {TestCloneFactory} from "rain-factory-0.2.14/src/test/TestCloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.16/src/test/TestCloneFactory.sol";
 import {
     OffchainAssetReceiptVaultPaymentMintAuthorizerV1,
     PaymentTokenDecimalMismatch,
@@ -20,7 +20,7 @@ import {VerifyAlwaysApproved} from "rain-verify-interface-0.1.0/src/concrete/Ver
 import {
     LibFixedPointDecimalScale,
     FLAG_ROUND_UP
-} from "rain-math-fixedpoint-0.2.4/src/lib/LibFixedPointDecimalScale.sol";
+} from "rain-math-fixedpoint-0.2.5/src/lib/LibFixedPointDecimalScale.sol";
 import {IERC20Errors} from "@openzeppelin-contracts-upgradeable-5.7.0/token/ERC20/ERC20Upgradeable.sol";
 
 import {TestErc20} from "test/concrete/TestErc20.sol";
