@@ -5,19 +5,19 @@ pragma solidity =0.8.25;
 import {ReceiptFactoryTest} from "test/abstract/ReceiptFactoryTest.sol";
 import {TestReceiptManager} from "test/concrete/TestReceiptManager.sol";
 import {ERC20PriceOracleReceipt} from "src/concrete/receipt/ERC20PriceOracleReceipt.sol";
-import {LibFixedPointDecimalFormat} from "rain-math-fixedpoint-0.2.4/src/lib/format/LibFixedPointDecimalFormat.sol";
+import {LibFixedPointDecimalFormat} from "rain-math-fixedpoint-0.2.5/src/lib/format/LibFixedPointDecimalFormat.sol";
 import {
     LibFixedPointDecimalArithmeticOpenZeppelin,
     Math
-} from "rain-math-fixedpoint-0.2.4/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
-import {FIXED_POINT_ONE} from "rain-math-fixedpoint-0.2.4/src/lib/FixedPointDecimalConstants.sol";
+} from "rain-math-fixedpoint-0.2.5/src/lib/LibFixedPointDecimalArithmeticOpenZeppelin.sol";
+import {FIXED_POINT_ONE} from "rain-math-fixedpoint-0.2.5/src/lib/FixedPointDecimalConstants.sol";
 import {ZeroReceiptId} from "src/error/ErrReceipt.sol";
-import {LibConformString} from "rain-string-0.3.10/src/lib/mut/LibConformString.sol";
+import {LibConformString} from "rain-string-0.3.11/src/lib/mut/LibConformString.sol";
 import {
     CMASK_QUOTATION_MARK,
     CMASK_PRINTABLE,
     CMASK_BACKSLASH
-} from "rain-string-0.3.10/src/lib/parse/LibParseCMask.sol";
+} from "rain-string-0.3.11/src/lib/parse/LibParseCMask.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts-5.7.0/token/ERC20/extensions/IERC20Metadata.sol";
 import {MutableMetadataReceipt} from "test/concrete/MutableMetadataReceipt.sol";
 

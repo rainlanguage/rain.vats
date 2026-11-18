@@ -15,7 +15,7 @@ import {
     WITHDRAW,
     CertificationExpired
 } from "src/concrete/authorize/OffchainAssetReceiptVaultAuthorizerV1.sol";
-import {TestCloneFactory} from "rain-factory-0.2.14/src/test/TestCloneFactory.sol";
+import {TestCloneFactory} from "rain-factory-0.2.16/src/test/TestCloneFactory.sol";
 import {TransferSharesStateChange, TransferReceiptStateChange} from "src/abstract/OffchainAssetReceiptVault.sol";
 
 contract OffchainAssetReceiptVaultAuthorizerV1AuthorizeTest is OffchainAssetReceiptVaultAuthorizerV1Test {

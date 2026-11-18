@@ -6,7 +6,7 @@ import {IAuthorizeV1, Unauthorized} from "../../interface/IAuthorizeV1.sol";
 
 import {AccessControlUpgradeable} from "@openzeppelin-contracts-upgradeable-5.7.0/access/AccessControlUpgradeable.sol";
 import {IAccessControl} from "@openzeppelin-contracts-5.7.0/access/IAccessControl.sol";
-import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.2.14/src/interface/ICloneableV2.sol";
+import {ICloneableV2, ICLONEABLE_V2_SUCCESS} from "rain-factory-0.2.16/src/interface/ICloneableV2.sol";
 import {
     CONFISCATE_RECEIPT,
     CONFISCATE_SHARES,
@@ -19,7 +19,7 @@ import {
     TransferReceiptStateChange
 } from "../../abstract/OffchainAssetReceiptVault.sol";
 import {IERC165} from "@openzeppelin-contracts-5.7.0/utils/introspection/IERC165.sol";
-import {LibConfigRegistry} from "rain-deploy-0.1.33/src/lib/LibConfigRegistry.sol";
+import {LibConfigRegistry} from "rain-deploy-0.1.35/src/lib/LibConfigRegistry.sol";
 
 /// Thrown when the admin is address zero.
 error ZeroInitialAdmin();
