@@ -29,7 +29,7 @@ import {ICloneableFactoryV7} from "rain-factory-0.2.16/src/interface/ICloneableF
 import {
     DEPLOYED_ADDRESS as CLONE_FACTORY_ADDRESS,
     RUNTIME_CODE as CLONE_FACTORY_RUNTIME_CODE
-} from "rain-factory-deploy-0.2.11/src/generated/candidate/CloneFactory.sol";
+} from "rain-factory-deploy-0.2.12/src/generated/candidate/CloneFactory.sol";
 import {IConfigRegistryV5} from "rain-deploy-0.1.35/src/interface/IConfigRegistryV5.sol";
 import {
     DEPLOYED_ADDRESS as CONFIG_REGISTRY_ADDRESS,
