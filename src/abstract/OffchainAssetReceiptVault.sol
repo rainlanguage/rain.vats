@@ -577,6 +577,7 @@ abstract contract OffchainAssetReceiptVault is
 
     /// Sets the authorizer contract. This is a critical operation and should be
     /// done with extreme care by the owner.
+    /// @dev Every `authorize` call trusts the authorizer the owner sets.
     /// @param newAuthorizer The new authorizer contract.
     function setAuthorizer(IAuthorizeV1 newAuthorizer) public virtual onlyOwner {
         _setAuthorizer(newAuthorizer);
